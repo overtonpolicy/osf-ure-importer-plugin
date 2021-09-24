@@ -1,0 +1,53 @@
+<!doctype html>
+<head>
+    <title>{% block title %}{% endblock %}</title>
+    {% block head %}
+        {% block css %}
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='ext/jquery-ui/jquery-ui.min.css')}}" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/general.css') }}">            
+        {% endblock %}
+
+        {%block javascript %}
+        <script type="text/javascript" src="{{ url_for('static', filename='ext/jquery.min.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='ext/jquery-ui/jquery-ui.min.js') }}"></script>
+
+        {# our general javascript #}
+        <script type="text/javascript" src="{{ url_for('static', filename='js/general.js') }}"></script>
+
+        {% endblock %}
+        
+    {% endblock %}
+</head>
+<section class="content">
+    <body>
+        {% block topmatter %}{% endblock %}
+        <div id="content">{% block content %}{% endblock %}</div>
+        {% block footer %}{% endblock %}
+    </body>
+</section>
+
+<section class="dialogs">
+    <div id="error-dialog" title="Error in Form" class="response-dialog">
+        <p>There is an error you need to fix.</p>
+        <div id="error-message"></div>
+    </div>
+
+    <div id="wait-dialog" title="Please Wait" class="response-dialog">
+        <p>Your document has been submitted.</p>
+        <p>Please wait for the response. It may take a few minutes. You <b><i>should</i></b> get an error message if it
+            fails.</p>
+        <p><span style="font-size: 0.75em; color:#999"><i>But also don't forget we are testing here, so don't spend all
+                    day staring at this box before your suspect it crashed.</i></span></p>
+    </div>
+
+    <div id="result-dialog" title="Results" class="response-dialog">
+        <div id="successful-page-loads"></div>
+        <div id="errors"></div>
+    </div>
+
+    <div id="confirm-dialog" title="Confirm Choice" class="response-dialog">
+        <h1>Are you sure?</h1>
+        <p>This will completely wipe the project clean before importing. Any changes, editors, or components that your
+            colleagues created will be destroyed. This is not reversible.</p>
+    </div>
+</section>

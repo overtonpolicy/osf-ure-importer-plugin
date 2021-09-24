@@ -1,0 +1,10 @@
+8ef88b3287e6459b9e2ebb63a892684c: 
+    secret: nhfm2m85ik9q2Eek5TmCidDcQ34QzQRBvoZlcqRN
+    url: https://testing.uremethods.org/auth/osfauth-callback.html
+ddce6e1baeaf40878ad58b63f34a7e9a:
+    secret: 97Uoja4Y2CHRvGqSWi7O5qHrDyJ5Op9TejKnMw0K
+    url: http://localhost:3000/auth/osfauth-callback.html
+20f73c48efcb466b8b53f646d3968586:
+    secret: m8Q6hF3Jv37Yl5rhj6PPfVAESdYMHr5G6cihaIo5
+    url: https://plugins.uremethods.org/auth/osfauth-callback.html
+

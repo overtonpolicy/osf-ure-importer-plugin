@@ -1,0 +1,144 @@
+import functools
+import flask
+import requests
+import yaml
+import urllib
+from . import db
+
+bp = flask.Blueprint('auth', __name__, url_prefix='/auth')
+
+#@bp.before_app_request
+#def load_login():
+#    """ Fetch an open session if available."""
+#    user_id = flask.session.get('osfid')
+
+#    if user_id is None:
+#       flask.g.user = None
+#    else:
+#        flask.g.user = db.get_db().execute(
+#            'SELECT * FROM osf_user WHERE id = ?', (user_id,)
+#        ).fetchone()
+
+
+def login_required(view):
+    """ This is a decorator that wraps all views in which an osf login session is required."""
+    @functools.wraps(view)
+    def wrapped_view(**kwargs):
+        if flask.g.user is None:
+            return flask.redirect(flask.url_for('auth.login'))
+
+        return view(**kwargs)
+
+    return wrapped_view
+
+def app_hostname():
+    """ Returns a formatted hostname for the server - this is important because OSF only recognizes very specific hostnames, even when multiple strings are equivalent."""
+    hostname = flask.request.url_root
+
+    if hostname == 'http://127.0.0.1:3000/' or hostname == 'http://localhost:3000/':
+        return("http://localhost:3000/") # make sure it's the exact text we registered with OSF
+    return(hostname)
+
+def osf_callback_url():
+    """ This is the callback url that is registered in OSF, which is dependent on the hostname. """
+    return(app_hostname() + 'auth/osfauth-callback.html')
+
+def oauth_client_id():
+    """ This is the client id that is registered in OSF and tied ot the hostname. """
+    hostname = app_hostname()
+
+    if hostname == 'http://127.0.0.1:3000/' or hostname == 'http://localhost:3000/':
+        return("ddce6e1baeaf40878ad58b63f34a7e9a")        
+    elif hostname == 'https://testing.uremethods.org/':
+        return("8ef88b3287e6459b9e2ebb63a892684c")
+    elif hostname == 'https://plugins.uremethods.org/':
+        return("20f73c48efcb466b8b53f646d3968586")
+    else:
+        raise Exception(f"We do not recognize calls from {flask.request.base_url}");
+    
+
+@bp.route('/getclient', methods=['POST'])
+def getclient():
+    """ The sole use of this endpoint is to return the data necessary to open the oauth2 popup window. The rest of this is handled in javascript, but to keey the client id out code easily viewable in the web app, we return it here. See the OSFAuth.launchAuthWindow method in static/js/osfauth.js for where it is used  """
+    return({
+        'oauth_client_id': oauth_client_id(),
+        'oauth_callback_url': osf_callback_url(), 
+    })
+
+@bp.route('/osfauth-callback.html')
+def oauth2_callback():
+    """ The sole use of this endpoint is to receive the authorization code from OSF for oauth2 authentication. This is the callback_uri/redirect_uri where authorization data is sent."""
+    return(flask.current_app.send_static_file('auth/osfauth-callback.html'))
+
+@bp.route('/debugsession', methods=['GET'])
+def debugsession():
+    return(f"""
+    <html><body>
+    <h1>Access</h1>
+    {flask.session['access_token']}
+    </body></html>
+    """)
+
+@bp.route('/registertoken', methods=['POST'])
+def oauth2_new_token():
+    """ Get the access token from an authorization code. This will automatically look up the client secret from the conf directory, which stores a mapping of client_id to client_secret in yaml format. This is called by the osf.completeAuthorization method when an access code is received back from the sign in window and is the last step for OSF authentication.
+    """    
+    access_code = flask.request.values.get('access_code')
+    
+    if not access_code:
+        raise Exception(f"Access code not provided to registertoken")
+    
+    url = "https://accounts.osf.io/oauth2/token"
+    client_id = oauth_client_id()
+
+    with open('conf/auth.yml') as fh:
+        secrets = yaml.load(fh, Loader=yaml.CLoader)
+
+    if client_id not in secrets:
+        raise Exception("Client ID is not registered by the plugin server.")
+    
+    req = requests.post(url, data={
+        'client_id': client_id,
+        'client_secret': secrets[client_id]['secret'],
+        'redirect_uri': secrets[client_id]['url'],
+        'grant_type': 'authorization_code',
+        'code': urllib.parse.unquote(access_code),
+    })
+
+    def errparams():
+        return({
+            'client_id': client_id,
+            #'client_secret': secrets[client_id],
+            'client_secret': '*************' + secrets[client_id]['secret'][-6:],
+            'redirect_uri': secrets[client_id]['url'],
+            'grant_type': 'authorization_code',
+            'code': access_code,
+        })
+
+    if req.status_code >= 300:    
+        # treat as an error
+        raise Exception(f"Attempt to fetch authorization code led to status code {req.status_code}. \n\tURL: {url}\n\tReason: '{req.reason}'\n\tText: {req.text}\n\tParams: {errparams()}")
+
+    js = req.json()
+    if 'error' in js:
+        js['request_params'] = errparams()
+        if js['error_description'] == 'Invalid Code':
+            js['error_description'] = 'Access Code is invalid or expired'
+    else:
+        access_token = js['access_token']        
+        flask.session['access_token'] = access_token
+        flask.session['token_expires'] = js['expires_in']
+    return(js)
+
+
+@bp.route('/login', methods=('GET', 'POST'))
+def osflogin():
+    if flask.request.method == 'POST':
+        raise Exception('Not yet')
+    return(flask.render_template('auth/login.html'))
+
+@bp.route('/logout')
+def osflogout():
+    flask.session.clear()
+    return(flask.redirect(flask.url_for('index')))
+

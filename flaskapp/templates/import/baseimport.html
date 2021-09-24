@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section id="dialog-content">
+    <h3>{{title}}</h3>
+</section>
+
+<form id="document-import" action="{{import_url}}" method="POST" enctype="application/x-www-form-urlencoded">
+    <fieldset>
+        
+        {% include 'partials/osf-project-select.html' %}
+        
+        {% block import_content %}{% endblock %}
+
+        <div id="doc-options" class="form-options">
+            <h3>Document Options</h3>
+            <div>                
+                <div class="form-item">
+                    <div class="form-element">
+                        <input type="checkbox" id="overwrite" value="" name="overwrite" class='inline-input' CHECKED />
+                        <label class="inline-label" for="overwrite">
+                            Overwrite
+                            <div class="help-text">
+                                Indicates that if a wiki or component already exists with the name for the section, it will be replaced. Unselect this if the Wiki may have changes or modifications that are not in the content you are importing.
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-item">
+                    <div class="form-element">
+                        <input type="checkbox" id="delete-old" value="" name="delete-old" class='inline-input' />
+                        <label class="inline-label" for="delete-old">
+                            Delete Old
+                            <div class="help-text">
+                                Deletes any wiki pages or components that do not exist in your new import. <b>This will lead to the loss of data</b> if new components or wikis were added to your project; it is only intended if you do all of your work externally and solely enter content in OSF via import. 
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="break-options" class="form-options">
+            <h3>Wiki and Component Break Options</h3>
+            <div>
+                <div class="form-item">
+                    <label>                        
+                        <div class="help-text">
+                            {% block component_break_desc %}
+                            Any <b>Component Break</b> found in your source content will create a new subcomponent in OSF and write the remaining wiki pages there. This is common for major sections in a project. By default, any <i>Section Break</i> or <i>Page Break</i> will create new components. Depending on how you format your document, <i>1st Headings</i> sometimes are also component breaks. 
+                            {% endblock %}
+                        </div>
+                        <div class="help-text">
+                            {% block wiki_break_desc %}
+                            Any <b>Wiki Break</b> found in your source content will create a new wiki in the same OSF project/component. This is common for minor areas within a component.  By default,  <i>1st Headings</i> will create new wikis, but you may want to designate other headings as well.
+                            {% endblock %}
+                        </div>
+                    </label>
+                    <div class="form-element">
+                        <label>
+                            Section Break Action
+                            <div class="help-text">
+                                Select the action to take when section breaks are found. If a <i>Component</i> or <i>Wiki</i> break is selected, the first heading found will be taken for the title.
+                            </div>
+                        </label>
+                        <select id="section-break-policy" name="section-break-policy" >
+                            <option value="" >No Action</option>
+                            <option value="wiki" >Wiki Break</option>
+                            <option value="component" SELECTED>Component Break</option>
+                        </select>
+                    </div>
+                    <div class="form-element">
+                        <label>
+                            Page Break Action
+                            <div class="help-text">
+                                Select the action to take when page breaks are found. If a <i>Component</i> or <i>Wiki</i> break is selected, the first heading found will be taken for the title.
+                            </div>
+                        </label>
+                        <select id="page-break-policy" name="page-break-policy" >
+                            <option value="" >No Action</option>
+                            <option value="wiki" >Wiki Break</option>
+                            <option value="component" SELECTED>Component Break</option>
+                        </select>
+                    </div>
+                    <div class="form-element">
+                        <label>
+                            Heading 1 Actions
+                            <div class="help-text">
+                                Select the action to take when a <i>Heading 1</i> is found. The heading will be used as the title.
+                            </div>
+                        </label>
+                        <select id="h1-policy" name="h1-policy" >
+                            <option value="" >No Action</option>
+                            <option value="wiki" SELECTED>Wiki Break</option>
+                            <option value="component" >Component Break</option>
+                        </select>
+                    </div>
+                    <div class="form-element">
+                        <label>
+                            Heading 2 Actions
+                            <div class="help-text">
+                                Select the action to take when a <i>Heading 2</i> is found. The heading will be used as the title.
+                            </div>
+                        </label>
+                        <select id="h2-policy" name="h2-policy" >
+                            <option value="" SELECTED>No Action</option>
+                            <option value="wiki" >Wiki Break</option>
+                            <option value="component" >Component Break</option>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    <div class="form-item">
+        <div style="width:550px">
+            <!-- button id="import-button" type="button">Import</button -->
+            <input type="submit" id="import-button" value="Import" />
+        </div>
+    </div>
+    </fieldset>
+</form>
+</div>
+</div>
+
+{% endblock %}

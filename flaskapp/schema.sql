@@ -1,0 +1,8 @@
+DROP TABLE IF EXISTS osfuser;
+
+CREATE TABLE osfuser (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  username TEXT UNIQUE NOT NULL,
+  password TEXT NOT NULL,
+  oauthkey TEXT NOT NULL
+);

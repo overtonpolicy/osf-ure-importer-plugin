@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Authenticate to OSF</title>
+
+    <!-- jquery is required for osf-->
+    <script type="text/javascript" src="/ext/jquery.min.js"></script>
+    <script type="text/javascript" src="/ext/jquery-ui/jquery-ui.min.js"></script>
+
+    <!-- here are the core scripts - osf.js-->
+    <script src="/static/js/osfauth.js"></script>
+
+    <script type="text/javascript">
+        OSFAuth.initializeCallback();
+    </script>
+</head>
+
+<body>
+    <div id="content">
+        Please wait a minute.
+    </div>
+</body>
+
+</html>
