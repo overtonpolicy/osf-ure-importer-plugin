@@ -1,5 +1,10 @@
 {% extends 'base.html' %}
 
+{% block javascript %}
+{{ super() }}
+<script type="text/javascript" src="{{ url_for('static', filename='js/osf-project-select.js') }}"></script>
+{% endblock %}
+
 {% block content %}
 <section id="dialog-content">
     <h3>{{title}}</h3>

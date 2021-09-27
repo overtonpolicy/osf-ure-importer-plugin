@@ -7,14 +7,14 @@
     <title>Authenticate to OSF</title>
 
     <!-- jquery is required for osf-->
-    <script type="text/javascript" src="/ext/jquery.min.js"></script>
-    <script type="text/javascript" src="/ext/jquery-ui/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="/static/ext/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/ext/jquery-ui/jquery-ui.min.js"></script>
 
     <!-- here are the core scripts - osf.js-->
-    <script src="/static/js/osfauth.js"></script>
+    <script type="text/javascript" src="/static/js/osfauth.js"></script>
 
     <script type="text/javascript">
-        OSFAuth.initializeCallback();
+        $(document).ready(function () {OSFAuth.initializeCallback();});
     </script>
 </head>
 

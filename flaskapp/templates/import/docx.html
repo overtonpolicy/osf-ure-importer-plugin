@@ -17,16 +17,13 @@
           </div>
     </label>    
     <div class="form-element">
-        <label class="form-label" for="docx-upload-div">
-            Upload your file here:
-        </label>
         <div id="docx-upload-div" class="form-highlight">
             <label for="upload-docx">
                 <div class="drag-n-drop-box">+</div>
             </label>
             <div class="fileselected-label">
-                <div>File selected: <span id="filename">none</span></div>
-                <div>Upload Status: <span id="upload-status"></span></div>
+                <div>File selected: <span id="filename" style="background: #ffff00">none</span></div>
+                <div>Upload Status: <span id="upload-status"  style="background: #ffff00"></span></div>
                 <div id="upload-progress"></div>
             </div>
             <input type="file" id="upload-docx" name="upload-docx" class='simple-upload' style="display: none;" onchange="$('#docx-upload-div.file_name').text(this.value);">

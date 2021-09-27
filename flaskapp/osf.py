@@ -1,8 +1,166 @@
-import functools
 import flask
-from . import db
+import requests
+import re
+import sys
+
+from requests.models import stream_decode_response_unicode 
 
 bp = flask.Blueprint('osf', __name__, url_prefix='/osf')
+
+
+abspath = re.compile(r'https?://', re.I)
+osf_server = "https://api.osf.io/v2"
+
+def osfget(url, url_params=None):
+
+    if not url:
+        raise Exception('must provide a url')    
+    
+    if not url_params:
+        url_params = None
+    
+    if not abspath.match(url):
+        url = osf_server + url
+
+    access_token = flask.session.get('access_token')
+    if not access_token:
+        raise Exception("You must be logged in to make this request.")
+    
+    print(f"about to osfget:\n\t{url}\n\t{url_params}\n\tToken: {access_token}", file=sys.stderr)
+    req = requests.get(
+        url,
+        headers={"Authorization" : "Bearer " + access_token},
+        params=url_params,
+    )
+
+    if req.status_code == 401:
+        #
+        # 401 - this happens when our access token is incorrect or expired
+        #
+        js = req.json()
+        return(js)
+
+    if req.status_code >= 400:
+        raise Exception(f"Attempt to get {url} returned unexpected status code {req.status_code}")
+    
+    js = req.json()
+    if 'errors' in js:
+        if js['errors'][0]['detail'] and js['errors'][0]['detail'] == 'User provided an invalid OAuth2 access token':
+            raise Exception("TODO: Need to work in the logic to handle expired OSF authorization tokens in real time. Tell Kevin if this gets annoying")
+            #self.launchAuthWindow(reget, on_failure);
+            # try to fetch again
+        else:
+            raise Exception(f"Attempt to get {url} returned with errors: {js['errors']}")
+    return(js)     
+
+def osfgetdata(url, url_params=None, fetch_all=False):
+    
+    resp = osfget(url, url_params)
+    if 'data' not in resp:
+        if 'errors' not in resp:
+            resp['errors'] = f"Call to osfgetdata for {url}, but this returned neither data nor an error message"
+        return(resp)
+    
+    data = resp['data']
+    if type(data) not in (tuple, list):
+        return(data)
+
+    if fetch_all:
+        if 'links' in resp and 'next' in resp['links'] and resp['links']['next']:
+            nextdata = osfgetdata(resp['links']['next'])
+            if type(nextdata) is list:
+                return(data + nextdata)
+            if not 'errors' in nextdata and nextdata['errors']:
+                raise Exception('Unexpected result')
+            return(nextdata)
+    
+    return(data)
+            
+
+@bp.route('/api', methods=['GET', 'POST'])
+def osfget_url():
+    url = flask.request.values.get('url')
+    params = flask.request.values.get('params')
+    return(osfget(url, params))
+
+@bp.route('/me', methods=['GET', 'POST'])
+def getme():
+    print("ME:", flask.session.get('me'), sys.stderr)
+    if flask.session.get('me'):
+        flask.session.clear()
+    data = flask.session.get('me')
+    if not data:        
+        js = osfget('/users/me/')
+        if not 'data' in js:
+            # error
+            return(js)
+        js = js['data']            
+        data = {
+            'name': js['attributes']['full_name'],
+            'id': js['id'],
+            'nodes': js['relationships']['nodes']['links']['related']['href'],
+        }
+        flask.session['me'] = data
+    return(data)
+
+@bp.route('/nodes', methods=['GET', 'POST'])
+def getnodes():
+    data = flask.session.get('nodes')
+    if data:
+        return(data)
+
+    me = getme()
+    if not data:
+        bibliographic_only = flask.request.form.get('bibliographic')
+        include_components = flask.request.form.get('include_components')
+        
+        params = {}
+        if bibliographic_only:
+            params = {
+                'filter': {'parent': None},
+                'embed': 'contributors',
+                'fields': {
+                    'nodes': ['category','current_user_is_contributor','current_user_permissions','date_created','date_modified','public','title','wiki_enabled','description','id','links','contributors'],                
+                    'contributors': ['bibliographic','id','permission','users'],
+                    'users': ['id', 'full_name'],
+                },
+                #'fields[users]': 'id,full_name',
+
+                #'filter[parent]':'null', 
+                #'embed': 'contributors',
+                #'fields[nodes]': 'category,current_user_is_contributor,current_user_permissions,date_created,date_modified,public,title,wiki_enabled,description,id,links,contributors',
+                #'fields[contributors]': 'bibliographic,id,permission,users',
+                #'fields[users]': 'id,full_name',
+            }
+        else:
+            params = {
+                #'filter[parent]': 'null',
+                #'filter[contributors]': me['id'],
+                #'filter': {
+                #    'parent':None,
+                #    'contributors': me['id'],
+                #},
+            }
+
+        data = osfgetdata(f"/users/{me['id']}/nodes/", params, fetch_all=True)
+        if type(data) is not list:
+            return(data)
+
+        print(data, file=sys.stderr)
+        if bibliographic_only:
+            bibliographic = [] 
+            for node in data:
+                # find the contributor record 
+                for contrib in node['embeds']['contributors']['data']:
+                    # if this is the user AND it's a bibliographic contribution, add it and break
+                    if contrib['embeds']['users']['data']['id'] != me['id']:
+                            continue
+                    if contrib['attributes']['bibliographic']:
+                        bibliographic.append(node)
+                        break
+            return(bibliographic)
+        else:
+            return(data)
 
 
 

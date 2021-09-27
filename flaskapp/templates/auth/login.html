@@ -3,8 +3,8 @@
 {%block javascript %}
 {{ super() }}
     {# this is used to log in and authenticate with OSF #}
-    <script type="text/javascript" src="{{ url_for('static', filename='/ext/osf.io-js-api-client/dist/osfclient.min.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='/js/osfauth.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='ext/osf.io-js-api-client/dist/osfclient.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/osfauth.js') }}"></script>
 {% endblock %}
     
 {% block header %}

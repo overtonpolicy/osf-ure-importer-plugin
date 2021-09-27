@@ -3,6 +3,8 @@ import flask
 import requests
 import yaml
 import urllib
+import sys
+
 from . import db
 
 bp = flask.Blueprint('auth', __name__, url_prefix='/auth')
@@ -47,19 +49,19 @@ def oauth_client_id():
     """ This is the client id that is registered in OSF and tied ot the hostname. """
     hostname = app_hostname()
 
-    if hostname == 'http://127.0.0.1:3000/' or hostname == 'http://localhost:3000/':
+    if hostname == 'http://localhost:3000/':
         return("ddce6e1baeaf40878ad58b63f34a7e9a")        
     elif hostname == 'https://testing.uremethods.org/':
         return("8ef88b3287e6459b9e2ebb63a892684c")
     elif hostname == 'https://plugins.uremethods.org/':
         return("20f73c48efcb466b8b53f646d3968586")
     else:
-        raise Exception(f"We do not recognize calls from {flask.request.base_url}");
+        raise Exception(f"We do not recognize calls from {hostname}. Connection to OSF relies on registered domain origins only. Are you perhaps using an ip address?");
     
 
 @bp.route('/getclient', methods=['POST'])
 def getclient():
-    """ The sole use of this endpoint is to return the data necessary to open the oauth2 popup window. The rest of this is handled in javascript, but to keey the client id out code easily viewable in the web app, we return it here. See the OSFAuth.launchAuthWindow method in static/js/osfauth.js for where it is used  """
+    """ The sole use of this endpoint is to return the data necessary to open the oauth2 popup window. The rest of this is handled in javascript, but to keey the client id out code easily viewable in the web app, we return it here. See the OSFAuth.launchAuthWindow method in static/js/osfauth.js for where it is used  """    
     return({
         'oauth_client_id': oauth_client_id(),
         'oauth_callback_url': osf_callback_url(), 
@@ -68,7 +70,11 @@ def getclient():
 @bp.route('/osfauth-callback.html')
 def oauth2_callback():
     """ The sole use of this endpoint is to receive the authorization code from OSF for oauth2 authentication. This is the callback_uri/redirect_uri where authorization data is sent."""
+    
+    print("oauth2 callback entered", file=sys.stderr)
+    print(flask.request.values.to_dict(), file=sys.stderr)
     return(flask.current_app.send_static_file('auth/osfauth-callback.html'))
+
 
 @bp.route('/debugsession', methods=['GET'])
 def debugsession():
@@ -83,6 +89,8 @@ def debugsession():
 def oauth2_new_token():
     """ Get the access token from an authorization code. This will automatically look up the client secret from the conf directory, which stores a mapping of client_id to client_secret in yaml format. This is called by the osf.completeAuthorization method when an access code is received back from the sign in window and is the last step for OSF authentication.
     """    
+    print("oauth2_new_token (/auth/registertoken) callback entered", file=sys.stderr)
+
     access_code = flask.request.values.get('access_code')
     
     if not access_code:
@@ -128,6 +136,8 @@ def oauth2_new_token():
         access_token = js['access_token']        
         flask.session['access_token'] = access_token
         flask.session['token_expires'] = js['expires_in']
+        print("New access token: " + access_token, file=sys.stderr)
+
     return(js)
 
 
@@ -142,3 +152,21 @@ def osflogout():
     flask.session.clear()
     return(flask.redirect(flask.url_for('index')))
 
+
+@bp.route('/revoketoken', methods=['GET', 'POST'])
+def revoke_access_token():
+
+    req = requests.post(
+        "https://accounts.osf.io/oauth2/revoke", data={    
+        'token': flask.session['access_token'],
+    })
+
+    flask.session.clear()    
+    # -- the expectation here is that 
+    if req.status_code == 204:
+        # -- access token revoked!        
+        return({'success': True})
+    elif req.status_code >= 400:
+        raise Exception(f"Attempted to clear the access token, but received a code {req.status_code}")
+    else:
+        raise Exception(f"Unknown error in attempt to revoke access. Received status code {req.status_code}, json {req.json()}")

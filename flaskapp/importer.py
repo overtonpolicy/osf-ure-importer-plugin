@@ -4,7 +4,9 @@ import string, random
 from . import db
 
 import os,sys
-sys.path.append(os.path.abspath(os.path.dirname(__file__)) + '/../pylib')
+
+#
+# Our webserver-unaware packages for processing things
 import ure
 
 uploaddir = 'tmpfiles'

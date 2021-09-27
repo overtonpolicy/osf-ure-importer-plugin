@@ -15,7 +15,9 @@ class OSFAuth {
     osf_server = "https://api.osf.io/v2"
 
     constructor(params){
-        var self = this; 
+        this.loginCallbacks = []
+        this.logoutCallbacks = []
+        this.logged_in = false 
     }
     
     /**
@@ -33,10 +35,6 @@ class OSFAuth {
 
     set access_code(value){
         this._access_code = value;
-    }
-
-    pingAccess() {
-        var self = this;
     }
 
     /** Completes the authorization by posting to the server to exchange the access code for an authorization token. */
@@ -68,6 +66,7 @@ class OSFAuth {
                 }
                 else{
                     self.access_token = data.access_token;
+                    self.registerLogin();
                     if(on_success)
                         on_success(data);
                 }
@@ -78,19 +77,15 @@ class OSFAuth {
 
     revokeCurrentToken(on_complete){
         var self = this;
-        $.ajax({
-        
-            url: "/cgi-bin/osfauth.cgi",
+        $.ajax({        
+            url: "/auth/revoketoken",
             method: "POST",
             dataType: "json",
-            data: {
-                'method': 'revoke_token',
-                "access_token" : self.access_token,
-            },
             success: function(data) {
                 console.log("Token revoked");
                 on_complete(data);
             },
+            error: ureAjaxError            
         });
     };
 
@@ -188,77 +183,137 @@ class OSFAuth {
     
     /** the function called by the authorization window to send the access code back to the parent*/
     static initializeCallback(){
-        // identify the referrer
+
+        // identify the referrer        
         var access_code = this.getURLParam('code');        
+        
         // console.log("Received access code:" + access_code);
         if(!access_code){
             alert("Authentication Callback URL not provided with an access code!");
             return;
         }    
-        /*
-        console.log("About to post message to:");
-        console.log(window.opener);
-        console.log("And from:");
-        console.log(window.location.origin);
-        */
         window.opener.postMessage({'code': access_code}, window.location.origin);
-        //console.log(parent);
-        //parent.postMessage({'code': access_code}, window.location.origin);
-        //console.log("Dispatched auth code message back to source app.")
         window.close();
     }
+
+    get(url, params, success, failure){
+        if(!failure)
+            failure = ureAjaxError;
+
+        $.ajax({
+            url: '/osf/get',
+            method: 'POST',
+            data: {
+                url: url,
+                params: params,
+            },
+            success: success,
+            error: failure,            
+        })
+    }
+
+    getme(success, failure=ureAjaxError){
+        $.ajax({
+            url: '/osf/me',
+            method: 'POST',
+            success: success,
+            error: failure,            
+        })
+    }
+
+    getMyProjects(callback, author_only=true, include_components=true, failure=ureAjaxError){        
+        $.ajax({
+            url: '/osf/nodes',
+            method: 'POST',
+            data: {
+                'bibliographic': author_only,
+                'include_components': include_components,
+            },
+            successs: callback,
+            error: failure
+        })
+    }
+
+    registerLogin(){
+        var self = this;
+        $('#osf-login').hide();
+        $('#osf-logout').show();
+        $('#osf-revoke').show();
+        $('.osf-login-required').each(function(){
+            $(this).show();
+        });
+        $('.hide-after-login').each(function(){
+            $(this).hide();
+        });
+
+        this.logged_in = true;
+        // update the label and conduct any custom callbacks
+        this.getme(function(me){
+            $('#osf-authentication-status').html('You are logged in as '+me.name+'.');
+            self.loginCallbacks.forEach(function(callback){
+                callback(me);
+            });
+        });
+        console.log("Login complete");
+        
+    }
+
+    registerLogout(){
+        var self = this;
+        $('#osf-login').show();
+        $('#osf-logout').hide();
+        $('#osf-revoke').hide();
+        $('#osf-authentication-status').html('You are not logged in.');
+        $('.osf-login-required').each(function(){
+            $(this).hide();
+        });
+        $('.hide-after-login').each(function(){
+            $(this).show();
+        });
+
+        this.logged_in = false;        
+        // update the label and conduct any custom callbacks
+        self.logoutCallbacks.forEach(function(callback){
+            callback(me);
+        });
+        console.log("Logout complete");
+    }
     
+    addLoginCallback(callback, initial_trigger=true){
+        this.loginCallbacks.push(callback);
+        if(this.logged_in && initial_trigger){
+            this.getme(callback);
+        }
+    }
+
+    addLogoutCallback(callback, initial_trigger=true){
+        this.logoutCallbacks.push(callback);
+        if(!this.logged_in && initial_trigger){
+            callback();
+        }
+    }
 }
 
-
-var osf;
+var osf = new OSFAuth();
 $(document).ready(function () {
 
-    osf = new OSFAuth();
     //
     // Set the actions for hte login components
     //
     $('#osf-login').click(function(){            
-        osf.launchAuthWindow(function(data){
-            $('#osf-login').hide();
-            $('#osf-logout').show();
-            $('#osf-revoke').show();
-            $('#osf-authentication-status').html('You are logged in as '+osf.user+'.')            
-        }, ureAjaxError);
+        osf.launchAuthWindow(function(){osf.registerLogin()}, ureAjaxError);
     });
     
     $('#osf-logout').click(function(){
-        osf.revokeCurrentToken(function(data){
-            $('#osf-login').show();
-            $('#osf-logout').hide();
-            $('#osf-revoke').hide();
-            $('#osf-authentication-status').html('You are not logged in.');
-            console.log("Logout complete");
-            console.log(data);            
-        }, ureAjaxError);
+        osf.revokeCurrentToken(function(){osf.registerLogout()}, ureAjaxError);
     });
 
     $('#osf-revoke').click(function(){
-        osf.revokeUserAuth(function(data){
-            $('#osf-login').show();
-            $('#osf-logout').hide();
-            $('#osf-revoke').hide();
-            $('#osf-authentication-status').html('You are not logged in.');
-            console.log("Revoke! complete");
-            console.log(data);            
-        }, ureAjaxError);
+        osf.revokeUserAuth(function(){osf.registerLogout()}, ureAjaxError);
     });
 
     //
     // Initialize based on current activity
     //
-    if(osf.pingAccess()){
-        $('#osf-login').hide();
-        $('#osf-authentication-status').html('You are logged in as '+osf.user+'.');
-    }
-    else{
-        $('#osf-logout').hide();
-        $('#osf-revoke').hide();
-        $('#osf-authentication-status').html('You are not logged in to OSF.');
-    }
+    //osf.getme( function(){osf.registerLogin()}, function(){osf.registerLogout()} );
 });
