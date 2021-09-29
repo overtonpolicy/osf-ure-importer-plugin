@@ -170,3 +170,18 @@ def revoke_access_token():
         raise Exception(f"Attempted to clear the access token, but received a code {req.status_code}")
     else:
         raise Exception(f"Unknown error in attempt to revoke access. Received status code {req.status_code}, json {req.json()}")
+
+
+
+
+@bp.route('/settoken', methods=['GET'])
+def debug_set_token():
+    """ For debugging use of authentication only: set the access token manually for the session """    
+    
+    access_token = flask.request.values.get('token')
+    
+    if not access_token:
+        raise Exception(f"token url parameter required")
+    
+    flask.session['access_token'] = access_token
+    return{'success': True}

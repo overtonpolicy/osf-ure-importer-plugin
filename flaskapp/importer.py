@@ -1,7 +1,7 @@
 import functools
 import flask
 import string, random
-from . import db
+from . import osf
 
 import os,sys
 
@@ -60,8 +60,23 @@ def docx_import():
         h1_break=parameters['h1-policy'],
         h2_break=parameters['h2-policy'],        
     )
+
+    js = osf.osfget(f"/nodes/{parameters['osf-project-id']}/", {'embed': ['wikis', 'children']})
+    existingwikis = {}
+    existingnodes = {}
+    for jswiki in js['embeds']['wikis']:
+        existingwikis[jswiki['attributes']['name']] = jswiki['id']
+    for jswiki in js['embeds']['children']:
+        existingnodes[jswiki['attributes']['title']] = jswiki['id']
+
     layout = ''
-    for comp in exporter.markdown:
+    compwikis = exporter.markdown    
+    root_project = compwikis.pop(0)
+    layout += '<h1>Root Project: ' + root_project[0] + '</h1>'
+    for wiki, text in root_project[1]:
+        layout += '<h2>Root Wiki: ' + wiki + '</h2><p>' + text + '</p>'
+
+    for comp in compwikis:
         layout += '<h1>Component: ' + comp[0] + '</h1>'
         for wiki, text in comp[1]:
             layout += '<h2>Wiki: ' + wiki + '</h2><p>' + text + '</p>'
@@ -69,6 +84,13 @@ def docx_import():
     return(f"""<html>
     <body>
     <h1>SOMETHING HAPPENED</h1>
+    <h2>Params</h2>
+    {parameters}
+    <h1>Existing Wikis</h1>
+    {existingwikis}
+    <h1>Layout</h1>
+    <pre>
     {layout}
+    </pre>
     <a href="{flask.url_for('import.docx')}">Return to form</a>
     </body></html>""")

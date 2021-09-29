@@ -38,13 +38,14 @@ class OSFAuth {
     }
 
     /** Completes the authorization by posting to the server to exchange the access code for an authorization token. */
-    completeAuthorization(on_success, on_error){
+    completeAuthorization(params){
         var self = this;
+        if(!params.error)
+            params.error = ureAjaxError;            
         if(!self.access_code){
             ureAjaxError("Cannot complete authorization without an access code");
             return;
         }
-
         $.ajax({
             url: "/auth/registertoken",
             method: "POST",
@@ -67,11 +68,11 @@ class OSFAuth {
                 else{
                     self.access_token = data.access_token;
                     self.registerLogin();
-                    if(on_success)
-                        on_success(data);
+                    if(params.success)
+                        params.success(data);
                 }
             },
-            error: ureAjaxError
+            error: params.error
         });    
     }
 
@@ -83,7 +84,9 @@ class OSFAuth {
             dataType: "json",
             success: function(data) {
                 console.log("Token revoked");
-                on_complete(data);
+                self.registerLogout();
+                if(on_complete)
+                    on_complete(data);
             },
             error: ureAjaxError            
         });
@@ -127,13 +130,15 @@ class OSFAuth {
 
     /** launchAuthWindow - Begin OAUTH2 Authorization
      * 
-     * @param {function} success_callback - a function to be called if authorization is successful. If all is successful, this function will be called with the authorization token. If the call is valid but the server providdes an error, this function will be called with no parameters.
-     * @param {function} error_callback - a function to be called if the ajax call fails.
+     * @param {function} success - a function to be called if authorization is successful. If all is successful, this function will be called with the authorization token. If the call is valid but the server providdes an error, this function will be called with no parameters.
+     * @param {function} error - a function to be called if the ajax call fails.
      * 
      * TODO: Should success_callback really be called in cases of error? 
      */
-    launchAuthWindow(success_callback, error_callback){
+    launchAuthWindow(params){
         var self = this;
+        if(!params.error)
+            params.error = ureAjaxError;
 
         $.ajax({
             url: "/auth/getclient",
@@ -160,7 +165,7 @@ class OSFAuth {
                             return;
                         if(event.data.code){
                             self.access_code = event.data.code;
-                            self.completeAuthorization(success_callback, error_callback);
+                            self.completeAuthorization({success:params.success, error:params.error});
                             // let the child know it can close
                             child.postMessage('close', window.location.origin); 
                         }
@@ -177,7 +182,7 @@ class OSFAuth {
                 );
 
             },
-            error: ureAjaxError,    
+            error: params.success,    
         });
     }
     
@@ -196,45 +201,83 @@ class OSFAuth {
         window.close();
     }
 
-    get(url, params, success, failure){
+
+    apiget(api_url, api_params, success, failure, json=true){
+        var server_url = json ? '/osf/data' : '/osf/api';
+        var params = {
+            url: api_url,
+            params: api_params,
+        };
+        return(this.get(server_url, params, success, failure, json))
+    }
+
+    get(url, params, success, failure, json=true){
+        var self = this;
         if(!failure)
             failure = ureAjaxError;
 
         $.ajax({
-            url: '/osf/get',
+            url: url,
             method: 'POST',
-            data: {
-                url: url,
-                params: params,
-            },
-            success: success,
+            data: params,
             error: failure,            
+            success: function(resp){
+                // check for errors
+                if(!resp.errors){
+                    return(success(resp));
+                }
+                // is it just authentication timeout / failure?
+                // If not, fail now.
+                if(![401,403].includes(resp.status_code)){
+                    return(ureAjaxError(resp))
+                }
+                // attempt to log back in one time.
+                console.log("User no longer logged in - attempting to log in again.")
+
+                self.launchAuthWindow({
+                    success: function(){
+                        $.ajax({ 
+                            url: url,
+                            method: 'POST',
+                            data: {
+                                url: url,
+                                params: params,
+                            },
+                            error: failure,
+                            success: function(resp){
+                                if(resp.errors)
+                                    return ureAjaxError(resp);
+                                else{
+                                    success(resp);
+                                }
+                            },
+                        })
+                    }, 
+                    error: function(){
+                        console.log("Failed to log user back in. Redirect to home.")
+                        window.location = "/"
+                    }
+                });
+            },            
         })
     }
 
     getme(success, failure=ureAjaxError){
-        $.ajax({
-            url: '/osf/me',
-            method: 'POST',
-            success: success,
-            error: failure,            
-        })
+        this.apiget('/users/me/', {}, success, failure);
     }
 
-    getMyProjects(callback, author_only=true, include_components=true, failure=ureAjaxError){        
-        $.ajax({
-            url: '/osf/nodes',
-            method: 'POST',
-            data: {
+    getMyProjects(callback, author_only=true, include_components=false, failure=ureAjaxError){        
+        console.log("getting my projects!");
+        this.get('/osf/nodes', {
                 'bibliographic': author_only,
                 'include_components': include_components,
             },
-            successs: callback,
-            error: failure
-        })
+            callback,
+            failure,
+        );
     }
 
-    registerLogin(){
+    registerLogin(me){
         var self = this;
         $('#osf-login').hide();
         $('#osf-logout').show();
@@ -246,14 +289,31 @@ class OSFAuth {
             $(this).hide();
         });
 
-        this.logged_in = true;
-        // update the label and conduct any custom callbacks
-        this.getme(function(me){
-            $('#osf-authentication-status').html('You are logged in as '+me.name+'.');
+        self.logged_in = true;
+        console.log("In past attempts, the following would die with 'full_name: can't read properties on undefined' ")
+        console.log("So what is it?")
+        console.log(me);
+        //debugger;
+
+        if(me){
+            // in this case, we logged in separately and are notifying the osf object of it, so we 
+            // we don't need to call getme separately.
+            self.me = me;
+            $('#osf-authentication-status').html('You are logged in as '+me.attributes.full_name+'.');
             self.loginCallbacks.forEach(function(callback){
                 callback(me);
             });
-        });
+        }
+        else{
+            // update the label and conduct any custom callbacks
+            self.getme(function(me){            
+                self.me = me;
+                $('#osf-authentication-status').html('You are logged in as '+me.attributes.full_name+'.');
+                self.loginCallbacks.forEach(function(callback){
+                    callback(me);
+                });
+            });
+        }
         console.log("Login complete");
         
     }
@@ -271,10 +331,11 @@ class OSFAuth {
             $(this).show();
         });
 
-        this.logged_in = false;        
+        this.logged_in = false;  
+        self.me = null;      
         // update the label and conduct any custom callbacks
         self.logoutCallbacks.forEach(function(callback){
-            callback(me);
+            callback();
         });
         console.log("Logout complete");
     }
@@ -282,7 +343,7 @@ class OSFAuth {
     addLoginCallback(callback, initial_trigger=true){
         this.loginCallbacks.push(callback);
         if(this.logged_in && initial_trigger){
-            this.getme(callback);
+            callback(this.me);
         }
     }
 
@@ -301,19 +362,19 @@ $(document).ready(function () {
     // Set the actions for hte login components
     //
     $('#osf-login').click(function(){            
-        osf.launchAuthWindow(function(){osf.registerLogin()}, ureAjaxError);
+        osf.launchAuthWindow();
     });
     
     $('#osf-logout').click(function(){
-        osf.revokeCurrentToken(function(){osf.registerLogout()}, ureAjaxError);
+        osf.revokeCurrentToken();
     });
 
     $('#osf-revoke').click(function(){
-        osf.revokeUserAuth(function(){osf.registerLogout()}, ureAjaxError);
+        osf.revokeCurrentToken();
     });
 
     //
     // Initialize based on current activity
     //
-    //osf.getme( function(){osf.registerLogin()}, function(){osf.registerLogout()} );
+    osf.getme( function(me){osf.registerLogin(me)}, function(){osf.registerLogout()} );
 });

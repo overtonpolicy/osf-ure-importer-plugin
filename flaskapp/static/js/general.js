@@ -77,7 +77,7 @@ $(document).ready(function () {
         messages = data.error_description;
     else if(data.message)
         messages = data.message;
-    debugger;
+    //debugger;
     UREErrorDialog(messages);
 }
 

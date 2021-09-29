@@ -5,10 +5,11 @@
         <div class="hide-after-login" class="help-text">
             You must log into your OSF account first.
         </div>
-        <div id="osf-panel" style="display:none" class="autocomplete-panel osf-login-required" >
-            <input type="text" name="osf-project-name" class="form-input" value="" id="osf-project-name" />
-            <input type="hidden" name="osf-project-id" value="" id="osf-project-id" />
+        <div id="osf-panel" style="display:none" class="osf-login-required" >
+            <input type="text" name="osf-project-name" class="form-input autocomplete-panel" value="" id="osf-project-name" />            
+            <span id="osf-project-fetch-info"class="help-text" ></span>
             <div class="help-text">Start typing the OSF Project Name and select it when it appears.</div>
+            <input type="hidden" name="osf-project-id" value="" id="osf-project-id" />
         </div>
         <div id="osf-access" class="access-panel">
         </div>

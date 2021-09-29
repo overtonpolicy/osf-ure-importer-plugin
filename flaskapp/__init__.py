@@ -27,11 +27,6 @@ def create_app(test_config=None):
     def index():
         return('There are not the droids you are looking for.')
 
-    # a simple page that says hello
-    @app.route('/hello')
-    def hello():
-        return 'Hello, World!'
-
     # register the db
     db.init_app(app)
 

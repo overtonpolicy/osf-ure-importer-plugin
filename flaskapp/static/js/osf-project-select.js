@@ -3,8 +3,8 @@
 function updateProjectSelect(nodes) {
 
     // get the nodes
-    var nodelist = [];
-    nodes.forEach(function (node) {
+    var nodelist = [];    
+    nodes.data.forEach(function (node) {
 
         // only for projects that the user is an author
         if (!node.attributes.current_user_is_contributor)
@@ -34,12 +34,14 @@ function updateProjectSelect(nodes) {
             $('#osf-project-id').val(ui.item.id);
         },
     });
+    $('#osf-project-fetch-info').html('<i>Ready</i>.')
 }
 
 $(document).ready(function () {
-    /*
+    $('#osf-project-fetch-info').html('<i>Loading</i>.')
     osf.addLoginCallback(function(){
+        $('#osf-project-fetch-info').html('<i>Loading</i>.')
         osf.getMyProjects(updateProjectSelect);
     });
-    */
+    
 });
