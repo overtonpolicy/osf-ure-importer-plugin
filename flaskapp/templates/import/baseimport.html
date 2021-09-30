@@ -3,6 +3,7 @@
 {% block javascript %}
 {{ super() }}
 <script type="text/javascript" src="{{ url_for('static', filename='js/osf-project-select.js') }}"></script>
+<link rel="stylesheet" href="{{url_for('static', filename='ext/three-dots/three-dots.min.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -50,18 +51,19 @@
             <div>
                 <div class="form-item">
                     <label>                        
-                        <div class="help-text">
+                        <div class="help-text form-item">
                             {% block component_break_desc %}
                             Any <b>Component Break</b> found in your source content will create a new subcomponent in OSF and write the remaining wiki pages there. This is common for major sections in a project. By default, any <i>Section Break</i> or <i>Page Break</i> will create new components. Depending on how you format your document, <i>1st Headings</i> sometimes are also component breaks. 
                             {% endblock %}
                         </div>
-                        <div class="help-text">
+                        <div class="help-text form-item">
                             {% block wiki_break_desc %}
                             Any <b>Wiki Break</b> found in your source content will create a new wiki in the same OSF project/component. This is common for minor areas within a component.  By default,  <i>1st Headings</i> will create new wikis, but you may want to designate other headings as well.
                             {% endblock %}
                         </div>
                     </label>
-                    <div class="form-element">
+		</div>
+                    <div class="form-item">
                         <label>
                             Section Break Action
                             <div class="help-text">
@@ -74,7 +76,7 @@
                             <option value="component" SELECTED>Component Break</option>
                         </select>
                     </div>
-                    <div class="form-element">
+                    <div class="form-item">
                         <label>
                             Page Break Action
                             <div class="help-text">
@@ -87,7 +89,7 @@
                             <option value="component" SELECTED>Component Break</option>
                         </select>
                     </div>
-                    <div class="form-element">
+                    <div class="form-item">
                         <label>
                             Heading 1 Actions
                             <div class="help-text">
@@ -100,7 +102,7 @@
                             <option value="component" >Component Break</option>
                         </select>
                     </div>
-                    <div class="form-element">
+                    <div class="form-item">
                         <label>
                             Heading 2 Actions
                             <div class="help-text">
@@ -113,8 +115,6 @@
                             <option value="component" >Component Break</option>
                         </select>
                     </div>
-                </div>
-
             </div>
         </div>
     <div class="form-item">

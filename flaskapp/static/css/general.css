@@ -46,7 +46,9 @@ th.tags-col{
 
 #content{
     max-width: 800px;
-    margin: 50px;
+    margin-left: 50px;
+    margin-right: 50px;
+    margin-top: 20px;
 }
 
 #dialog-content{
@@ -68,7 +70,7 @@ h3{
 }
 
 .form-item{
-    margin-top: 25px;
+    margin-top: 15px;
 }
 
 .form-subitem{
@@ -94,6 +96,7 @@ h3{
 .form-element{
     width:100%;
     display:inline-block;
+    margin-bottom: 5px;
 }
 
 .form-indicator{
@@ -117,13 +120,15 @@ h3{
 
 
 label{
-    font-weight: 500;
+    font-weight: 700;
     color: #333;
 }
 
 .help-text{
     font-weight: 200;
     color: #666;
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 
 .access-panel{
@@ -137,17 +142,23 @@ label{
     vertical-align:top;
 }
 
+#osf-login-div{
+    max-width: 400px;
+}
+
 .osf-status-message{
-    margin-bottom: 10px;
-    margin-left:10px;
+    text-align: center;
+    padding: 10px;
     font-weight:200;
     color: #333;
     font-size: 0.7em;
 }
 
 .osf-auth-button{
-    margin-bottom: 10px;
-    margin-left: 25px;
+    margin-bottom: 5px;
+    margin-top: 5px;
+    margin-left: 10px;
+    margin-right: 10px;
     padding: 5px;
 }
 

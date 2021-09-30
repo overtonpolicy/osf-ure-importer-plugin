@@ -233,9 +233,10 @@ class OSFAuth {
                 }
                 // attempt to log back in one time.
                 console.log("User no longer logged in - attempting to log in again.")
-
+		$('#osf-authentication-status').html('<b>New log in to OSF required</b>. If the login window does not appear, you need to allow pop-ups for uremethods and reload (instructions <a href="https://support.google.com/chrome/answer/95472?hl=en&co=GENIE.Platform%3DDesktop&oco=0" target="_blank">here</a>)')
                 self.launchAuthWindow({
                     success: function(){
+			$('#osf-authentication-status').html('');
                         $.ajax({ 
                             url: url,
                             method: 'POST',
@@ -251,6 +252,7 @@ class OSFAuth {
                         })
                     }, 
                     error: function(){
+			$('#osf-authentication-status').html('');
                         console.log("Failed to log user back in. Redirect to home.")
                         window.location = "/"
                     }
