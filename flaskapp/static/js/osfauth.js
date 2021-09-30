@@ -137,7 +137,9 @@ class OSFAuth {
      */
     launchAuthWindow(params){
         var self = this;
-        if(!params.error)
+	if(!params)
+	    params = {error: ureAjaxError};	  
+	else if(!params.error)
             params.error = ureAjaxError;
 
         $.ajax({
@@ -375,5 +377,8 @@ $(document).ready(function () {
     //
     // Initialize based on current activity
     //
+    $('#osf-login').show();
+    $('#osf-logout').hide();
+    $('#osf-revoke').hide();
     osf.getme( function(me){osf.registerLogin(me)}, function(){osf.registerLogout()} );
 });

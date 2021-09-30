@@ -26,6 +26,7 @@ function updateProjectSelect(nodes) {
     // show the panel
     $('#osf-panel').show();
 
+    $('#osf-project-name').prop('disabled', false);
     // set the autocomplete value
     $('#osf-project-name').autocomplete({
         source: nodelist,
@@ -39,10 +40,13 @@ function updateProjectSelect(nodes) {
 
 $(document).ready(function () {
     $('#osf-project-fetch-info').html('<div class="dot-pulse" style="display:inline-block;margin-left:20px"></div>');
+    $('#osf-project-name').prop('disabled', true);
 
     osf.addLoginCallback(function(){
     	$('#osf-project-fetch-info').html('<div class="dot-pulse" style="display:inline-block;margin-left:20px"></div>');
-        osf.getMyProjects(updateProjectSelect);
+    	$('#osf-project-name').prop('disabled', true);
+        
+	osf.getMyProjects(updateProjectSelect);
     });
     
 });
