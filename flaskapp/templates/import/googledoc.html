@@ -1,0 +1,30 @@
+{% extends 'import/baseimport.html' %}
+{%set import_url = url_for('import.docx_import') %}
+
+{% block javascript %}
+{{ super() }}
+{% endblock %}
+
+{% block import_content %}
+<div class="form-item">
+    <div class="form-item">
+        <label class="form-label" for="gdoc-name">Google Document</label>
+        <!-- This html is intended to be used with osf-project-select.js, which must be added to the header manually -->
+        <div class="form-element">
+            <div id="google-login-required">
+                <div class="help-text">You must log into your Google Account and grant access to select the Google Document to import.</div>
+                <button id="google-login" class="osf-auth-button" >Log In</button>                
+            </div>
+            <div id="gdoc-panel" style="display:none" >
+                <input type="text" name="gdoc-name" class="form-input autocomplete-panel" value="" id="gdoc-name" />            
+                <span id="gdoc-fetch-info"class="help-text" ></span>
+                <div class="help-text">Start typing the Google Document Name and select it when it appears.</div>
+                <input type="hidden" name="gdoc-id" value="" id="gdoc-id" />
+            </div>
+            <div id="gdoc-access" class="access-panel">
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

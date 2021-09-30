@@ -228,7 +228,7 @@ class OSFAuth {
                 }
                 // is it just authentication timeout / failure?
                 // If not, fail now.
-                if(![401,403].includes(resp.status_code)){
+                if(![-1, 401,403].includes(resp.status_code)){
                     return(ureAjaxError(resp))
                 }
                 // attempt to log back in one time.
@@ -239,10 +239,7 @@ class OSFAuth {
                         $.ajax({ 
                             url: url,
                             method: 'POST',
-                            data: {
-                                url: url,
-                                params: params,
-                            },
+                            data: params,                            
                             error: failure,
                             success: function(resp){
                                 if(resp.errors)
