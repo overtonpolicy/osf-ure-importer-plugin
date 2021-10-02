@@ -45,6 +45,17 @@ class BaseExporter():
         # does the additional datastructure creation that we use for everything here
         self._markdown = self.postprocess_markdown(mkd)
 
+    @classmethod
+    def sanitize_text(self, text):
+        """ Intended for things like rendering page names - remove characers or strings that are invalid. 
+        Examples:
+            Page names cannot include foreward slashes
+        """
+        text = re.sub(r'\/', '-', text.strip()) # change characters to hyphens
+        text = re.sub(r'\n', ' ', text) # change characters to spaces
+        text = re.sub(r'\r', '', text) # remove characters
+        return(text)
+
     def process_source(self):
         raise Exception("process_source must be defined in the subclass to return a ure-markdown datastructure")
 
@@ -136,7 +147,7 @@ class BaseExporter():
                     print("*** Appending subpage to " + wiki_pages[-1][0])
                     wiki_pages[-1][1] += "\n\n" + wiki_mkd
                 else:
-                    wiki_pages.append([m.group(1), wiki_mkd])
+                    wiki_pages.append([self.sanitize_text(m.group(1)), wiki_mkd])
             nodes.append([title, wiki_pages])
 
         return(nodes)
@@ -145,7 +156,7 @@ class BaseExporter():
     def clean_pandoc_markdown(cls, mkdtext):
         """ Cleans the bad formatting that comes out of pandoc """
         import sys
-        print("[[Original Text]]\n\n" + mkdtext, file=sys.stderr)        
+        #print("[[Original Text]]\n\n" + mkdtext, file=sys.stderr)        
         # Replace an initial heading with the #-based heading
         cnt = -1
         while cnt:
@@ -154,5 +165,5 @@ class BaseExporter():
         # remove bold from headings
         mkdtext = re.sub(r'^(#+\s+)\*\*(.+)\*\*\s*$', lambda m: m.group(1) + m.group(2), mkdtext, flags=re.MULTILINE)
 
-        print("\n\n[[New Text]]\n\n" + mkdtext, file=sys.stderr)
+        #print("\n\n[[New Text]]\n\n" + mkdtext, file=sys.stderr)
         return(mkdtext)

@@ -210,10 +210,10 @@ class OSFAuth {
             url: api_url,
             params: api_params,
         };
-        return(this.get(server_url, params, success, failure, json))
+        return(this.local(server_url, params, success, failure, json))
     }
 
-    get(url, params, success, failure, json=true){
+    local(url, params, success, failure, json=true){
         var self = this;
         if(!failure)
             failure = ureAjaxError;
@@ -269,7 +269,7 @@ class OSFAuth {
 
     getMyProjects(callback, author_only=true, include_components=false, failure=ureAjaxError){        
         console.log("getting my projects!");
-        this.get('/osf/nodes', {
+        this.local('/osf/nodes', {
                 'bibliographic': author_only,
                 'include_components': include_components,
             },

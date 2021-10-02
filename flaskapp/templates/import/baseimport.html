@@ -3,7 +3,7 @@
 {% block javascript %}
 {{ super() }}
 <script type="text/javascript" src="{{ url_for('static', filename='js/osf-project-select.js') }}"></script>
-<link rel="stylesheet" href="{{url_for('static', filename='ext/three-dots/three-dots.min.css') }}">
+<script type="text/javascript" src="{{ url_for('static', filename='js/osfimport.js') }}"></script>
 {% endblock %}
 
 {% block content %}
@@ -35,8 +35,8 @@
 
                 <div class="form-item">
                     <div class="form-element">
-                        <input type="checkbox" id="delete-old" value="" name="delete-old" class='inline-input' />
-                        <label class="inline-label" for="delete-old">
+                        <input type="checkbox" id="deleteold" value="" name="deleteold" class='inline-input' />
+                        <label class="inline-label" for="deleteold">
                             Delete Old
                             <div class="help-text">
                                 Deletes any wiki pages or components that do not exist in your new import. <b>This will lead to the loss of data</b> if new components or wikis were added to your project; it is only intended if you do all of your work externally and solely enter content in OSF via import. 
@@ -119,8 +119,7 @@
         </div>
     <div class="form-item">
         <div style="width:550px">
-            <!-- button id="import-button" type="button">Import</button -->
-            <input type="submit" id="import-button" value="Import" />
+            <button id="import-button" type="button" onclick="import_to_osf()">Import</button>
         </div>
     </div>
     </fieldset>

@@ -88,7 +88,7 @@ class DocX(BaseExporter):
                 body.insert(break_index, hack_element)
 
 
-            if child.tag[-2:] == 'br' and items[0][1] == 'page' and child.prefix == 'w' and child.values and child.values()[0] == 'page':
+            if child.tag[-2:] == 'br' and len(items) and items[0][1] == 'page' and child.prefix == 'w' and child.values and child.values() and child.values()[0] == 'page':
                 #
                 # Page Break!
                 #

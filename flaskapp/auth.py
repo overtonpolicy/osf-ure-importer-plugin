@@ -71,8 +71,7 @@ def getclient():
 def oauth2_callback():
     """ The sole use of this endpoint is to receive the authorization code from OSF for oauth2 authentication. This is the callback_uri/redirect_uri where authorization data is sent."""
     
-    print("oauth2 callback entered", file=sys.stderr)
-    print(flask.request.values.to_dict(), file=sys.stderr)
+    #print(flask.request.values.to_dict(), file=sys.stderr)
     return(flask.current_app.send_static_file('auth/osfauth-callback.html'))
 
 
@@ -89,7 +88,7 @@ def debugsession():
 def oauth2_new_token():
     """ Get the access token from an authorization code. This will automatically look up the client secret from the conf directory, which stores a mapping of client_id to client_secret in yaml format. This is called by the osf.completeAuthorization method when an access code is received back from the sign in window and is the last step for OSF authentication.
     """    
-    print("oauth2_new_token (/auth/registertoken) callback entered", file=sys.stderr)
+    #print("oauth2_new_token (/auth/registertoken) callback entered", file=sys.stderr)
 
     access_code = flask.request.values.get('access_code')
     
@@ -136,7 +135,7 @@ def oauth2_new_token():
         access_token = js['access_token']        
         flask.session['access_token'] = access_token
         flask.session['token_expires'] = js['expires_in']
-        print("New access token: " + access_token, file=sys.stderr)
+        #print("New access token: " + access_token, file=sys.stderr)
 
     return(js)
 

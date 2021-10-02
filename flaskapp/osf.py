@@ -11,13 +11,16 @@ bp = flask.Blueprint('osf', __name__, url_prefix='/osf')
 abspath = re.compile(r'https?://', re.I)
 osf_server = "https://api.osf.io/v2"
 
-def osfget(url, url_params=None):
+
+
+
+def osfapicall(url, reqparams, method):
 
     if not url:
         raise Exception('must provide a url')    
     
-    if not url_params:
-        url_params = None
+    if not reqparams:
+        reqparams = None
     
     if not abspath.match(url):
         url = osf_server + url
@@ -30,27 +33,58 @@ def osfget(url, url_params=None):
             'status_code': -1,
         })
     
-    print(f"about to osfget:\n\t{url}\n\t{url_params}\n\tToken: {access_token}", file=sys.stderr)
-    req = requests.get(
-        url,
-        headers={"Authorization" : "Bearer " + access_token},
-        params=url_params,
-    )
+    #print(f"about to make {method} req:\n\t{url}\n\t{reqparams}\n\tToken: {access_token}", file=sys.stderr)
+    if method == 'get':
+        # 'params' is the payload, not 'data'
+        # Returns contentful json  
+        req = requests.get(
+            url,
+            headers={"Authorization" : "Bearer " + access_token},
+            params=reqparams,
+        )
+    elif method in ('post', 'delete'):
+        # 'data' is the payload. 'params' is available for explicit url params, but this doesn't exist in the OSF API
+        req = getattr(requests, method)(
+            url,
+            headers={"Authorization" : "Bearer " + access_token},
+            data=reqparams,
+        )    
+    else:
+        raise Exception(f"Unknown method {method}")
 
-    js = req.json()
-    if req.status_code == 401:
+
+    if req.status_code == 401 or req.status_code == 403:
         #
         # 401 - this happens when our access token is incorrect or expired
         #
+        js = req.json()
         js['errors'].append({'detail': f'status_code: {req.status_code}'})
         js['action'] = 'reauthorize'
         js['status_code'] = req.status_code
         return(js)
 
-    if req.status_code >= 400:
-        raise Exception(f"Attempt to get {url} returned unexpected status code {req.status_code}")
-    
+    if not req.ok:
+        raise Exception(f"Attempt to {method} {url} returned unexpected status code {req.status_code}.\n<h3>Debug Info</h3>\nResponse Status Code: {req.status_code}\nResponse Reason: {req.reason}\nResponse Headers: {req.headers}\nResponse Text: {req.text}")
+    if method in ('delete',):
+        return({
+            'url': url,
+            'params': reqparams,
+            'status_code': req.status_code,
+            'reason': method + " api call successful.",
+        })
+
+    js = req.json()
     return(js)     
+
+def osfpost(url, url_params=None):
+    return(osfapicall(url, url_params, method='post'))
+
+def osfget(url, url_params=None):
+    return(osfapicall(url, url_params, method='get'))
+
+def osfdelete(url, url_params=None):
+    return(osfapicall(url, url_params, method='delete'))
+
 
 def osfgetdata(url, url_params=None, fetch_all=False):
     
@@ -74,7 +108,21 @@ def osfgetdata(url, url_params=None, fetch_all=False):
             return(nextdata)
     
     return(data)
-            
+
+
+@bp.route('/admin', methods=['GET', 'POST'])
+def ap_admin():
+    if flask.request.url_root != 'http://localhost:3000/':
+        raise Exception("Path not allowed")
+    params = flask.request.values.to_dict()
+    url = params['url']
+    del params['url']  
+    if 'method' in params:
+        method = params['method']
+        del params['method']
+    else:
+        method = 'get'      
+    return(osfapicall(url, params, method=method))
 
 @bp.route('/api', methods=['GET', 'POST'])
 def osfget_url():
@@ -97,10 +145,9 @@ def osfget_data():
 
 
 @bp.route('/me', methods=['GET', 'POST'])
-def getme():
-    print("ME:", flask.session.get('me'), sys.stderr)
+def getme(refresh=False):
     data = flask.session.get('me')
-    if not data:        
+    if refresh or not data:        
         js = osfget('/users/me/')
         if not 'data' in js:
             # error
@@ -154,10 +201,9 @@ def getnodes():
                 #},
             }
         if not include_components:
-            print('*** FILTER OUT BAD PARENTS ****', file=sys.stderr)
             params['filter[parent]'] = 'null'
-        else:
-            print(f"WTF? Include components is {include_components}", file=sys.stderr)
+        #else:
+        #    print(f"WTF? Include components is {include_components}", file=sys.stderr)
 
         data = osfgetdata(f"/users/{me['id']}/nodes/", params, fetch_all=True)
         if type(data) is not list:
@@ -175,8 +221,6 @@ def getnodes():
                     if contrib['attributes']['bibliographic']:                        
                         bibliographic.append(node)
                         break   
-            print("About to return bibliographic nodes")         
-            print(bibliographic, file=sys.stderr)
             return({'data': bibliographic})
         else:
             return({'data': data})

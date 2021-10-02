@@ -3,16 +3,21 @@ $(document).ready(function () {
     // Dialog-ify all the dialogs - automatically adds a message div.
     $('.response-dialog').each(function(){
         var diag = jQuery(this);
+        
+        var buttons;
+        if(!diag.hasClass('no-buttons'))
+            buttons = [{ text: "Ok", click: function() { $( this ).dialog( "close" );} }];
+        
         var width = diag.attr("width");
-        if(!width){
+        if(!width)
             width = 700;
-        }
+        
         diag.append('<div class="message"></div>');
         diag.dialog({
             autoOpen: false,
             modal: true,
             width: width,
-            buttons: [{ text: "Ok", click: function() { $( this ).dialog( "close" );} }],
+            buttons: buttons,
         });
     });
 
