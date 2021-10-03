@@ -1,5 +1,5 @@
 import re
-import pdb 
+import urllib.parse
 
 class BaseExporter():
 
@@ -92,7 +92,6 @@ class BaseExporter():
 
         # -- go through all of the style types and apply our custom markups 
         for style, break_type in policies.items():
-            #pdb.set_trace()
             if not break_type:
                 continue
             if break_type == 'wiki':
@@ -121,7 +120,11 @@ class BaseExporter():
             
             home_wiki, *other_mkd = filter(lambda m: m, [wiki.strip() for wiki in component_mkd.split("&&&&&&")])
 
-            # find the heading in the home_wikim and concatenate the following if there is none
+            # This is a little bit roundabout.  
+            # We look for a heading in the home wiki.
+            # If there isn't one, we use that to suggest this is a preamble block of text, and we concatenate the next wiki to it until we run out.
+            # If we run out of wikis and still have no title, we assign '(No Title)' to the heading.
+            # HOWEVER, the processed title/heading from the home wiki becomes the component title because the home wiki is, obviously, 'Home'.
             headmatch = headingre.search(home_wiki)
             while other_mkd and not headmatch:
                 print("*** Appending subpage to HOME")
@@ -134,10 +137,13 @@ class BaseExporter():
                 # this if there are no headings for the entire document.
                 title = '(No Title)'
             wiki_pages = [
-                #home_wp = wiki.models.WikiPage(content=home_wiki)
                 ['home_wiki', home_wiki],
             ]
             
+            # process all wikis after the home wiki.  
+            # We again require a wiki to have a heading. But here we consider
+            # any heading-less wikis as epilogues to the prior wiki, and add 
+            # it the *prior* text, which we already processed.
             while other_mkd:
                 wiki_mkd = other_mkd.pop(0)
                 # -- first try to identify the heading that we name the wiki page after
@@ -148,7 +154,8 @@ class BaseExporter():
                     wiki_pages[-1][1] += "\n\n" + wiki_mkd
                 else:
                     wiki_pages.append([self.sanitize_text(m.group(1)), wiki_mkd])
-            nodes.append([title, wiki_pages])
+            # Now append the full data structure to nodes, with the title of the home wiki as the title for the node. 
+            nodes.append([self.sanitize_text(title), wiki_pages])
 
         return(nodes)
 
