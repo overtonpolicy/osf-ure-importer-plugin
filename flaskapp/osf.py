@@ -12,9 +12,25 @@ abspath = re.compile(r'https?://', re.I)
 osf_server = "https://api.osf.io/v2"
 
 
+def parse_parameters(checkbox_params=None):
+    """ Render the url/form/data parameters to create a python dict of it.
+    
+    This ends up being different from calling `flask.request.values.to_dict()` because:
+    - It translate the empty string to None
+    - It handles wonky serialization of certain form elements. When `jQuery.serialize()` encounters checkboxes, it passes checked checkboxes as emptry strings, and False checkboxes are not included at all. So, we translate that to an accurate boolean.
 
+    Args:
+        checkbox_params (list): A list of form items to translate. If they exist in the incoming parameter, their value will be set to true. If they do not exist, they will be added and set to False.  
+    """
+    parameters = {k:None if v == '' else v for k,v in flask.request.values.items()}
+    #
+    # jQuery.serialize is dumb. Checked checkboxes are encoded as empty hash values, and unchecked checkboxes are not present in the paraemeter list.
+    # So we fix that here
+    for checkboxparam in checkbox_params:
+        parameters[checkboxparam] = checkboxparam in parameters
+    return(parameters)
 
-def osfapicall(url, reqparams, method):
+def osfapicall(url, reqparams, method, quiet=True):
 
     if not url:
         raise Exception('must provide a url')    
@@ -33,7 +49,8 @@ def osfapicall(url, reqparams, method):
             'status_code': -1,
         })
     
-    #print(f"about to make {method} req:\n\t{url}\n\t{reqparams}\n\tToken: {access_token}", file=sys.stderr)
+    if flask.request.url_root == 'http://localhost:3000/':
+        print(f"about to make {method} req:\n\t{url}\n\t{reqparams}\n\tToken: {access_token}", file=sys.stderr)
     if method == 'get':
         # 'params' is the payload, not 'data'
         # Returns contentful json  
@@ -57,6 +74,9 @@ def osfapicall(url, reqparams, method):
         #
         # 401 - this happens when our access token is incorrect or expired
         #
+        if flask.request.url_root == 'http://localhost:3000/':
+            print("\t*** Request Respone: User is no longer logged in", file=sys.stderr)
+
         js = req.json()
         js['errors'].append({'detail': f'status_code: {req.status_code}'})
         js['action'] = 'reauthorize'
@@ -64,33 +84,48 @@ def osfapicall(url, reqparams, method):
         return(js)
 
     if not req.ok:
-        raise Exception(f"Attempt to {method} {url} returned unexpected status code {req.status_code}.\n<h3>Debug Info</h3>\nResponse Status Code: {req.status_code}\nResponse Reason: {req.reason}\nResponse Headers: {req.headers}\nResponse Text: {req.text}")
+        if quiet:
+            return({
+                'errors': [
+                    f"{req.reason} (Code {req.status_code})",
+                ],
+                'status_code': req.status_code,
+                'url': url,
+                'params': reqparams,
+            })
+        error_response = f"Attempt to {method} {url} returned unexpected status code {req.status_code}.\n<h3>Debug Info</h3>\nResponse Status Code: {req.status_code}\nResponse Reason: {req.reason}\nResponse Headers: {req.headers}\nResponse Text: {req.text}"
+        if flask.request.url_root == 'http://localhost:3000/':
+            print("\t*** Response Failed: " + error_response, file=sys.stderr)
+        raise Exception(error_response)
+
     if method in ('delete',):
+        # These requests do not have a response payload, just indicate a status of successful.
         return({
             'url': url,
             'params': reqparams,
             'status_code': req.status_code,
             'reason': method + " api call successful.",
+            'errors': False,
         })
 
     js = req.json()
     return(js)     
 
-def osfpost(url, url_params=None):
-    return(osfapicall(url, url_params, method='post'))
+def osfpost(url, url_params=None, **kwargs):
+    return(osfapicall(url, url_params, method='post', **kwargs))
 
-def osfget(url, url_params=None):
-    return(osfapicall(url, url_params, method='get'))
+def osfget(url, url_params=None, **kwargs):
+    return(osfapicall(url, url_params, method='get', **kwargs))
 
-def osfdelete(url, url_params=None):
-    return(osfapicall(url, url_params, method='delete'))
+def osfdelete(url, url_params=None, **kwargs):
+    return(osfapicall(url, url_params, method='delete', **kwargs))
 
 
 def osfgetdata(url, url_params=None, fetch_all=False):
     
     resp = osfget(url, url_params)
     if 'data' not in resp:
-        if 'errors' not in resp:
+        if not resp['errors']:
             resp['errors'] = f"Call to osfgetdata for {url}, but this returned neither data nor an error message"
         return(resp)
     
@@ -103,7 +138,7 @@ def osfgetdata(url, url_params=None, fetch_all=False):
             nextdata = osfgetdata(resp['links']['next'], fetch_all=True)
             if type(nextdata) is list:
                 return(data + nextdata)
-            if not 'errors' in nextdata and nextdata['errors']:
+            if nextdata['errors']:
                 raise Exception(f"Unexpected result. Data returned was an array for the first page but not an array for the follow pages")
             return(nextdata)
     
@@ -157,6 +192,7 @@ def getme(refresh=False):
             'name': js['attributes']['full_name'],
             'id': js['id'],
             'nodes': js['relationships']['nodes']['links']['related']['href'],
+            'errors': None,
         }
         flask.session['me'] = data
     return(data)
@@ -221,7 +257,7 @@ def getnodes():
                     if contrib['attributes']['bibliographic']:                        
                         bibliographic.append(node)
                         break   
-            return({'data': bibliographic})
+            return({'data': bibliographic, 'errors':None,})
         else:
-            return({'data': data})
+            return({'data': data, 'errors':None,})
 
