@@ -150,7 +150,11 @@ def render_import(importer, parameters):
             newactions = render_wikis(existingnodes[component_name], compwikis, overwrite=overwrite, deleteold=deleteold)
             for k,v in newactions.items():
                 wikiactions[k].extend(v)
-            componentactions['updated'].append([ existingnodes[component_name], component_name])
+            if newactions['created'] or newactions['updated'] or newactions['deleted']:
+                componentactions['updated'].append([ existingnodes[component_name], component_name])
+            else:
+                componentactions['ignored'].append([ existingnodes[component_name], component_name])
+
             del existingnodes[component_name]
         else:
             new_component = osf.osfpost(
