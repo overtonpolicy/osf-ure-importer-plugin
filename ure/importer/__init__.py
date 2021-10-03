@@ -1,4 +1,4 @@
-from .baseclass import BaseExporter
+from .baseclass import BaseImporter
 from .docx import DocX
 
 import re 

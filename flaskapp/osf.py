@@ -26,8 +26,9 @@ def parse_parameters(checkbox_params=None):
     #
     # jQuery.serialize is dumb. Checked checkboxes are encoded as empty hash values, and unchecked checkboxes are not present in the paraemeter list.
     # So we fix that here
-    for checkboxparam in checkbox_params:
-        parameters[checkboxparam] = checkboxparam in parameters
+    if checkbox_params:
+        for checkboxparam in checkbox_params:
+            parameters[checkboxparam] = checkboxparam in parameters
     return(parameters)
 
 def osfapicall(url, reqparams, method, quiet=True):

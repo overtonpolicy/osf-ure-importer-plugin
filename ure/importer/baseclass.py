@@ -1,7 +1,6 @@
 import re
-import urllib.parse
 
-class BaseExporter():
+class BaseImporter():
 
     def __init__(self, h1_break='wiki', h2_break=None, section_break='component', page_break=None):
         self._markdown = None

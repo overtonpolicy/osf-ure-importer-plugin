@@ -6,7 +6,7 @@ function import_to_osf(){
     var wait_dialog = $('#wait-dialog');
     $('#wait-dialog').dialog('open');
     osf.local(
-        '/import/docx',
+        '/import/docx', // the server handles posts as form input
         $('#document-import').serialize(),
         show_import_results,
         function(data){

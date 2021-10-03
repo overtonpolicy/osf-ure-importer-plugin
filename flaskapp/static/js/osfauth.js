@@ -184,7 +184,7 @@ class OSFAuth {
                 );
 
             },
-            error: params.success,    
+            error: params.error,    
         });
     }
     

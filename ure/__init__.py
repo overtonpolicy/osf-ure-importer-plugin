@@ -4,4 +4,4 @@ import sys
 #sys.path.insert(0, osf_io_path)
 #sys.path.insert(0, osf_io_path + '/addons')
 
-from . import exporter
+from . import importer

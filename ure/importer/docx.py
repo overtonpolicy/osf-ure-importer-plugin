@@ -6,13 +6,13 @@ import textwrap
 import shutil
 import tempfile
 
-from .baseclass import BaseExporter
+from .baseclass import BaseImporter
 
 def print_xml(element):
     print(lxml.etree.tostring(element, encoding='Unicode', pretty_print=True))
 
 
-class DocX(BaseExporter):
+class DocX(BaseImporter):
 
     def __init__(self, filename, **kwargs):
         super().__init__(**kwargs)

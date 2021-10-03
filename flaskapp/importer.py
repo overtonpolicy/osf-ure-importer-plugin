@@ -62,22 +62,35 @@ def process_docx_upload():
         'id': filename, 
     })
 
-def docx_import():
-    """ Import a MS Word Document.
 
-    'rootnodeid': projectid,
-        'rootnodename': projectname,
-        'nodemap': nodelookup,
-        'wikiactions': wikiactions,
-        'componentactions': componentactions,
+
+def googledoc_import():
+    """ Import a Google Document. This pulls in the common import data structure from the Google document and delegates to `render_import()`. See that functions for further details on processing and return data.
+    """
+    parameters = osf.parse_parameters(checkbox_params=['overwrite', 'deleteold']) 
+
+    if 'fileid' not in parameters or not parameters['fileid']:
+        raise Exception(f"You must upload a file to import. Please report this to tech support.")
+
+    importer = ure.importer.from_google(
+        UPLOADDIR + '/' + parameters['fileid'], 
+        section_break=parameters['section-break-policy'],
+        page_break=parameters['page-break-policy'],
+        h1_break=parameters['h1-policy'],
+        h2_break=parameters['h2-policy'],        
+    )
+    return(render_import(importer, parameters))
+
+def docx_import():
+    """ Import a MS Word Document. This pulls in the common import data structure from the uploaded document and delegates to `render_import()`. See that functions for further details on processing and return data.
     """
 
     parameters = osf.parse_parameters(checkbox_params=['overwrite', 'deleteold']) 
 
     if 'fileid' not in parameters or not parameters['fileid']:
-        raise Exception(f"You you upload a file to import. Please report this to tech support.")
+        raise Exception(f"You must upload a file to import. Please report this to tech support.")
 
-    importer = ure.exporter.from_file(
+    importer = ure.importer.from_file(
         UPLOADDIR + '/' + parameters['fileid'], 
         section_break=parameters['section-break-policy'],
         page_break=parameters['page-break-policy'],
