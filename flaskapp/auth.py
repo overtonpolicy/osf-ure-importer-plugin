@@ -5,7 +5,7 @@ import yaml
 import urllib
 import sys
 
-from . import db
+from . import osf
 
 bp = flask.Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -45,6 +45,7 @@ def osf_callback_url():
     """ This is the callback url that is registered in OSF, which is dependent on the hostname. """
     return(app_hostname() + 'auth/osfauth-callback.html')
 
+
 def oauth_client_id():
     """ This is the client id that is registered in OSF and tied ot the hostname. """
     hostname = app_hostname()
@@ -58,6 +59,31 @@ def oauth_client_id():
     else:
         raise Exception(f"We do not recognize calls from {hostname}. Connection to OSF relies on registered domain origins only. Are you perhaps using an ip address?");
     
+
+@bp.route('/googleclient', methods=['POST'])
+def getgoogleclientparams():
+    """ The sole use of this endpoint is to return the parameters necessary to initialize the Google API client. 
+    """
+    params = osf.parse_parameters()
+    # We pepare for future expansion by looking for a 'context' post value which will define the discovery url and scopes
+
+    if 'context' not in params:
+        params['context'] = 'read_docs'
+    
+    if params['context'] == 'read_docs':
+        discovery_url = 'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'
+
+        scopes = 'https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/documents.readonly'
+    else:
+        raise Exception(f"Unknown Google authorization context requested: '{params['context']}")
+
+    response = {
+        'apiKey': 'AIzaSyB-DviIlxBj-xvlF81BdN6kJb2B8UiUSCA',
+        'clientId': '990050866625-f3pld68g2vvk4geho9a5r0prjspkh4dd.apps.googleusercontent.com',
+        'discoveryDocs': [discovery_url],
+        'scope': scopes
+    }
+    return(response)
 
 @bp.route('/getclient', methods=['POST'])
 def getclient():
