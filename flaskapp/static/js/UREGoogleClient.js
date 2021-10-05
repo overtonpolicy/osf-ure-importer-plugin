@@ -3,7 +3,13 @@ var GoogleAuth;
 function handleClientLoad() {
     // Load the API's client and auth2 modules.
     // Call the initClient function after the modules load.
-    gapi.load('client:auth2', initClient);
+    console.log("Ok")
+    if(!gapi){
+        UREErrorDialog("Google API Client was not loaded. This usually is the result of a network error. Please reload the webpage. Contact technical support if this problem persists.")
+    }
+    else{
+        gapi.load('client:auth2', initClient);
+    }
 }
 
 function initClient() {
