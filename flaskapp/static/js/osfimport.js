@@ -1,8 +1,66 @@
 $(document).ready(function () {
+    $('#document-import')
+        .submit(function(e){e.preventDefault()}) // disable default action
+        .validate({
+            ignore:[],
+            errorPlacement: function(error, element){
+                var parent = element.parent();                
+                parent.append(error);
+                parent[0].scrollIntoView();                
+            },
+            submitHandler: function(form) {
+                var wait_dialog = $('#wait-dialog');
+                wait_dialog.dialog('open');
+                osf.local(
+                    '/import/docx', // the server handles posts as form input
+                    $('#document-import').serialize(),
+                    show_import_results,
+                    function(data){
+                        wait_dialog.dialog("close");
+                        ureAjaxError(data);
+                    }
+                );
+            },
+            messages: {
+                'osf-project-name': "Please select an OSF Project.",
+                'osf-project-id': "Please re-select the project. Start typing and select the project *from the list* when it appears.",
+                'fileid': "Please upload a Microsoft Word Document.", 
+            },
+            rules: {
+                'osf-project-name': {
+                    'required':true,
+                    'minlength': 3,
+                },
+                'osf-project-id': {
+                    'required':{
+                        depends: function(element){
+                            return($('#osf-project-name').val());                            
+                        }
+                    },
+                    'minlength': 4,
+                },
+                'fileid': {
+                    'required': true,
+                    'minlength': 5,                    
+                }
+            }
+        });
+    /*
+    var wait_dialog = $('#wait-dialog');
+    $('#wait-dialog').dialog('open');
+    osf.local(
+        '/import/docx', // the server handles posts as form input
+        $('#document-import').serialize(),
+        show_import_results,
+        function(data){
+            $('#wait-dialog').dialog("close");
+            ureAjaxError(data);
+        }
+    );
+    */
 
 });
 function import_to_osf(){
-
     var wait_dialog = $('#wait-dialog');
     $('#wait-dialog').dialog('open');
     osf.local(
@@ -19,7 +77,6 @@ function import_to_osf(){
 function show_import_results(data){
     $('#wait-dialog').dialog("close");
     
-    console.log(data);
     $('#result-header').html('<h1>Import Complete</h1><p><a href="http://osf.io/'+data.rootnodeid+'/">Click Here</a> to leave the importer and go to the '+data.rootnodename+' Project.</p><a href="/">Click Here</a> to return to the URE Methods extensions index.</p><p class="help-text">Below is a list of completed actions. Click on the links to open a <i>new window</i> for the page.</p><p>If you accidentally overwrote a wiki page, you can <b>revert</b> it to the old <b>Version</b> via the wiki page. If you accidentally deleted a wiki or component, it cannot be recovered.<b><i>TODO: Verify no recovery</b></i></p>')
     var div = $('<div></div>');
 
@@ -53,7 +110,5 @@ function show_import_results(data){
     });
     $('#result-message').html(div)
     $('#result-dialog').dialog('open');
-    console.log(data)
     console.log("Import complete")
-
 }

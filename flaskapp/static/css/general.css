@@ -1,4 +1,13 @@
 
+.error {
+    color: #ff0000;
+}
+
+.error-highlight {
+    background-color: #ffcccc;
+    border: 1px solid #aa0000;
+}
+
 .source-title{
     text-decoration: none;
     font-size: 1.25em;

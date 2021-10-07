@@ -24,9 +24,10 @@
                 <div>File selected: <span id="filename" style="background: #ffff00">none</span></div>
                 <div>Upload Status: <span id="upload-status"  style="background: #ffff00"></span></div>
                 <div id="upload-progress"></div>
+                <input type="file" id="upload-docx" name="upload-docx" class='simple-upload' style="display:none" onchange="$('#docx-upload-div.file_name').text(this.value);" />
+                <input type="hidden" id="fileid" name="fileid" value="" />
             </div>
-            <input type="file" id="upload-docx" name="upload-docx" class='simple-upload' style="display: none;" onchange="$('#docx-upload-div.file_name').text(this.value);">
-            <input type="hidden" id="fileid" name="fileid" value="" />
+            
         </div>
     </div>
 </div>

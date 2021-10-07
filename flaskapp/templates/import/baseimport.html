@@ -2,6 +2,8 @@
 
 {% block javascript %}
 {{ super() }}
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/additional-methods.min.js"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/osf-project-select.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/osfimport.js') }}"></script>
 {% endblock %}
@@ -119,7 +121,7 @@
         </div>
     <div class="form-item">
         <div style="width:550px">
-            <button id="import-button" type="button" onclick="import_to_osf()">Import</button>
+            <input type="submit" id="import-button" value="Import">
         </div>
     </div>
     </fieldset>
