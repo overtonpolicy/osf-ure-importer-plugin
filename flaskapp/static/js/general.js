@@ -74,14 +74,23 @@ $(document).ready(function () {
         messages = data;
     if(data.responseText)
         messages = data.responseText;
-    else if(data.errors)
-        messages = data.errors.map(err => err.detail);
+    else if(data.errors){
+        messages = [];
+        data.errors.forEach(function(err){
+            if(typeof(err) == 'string')
+                messages.push(err);
+            else
+                messages.push(err.detail);
+        })
+    }
     else if(data.error_message)
         messages = data.error_message;
     else if(data.error_description)
         messages = data.error_description;
     else if(data.message)
         messages = data.message;
+    else if(data.error)
+        messages = data.error;
     //debugger;
     UREErrorDialog(messages);
 }

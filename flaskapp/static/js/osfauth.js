@@ -137,9 +137,9 @@ class OSFAuth {
      */
     launchAuthWindow(params){
         var self = this;
-	if(!params)
-	    params = {error: ureAjaxError};	  
-	else if(!params.error)
+	    if(!params)
+	        params = {error: ureAjaxError};	  
+	    else if(!params.error)
             params.error = ureAjaxError;
 
         $.ajax({

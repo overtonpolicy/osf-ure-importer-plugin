@@ -24,7 +24,7 @@ def standardized_encode(text):
     return(urllib.parse.quote(text))
 
 
-@bp.route('/googledoc', methods=('GET', 'POST'))
+@bp.route('/google', methods=('GET', 'POST'))
 def googledoc():
     """ The endpoint for the Google Document importer. If a GET request, returns the web form. POST is expected to be an ajax call to submit the import."""
     if flask.request.method == 'POST':

@@ -41,64 +41,48 @@ def app_hostname():
         return("http://localhost:3000/") # make sure it's the exact text we registered with OSF
     return(hostname)
 
+def development_level():
+    hostname = app_hostname()
+
+    if hostname == 'http://localhost:3000/':
+        dev_mode = 'development'
+    elif hostname == 'https://testing.uremethods.org/':
+        dev_mode = 'staging'
+    elif hostname == 'https://plugins.uremethods.org/':
+        dev_mode = 'production'
+    else:
+        raise Exception(f"We do not recognize calls from {hostname}. Connection to OSF relies on registered domain origins only. Are you perhaps using an ip address?");    
+    return(dev_mode)
+
 def osf_callback_url():
     """ This is the callback url that is registered in OSF, which is dependent on the hostname. """
     return(app_hostname() + 'auth/osfauth-callback.html')
 
-
-def oauth_client_id():
+def get_oauth_details():
     """ This is the client id that is registered in OSF and tied ot the hostname. """
-    hostname = app_hostname()
+    dev_mode = development_level()
 
-    if hostname == 'http://localhost:3000/':
-        return("ddce6e1baeaf40878ad58b63f34a7e9a")        
-    elif hostname == 'https://testing.uremethods.org/':
-        return("8ef88b3287e6459b9e2ebb63a892684c")
-    elif hostname == 'https://plugins.uremethods.org/':
-        return("20f73c48efcb466b8b53f646d3968586")
-    else:
-        raise Exception(f"We do not recognize calls from {hostname}. Connection to OSF relies on registered domain origins only. Are you perhaps using an ip address?");
-    
+    with open('conf/auth.yml') as fh:
+        secrets = yaml.load(fh, Loader=yaml.CLoader)
 
-@bp.route('/googleclient', methods=['POST'])
-def getgoogleclientparams():
-    """ The sole use of this endpoint is to return the parameters necessary to initialize the Google API client. 
-    """
-    params = osf.parse_parameters()
-    # We pepare for future expansion by looking for a 'context' post value which will define the discovery url and scopes
-
-    if 'context' not in params:
-        params['context'] = 'read_docs'
-    
-    if params['context'] == 'read_docs':
-        discovery_url = 'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'
-
-        scopes = 'https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/documents.readonly'
-    else:
-        raise Exception(f"Unknown Google authorization context requested: '{params['context']}")
-
-    response = {
-        'apiKey': 'AIzaSyB-DviIlxBj-xvlF81BdN6kJb2B8UiUSCA',
-        'clientId': '990050866625-f3pld68g2vvk4geho9a5r0prjspkh4dd.apps.googleusercontent.com',
-        'discoveryDocs': [discovery_url],
-        'scope': scopes
-    }
-    return(response)
+    if dev_mode not in secrets:
+        raise Exception(f"Cannot find mode '{dev_mode}' in the OSF Oauth Configuration")
+    return(secrets[dev_mode])
 
 @bp.route('/getclient', methods=['POST'])
 def getclient():
     """ The sole use of this endpoint is to return the data necessary to open the oauth2 popup window. The rest of this is handled in javascript, but to keey the client id out code easily viewable in the web app, we return it here. See the OSFAuth.launchAuthWindow method in static/js/osfauth.js for where it is used  """    
+    secrets = get_oauth_details()
     return({
-        'oauth_client_id': oauth_client_id(),
-        'oauth_callback_url': osf_callback_url(), 
+        'oauth_client_id': secrets['client'],
+        'oauth_callback_url': secrets['url'], 
     })
 
 @bp.route('/osfauth-callback.html')
 def oauth2_callback():
     """ The sole use of this endpoint is to receive the authorization code from OSF for oauth2 authentication. This is the callback_uri/redirect_uri where authorization data is sent."""
-    
-    #print(flask.request.values.to_dict(), file=sys.stderr)
-    return(flask.current_app.send_static_file('auth/osfauth-callback.html'))
+        
+    return(flask.current_app.send_static_file('auth/osfauth-callback.html')) # does this need to be hard coded?
 
 
 @bp.route('/debugsession', methods=['GET'])
@@ -122,28 +106,21 @@ def oauth2_new_token():
         raise Exception(f"Access code not provided to registertoken")
     
     url = "https://accounts.osf.io/oauth2/token"
-    client_id = oauth_client_id()
+    secrets = get_oauth_details()    
 
-    with open('conf/auth.yml') as fh:
-        secrets = yaml.load(fh, Loader=yaml.CLoader)
-
-    if client_id not in secrets:
-        raise Exception("Client ID is not registered by the plugin server.")
-    
     req = requests.post(url, data={
-        'client_id': client_id,
-        'client_secret': secrets[client_id]['secret'],
-        'redirect_uri': secrets[client_id]['url'],
+        'client_id': secrets['client'],
+        'client_secret': secrets['secret'],
+        'redirect_uri': secrets['url'],
         'grant_type': 'authorization_code',
         'code': urllib.parse.unquote(access_code),
     })
 
     def errparams():
         return({
-            'client_id': client_id,
-            #'client_secret': secrets[client_id],
-            'client_secret': '*************' + secrets[client_id]['secret'][-6:],
-            'redirect_uri': secrets[client_id]['url'],
+            'client_id': secrets['client'],
+            'client_secret': '*************' + secrets['secret'][-6:],
+            'redirect_uri': secrets['url'],
             'grant_type': 'authorization_code',
             'code': access_code,
         })
@@ -195,8 +172,6 @@ def revoke_access_token():
         raise Exception(f"Attempted to clear the access token, but received a code {req.status_code}")
     else:
         raise Exception(f"Unknown error in attempt to revoke access. Received status code {req.status_code}, json {req.json()}")
-
-
 
 
 @bp.route('/settoken', methods=['GET'])

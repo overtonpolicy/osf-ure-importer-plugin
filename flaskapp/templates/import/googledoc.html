@@ -2,33 +2,55 @@
 
 {% block javascript %}
 {{ super() }}
-{# Google's Javascript API #}
-<script type="text/javascript" src="https://apis.google.com/js/api.js"></script>
 {# Our Custom Javascript Client for Google's API #}
-<script type="text/javascript" src="{{ url_for('static', filename='js/UREGoogleClient.js') }}"></script>
-
+<script type="text/javascript" src="{{ url_for('static', filename='js/googleauth.js') }}"></script>
 {% endblock %}
 
 {% block import_content %}
 <div class="form-item">
-    <div class="form-item">
-        <label class="form-label" for="google-document-name">Google Document</label>
-        <!-- This html is intended to be used with osf-project-select.js, which must be added to the header manually -->
-        <div class="form-element">
-            <div id="google-login-required">
-                <div class="help-text">You must log into your Google Account and grant access to select the Google Document to import.</div>
-                <button id="google-login" class="osf-auth-button" >Log In</button>                
-            </div>
-            <div id="google-document-panel" style="display:none" >
-                <input type="text" name="google-document-name" class="form-input autocomplete-panel" value="" id="google-document-name" />            
-                <span id="google-fetch-info"class="help-text" ></span>
-                <div class="help-text">Start typing the Google Document Name and select it when it appears.</div>
-                <input type="hidden" name="google-document-id" value="" id="google-document-id" />
-            </div>
-            <div id="google-document-access" class="access-panel">
-            </div>
-        </div>
+    <label class="form-label" for="google-document-name">Google Document</label>
+    <div class="google-login-required">
+        <input type="hidden" name="google-document-id" value="" id="google-document-id" />
+        <input type="text" name="google-document-name" class="form-input autocomplete-panel" value="" id="google-document-name" />            
+        <span id="google-project-fetch-info" class="help-text" ></span>
+        <div class="help-text">Start typing the Google Document and select it when it appears.</div>
     </div>
+    <!-- This html is intended to be used with osf-project-select.js, which must be added to the header manually -->
+    {% include "partials/googleauth-widget.html" %}
 </div>
+<script>
+$(document).ready(function () {
+    $('#google-document-name').autocomplete({
+        minLength: 3,
+        source: function(req, setData){
+            $.ajax({
+                url: "/google/getfiles",
+                method: "POST",
+                dataType: "json",
+                data: {'name_contains': req.term},
+                success: function(data) {                
+                    if(data.error || data.errors)
+                        ureAjaxError(data);
+                    else{
+                        console.log("Google Files Search for " + req.term);
+                        console.log(data);
+                        var results = [];
+                        data.files.forEach(function(fref){
+                            results.push({value: fref.name, id: fref.id});
+                        });
+                        setData(results);
+                    }
+                },
+                error: ureAjaxError
+            });   
+        },
+        select: function(event, ui){
+            // set the id to the hidden field            
+            $('#google-document-id').val(ui.item.id);            
+        }
+    });
 
+
+});
+</script>
 {% endblock %}
