@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Authenticated to Google</title>
+
+    <!-- jquery is required for osf-->
+    <script type="text/javascript" src="/static/ext/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/ext/jquery-ui/jquery-ui.min.js"></script>
+
+    <!-- here are the core scripts - osf.js-->
+    <script type="text/javascript" src="/static/js/googleauth.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {GoogleAuth.initializeCallback();});
+    </script>
+</head>
+
+<body>
+    <div id="content">
+        Please wait a minute.
+    </div>
+</body>
+
+</html>

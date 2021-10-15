@@ -1,0 +1,94 @@
+{% extends 'barebase.html' %}
+
+{%block javascript %}
+{{ super() }}
+    <script type="text/javascript" src="{{ url_for('static', filename='js/googleauth.js') }}"></script>
+{% endblock %}
+    
+{% block header %}
+  <h1>{% block title %}Log In{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  {% include "partials/googleauth-widget.html" %}
+  <button id="test-getme" class="google-auth-button" type="button">Test GetMe</button>
+  <button id="test-getfiles" class="google-auth-button" type="button">Test GetFiles</button>
+  <button id="test-refresh" class="google-auth-button" type="button">Test Refresh</button>
+  <div id="status-message"></div>
+    
+    <script>
+        var gauth = new GoogleAuth();
+        $('#google-login').click(function(){
+            gauth.launchAuthWindow();
+        });
+        $('#test-getme').click(function(){
+            $.ajax({
+            url: "/google/getme",
+            method: "POST",
+            dataType: "json",
+            data: {},
+            success: function(data) {                
+                if(data.error){
+                    ureAjaxError(data);                     
+                    if(on_error)
+                        on_error(data);   
+                }
+                else if (data.errors){                    
+                    ureAjaxError(data); 
+                }
+                else{
+                    gauth.registerLogin(data);
+                }
+            },
+            error: ureAjaxError
+            });  
+        });
+
+        $('#test-getfiles').click(function(){
+            $.ajax({
+            url: "/google/getfiles",
+            method: "POST",
+            dataType: "json",
+            data: {},
+            success: function(data) {                
+                if(data.error){
+                    ureAjaxError(data);                     
+                    if(on_error)
+                        on_error(data);   
+                }
+                else if (data.errors){                    
+                    ureAjaxError(data); 
+                }
+                else{
+                    $('#status-message').html(data)
+                }
+            },
+            error: ureAjaxError
+            });  
+        });
+
+        $('#test-refresh').click(function(){
+            $.ajax({
+            url: "/google/refresh",
+            method: "POST",
+            dataType: "json",
+            data: {},
+            success: function(data) {                
+                if(data.error){
+                    ureAjaxError(data);                     
+                    if(on_error)
+                        on_error(data);   
+                }
+                else if (data.errors){                    
+                    ureAjaxError(data); 
+                }
+                else{
+                    $('#status-message').html(data)
+                }
+            },
+            error: ureAjaxError
+            });  
+        });
+
+</script>
+{% endblock %}
