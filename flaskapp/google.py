@@ -147,7 +147,7 @@ def google_oauth2_callback():
 def google_get_authenticated_user():
 
     if 'google_token' not in flask.session or not flask.session['google_token']:
-        return({'error': "Not logged into Google."})
+        return({'error': "Not logged into Google.", 'status_code': 401})
     
     # Load credentials from the session.
     credentials = google.oauth2.credentials.Credentials(
@@ -167,25 +167,34 @@ def google_get_authenticated_user():
 def get_files():
 
     if 'google_token' not in flask.session or not flask.session['google_token']:
-        return({'error': "Not logged into Google."})
+        return({'error': "Not logged into Google.", 'status_code': 401})
 
     # Load credentials from the session.
     credentials = google.oauth2.credentials.Credentials(
         **flask.session['google_token']
     )
 
-    name = flask.request.values.get('name_contains')
-    if name:
-        search_value += f' and name contains "{name}"'
-
-    #params={'q': 'mimeType="application/vnd.google-apps.document"'},
+    search_value = 'mimeType="application/vnd.google-apps.document" and trashed=false'
     
+    name = flask.request.values.get('name_contains')
+    search_value += f' and name contains "{name}"'
+
+    all_drives = flask.request.values.get('all_drives')
+    print(f"ALL DRIVES = {all_drives}")
     drive = googleapiclient.discovery.build(
         'drive', 'v3', credentials=credentials, 
     )
 
-    files = drive.files().list().execute()
-    return flask.jsonify(**files)
+    filedata = drive.files().list(
+        includeItemsFromAllDrives=all_drives,
+        supportsAllDrives=all_drives,
+        pageSize=50,
+        q=search_value
+    ).execute()
+
+    if 'nextPageToken' in filedata and filedata['nextPageToken']:
+        return({'success':False, 'result_count_exceeded':True})
+    return (flask.jsonify(filedata['files']))
     
 
 @bp.route('/logout', methods=('GET', 'POST'))

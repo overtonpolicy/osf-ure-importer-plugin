@@ -58,13 +58,8 @@ th.tags-col{
     margin-left: 50px;
     margin-right: 50px;
     margin-top: 20px;
-}
-
-#dialog-content{
-    margin: 25px;
     font-family: 'Open Sans','Helvetica Neue',sans-serif!important;
     font-size=14px;
-
 }
 
 
@@ -151,6 +146,10 @@ label{
     vertical-align:top;
 }
 
+.login-widget{
+    margin: 10px;
+}
+
 #osf-login-div{
     max-width: 400px;
 }
@@ -169,6 +168,10 @@ label{
     margin-left: 10px;
     margin-right: 10px;
     padding: 5px;
+}
+
+.google-status-message{
+    font-style: italic;
 }
 
 .right-justify{

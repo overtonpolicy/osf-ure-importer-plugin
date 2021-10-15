@@ -135,6 +135,36 @@ class GoogleAuth {
         });     
     }
 
+    checkLogin(params){
+        var self = this;
+        if(!params)
+            params = {error: ureAjaxError};
+        if(!params.error)
+            params.error = ureAjaxError;            
+
+        $.ajax({
+            url: "/google/getme",
+            method: "POST",
+            dataType: "json",
+            data: {},
+            success: function(data) {                
+                if(data.error){
+                    if(data.status_code == 401)
+                        self.registerLogout(params);
+                    else{
+                        if(params.on_error)
+                            params.on_error(data);   
+                        params.error("Unkown error happened when trying to log in");
+                    }
+                }
+                else{
+                    self.registerLogin(data);
+                }
+            },
+            error: params.error
+        });     
+    }
+
     registerLogin(me){
         var self = this;
         if(self.logged_in)
@@ -179,7 +209,7 @@ class GoogleAuth {
     }
 }
 
-var google  = new GoogleAuth();
+var google = new GoogleAuth();
 $(document).ready(function () {
 
     $('#google-login').click(function(){
@@ -190,10 +220,12 @@ $(document).ready(function () {
         google.logout();
     });
 
-    //
     // Initialize based on current activity
-    //
     $('#google-login').show();
     $('#google-logout').hide();
+    $('.google-login-required').each(function(){
+        $(this).hide();
+    });
+    google.checkLogin();
     //google.refreshLogin(success=function(me){google.registerLogin(me)} );
 });
