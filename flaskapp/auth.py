@@ -1,4 +1,3 @@
-import functools
 import flask
 import requests
 import yaml
@@ -8,30 +7,6 @@ import sys
 from . import osf
 
 bp = flask.Blueprint('auth', __name__, url_prefix='/auth')
-
-#@bp.before_app_request
-#def load_login():
-#    """ Fetch an open session if available."""
-#    user_id = flask.session.get('osfid')
-
-#    if user_id is None:
-#       flask.g.user = None
-#    else:
-#        flask.g.user = db.get_db().execute(
-#            'SELECT * FROM osf_user WHERE id = ?', (user_id,)
-#        ).fetchone()
-
-
-def login_required(view):
-    """ This is a decorator that wraps all views in which an osf login session is required."""
-    @functools.wraps(view)
-    def wrapped_view(**kwargs):
-        if flask.g.user is None:
-            return flask.redirect(flask.url_for('auth.login'))
-
-        return view(**kwargs)
-
-    return wrapped_view
 
 def app_hostname():
     """ Returns a formatted hostname for the server - this is important because OSF only recognizes very specific hostnames, even when multiple strings are equivalent."""
