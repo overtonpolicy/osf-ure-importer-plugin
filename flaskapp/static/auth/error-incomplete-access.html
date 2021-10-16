@@ -1,0 +1,31 @@
+<html>
+
+<head>
+    <title>Incomplete Access Provided</title>
+    <link rel="shortcut icon" href="/static/favicon.ico">
+    <link rel="stylesheet" type="text/css" href="/static/ext/jquery-ui/jquery-ui.min.css" />
+    <link rel="stylesheet" href="/static/css/general.css">
+    <script type="text/javascript" src="/static/ext/jquery.min.js"></script>
+    <script type="text/javascript">
+    $(document).ready(function () {
+        $('#close-window').click(function(){
+            window.close();
+        });
+    });
+    </script>
+</head>
+
+<body>
+    <div class="response-dialog">
+        <h1 class="heading">Incomplete Access Provided.</h1>
+        <div class="dialog-text">
+            <p>Some access was granted, but it is not sufficient to complete this task.</p>
+            <p>You will not be able to continue until you authorize the plugin to access the full scope of access required.</p>
+        </div>            
+        <div class="form-item">
+            <button id="close-window" type="button" class="ui-button ui-corner-all ui-widget">Ok</button>
+        </div>   
+    </div>
+</body>
+
+</html>
