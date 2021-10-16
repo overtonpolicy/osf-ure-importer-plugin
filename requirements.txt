@@ -1,0 +1,10 @@
+PyYAML 
+urllib3 
+requests 
+lxml 
+markdown
+google-api-python-client 
+google-auth 
+google-auth-oauthlib 
+google-auth-httplib2
+flask
