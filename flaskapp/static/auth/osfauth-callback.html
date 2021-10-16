@@ -14,7 +14,16 @@
     <script type="text/javascript" src="/static/js/osfauth.js"></script>
 
     <script type="text/javascript">
-        $(document).ready(function () {OSFAuth.initializeCallback();});
+        $(document).ready(function () {
+            // check whether access was granted or denied. If denied, redirect to an appropriate error.
+            const urlParams = new URLSearchParams(window.location.search);
+            var error = urlParams.get('error');            
+            if(error == "access_denied")
+                window.location.href = '/static/auth/error-access-denied.html'
+            else
+                OSFAuth.initializeCallback();
+            
+        });
     </script>
 </head>
 

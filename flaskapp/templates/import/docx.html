@@ -2,6 +2,7 @@
 
 {% block javascript %}
 {{ super() }}
+<script type="text/javascript" src="{{ url_for('static', filename='js/importdocx.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='ext/simpleUpload.min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/simpleUploadClient.js') }}"></script>
 {% endblock %}

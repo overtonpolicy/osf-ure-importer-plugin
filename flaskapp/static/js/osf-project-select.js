@@ -46,7 +46,7 @@ $(document).ready(function () {
     	$('#osf-project-fetch-info').html('<div class="dot-pulse" style="display:inline-block;margin-left:20px"></div>');
     	$('#osf-project-name').prop('disabled', true);
         
-	osf.getMyProjects(updateProjectSelect);
+	osf.getMyProjects({success:updateProjectSelect});
     });
     
 });

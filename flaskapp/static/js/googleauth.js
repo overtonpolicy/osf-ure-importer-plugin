@@ -86,7 +86,10 @@ class GoogleAuth {
         $.ajax({
             url: "/google/logout",
             method: "POST",
-            success: function(data) {                
+            success: function(data) {    
+                // we always register the logout because even if 
+                // the token was already revoked, we need to hide the buttons.            
+                self.registerLogout(data);
                 if(data.error){
                     params.error(data);                     
                     if(params.on_error)
@@ -96,7 +99,6 @@ class GoogleAuth {
                     params.error(data); 
                 }
                 else{
-                    self.registerLogout(data);
                     if(params.success)
                         params.success(data);
                 }

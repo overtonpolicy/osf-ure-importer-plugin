@@ -6,7 +6,7 @@ import html
 import sys
 
 # get the local osf requests library
-from . import osf
+from . import osf, google
 # Our webserver-unaware packages for processing things
 import ure
 
@@ -62,24 +62,35 @@ def process_docx_upload():
         'id': filename, 
     })
 
-
-
 def googledoc_import():
     """ Import a Google Document. This pulls in the common import data structure from the Google document and delegates to `render_import()`. See that functions for further details on processing and return data.
     """
     parameters = osf.parse_parameters(checkbox_params=['overwrite', 'deleteold']) 
 
-    if 'fileid' not in parameters or not parameters['fileid']:
-        raise Exception(f"You must upload a file to import. Please report this to tech support.")
+    if 'google-document-id' not in parameters or not parameters['google-document-id']:
+        raise Exception(f"You must indicate a Google Document to import. Please report this to tech support.")
 
-    importer = ure.importer.from_google(
-        UPLOADDIR + '/' + parameters['fileid'], 
-        section_break=parameters['section-break-policy'],
-        page_break=parameters['page-break-policy'],
-        h1_break=parameters['h1-policy'],
-        h2_break=parameters['h2-policy'],        
+    document_bytes = google.api(
+        service_path=['drive', 'v3'],
+        method_list=['files', 'export'],
+        params={
+            'fileId': parameters['google-document-id'], 
+            'mimeType': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        },
     )
-    return(render_import(importer, parameters))
+    import tempfile
+    with tempfile.NamedTemporaryFile(mode='w+b', suffix='.docx') as fh:
+        
+        fh.write(document_bytes)
+        fh.flush()
+        importer = ure.importer.from_file(
+            fh.name, 
+            section_break=parameters['section-break-policy'],
+            page_break=parameters['page-break-policy'],
+            h1_break=parameters['h1-policy'],
+            h2_break=parameters['h2-policy'],        
+        )
+        return(render_import(importer, parameters))
 
 def docx_import():
     """ Import a MS Word Document. This pulls in the common import data structure from the uploaded document and delegates to `render_import()`. See that functions for further details on processing and return data.

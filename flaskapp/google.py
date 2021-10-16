@@ -127,9 +127,9 @@ def google_oauth2_callback():
     try:
         flow.fetch_token(authorization_response=authorization_response)
     except oauthlib.oauth2.rfc6749.errors.AccessDeniedError as ae:
-        return({'success':False, 'error': 'Access was not granted. You cannot proceed without with pluging without granting access to your Google account.'})
+        return(flask.current_app.send_static_file('auth/error-access-denied.html'))
     except Warning as warn:
-        return({'success':False, 'error': 'Access was not fully granted. You cannot proceed without with pluging without granting access to your Google account.', 'error_code': str(warn)})
+        return(flask.current_app.send_static_file('auth/error-incomplete-access.html'))
 
     # Store the credentials in the session.
     credentials = flow.credentials
@@ -143,16 +143,49 @@ def google_oauth2_callback():
     print(f"Google token: {flask.session['google_token']}", file=sys.stderr)
     return(flask.current_app.send_static_file('auth/googleauth-callback.html'))
 
+def api(service_path, method_list, params=None):
+    if 'google_token' not in flask.session or not flask.session['google_token']:
+        return({'error': "Not logged into Google.", 'status_code': 401})
+    
+    if not params:
+        params = {}
+
+    # Load credentials from the session.
+    secrets = get_oauth_details()
+    creds = {'client_id': secrets['client'], 'client_secret': secrets['secret']}
+    creds.update(flask.session['google_token'])
+    creds['scopes'] = creds['scopes'].split(' ')
+    credentials = google.oauth2.credentials.Credentials(**creds)
+        
+    service = googleapiclient.discovery.build(
+        *service_path, credentials=credentials
+    )
+    method = service
+    last_method = method_list.pop()
+    for next_method in method_list:
+        method = getattr(method, next_method)()
+
+    result = getattr(method, last_method)(**params).execute()
+    return(result)
+
 @bp.route("/getme", methods=('GET', 'POST'))
 def google_get_authenticated_user():
+
+    return(api(
+        service_path=['oauth2','v2'],
+        method_list=['userinfo','get'] 
+    ))
 
     if 'google_token' not in flask.session or not flask.session['google_token']:
         return({'error': "Not logged into Google.", 'status_code': 401})
     
     # Load credentials from the session.
-    credentials = google.oauth2.credentials.Credentials(
-        **flask.session['google_token']
-    )
+    secrets = get_oauth_details()
+    creds = {'client_id': secrets['client'], 'client_secret': secrets['secret']}
+    creds.update(flask.session['google_token'])
+    creds['scopes'] = creds['scopes'].split(' ')
+    print(json.dumps(creds))
+    credentials = google.oauth2.credentials.Credentials(**creds)
         
     user_info_service = googleapiclient.discovery.build(
         'oauth2','v2', credentials=credentials
@@ -165,6 +198,7 @@ def google_get_authenticated_user():
 
 @bp.route("/getfiles", methods=('GET', 'POST'))
 def get_files():
+
 
     if 'google_token' not in flask.session or not flask.session['google_token']:
         return({'error': "Not logged into Google.", 'status_code': 401})
@@ -181,16 +215,27 @@ def get_files():
 
     all_drives = flask.request.values.get('all_drives')
     print(f"ALL DRIVES = {all_drives}")
-    drive = googleapiclient.discovery.build(
-        'drive', 'v3', credentials=credentials, 
+    #drive = googleapiclient.discovery.build(
+    #    'drive', 'v3', credentials=credentials, 
+    #)
+
+    filedata = api(
+        service_path=['drive','v3'],
+        method_list=['files','list'],
+        params={
+            'includeItemsFromAllDrives': all_drives,
+            'supportsAllDrives': all_drives,
+            'pageSize': 50,
+            'q':search_value,
+        } 
     )
 
-    filedata = drive.files().list(
-        includeItemsFromAllDrives=all_drives,
-        supportsAllDrives=all_drives,
-        pageSize=50,
-        q=search_value
-    ).execute()
+    #filedata = drive.files().list(
+    #    includeItemsFromAllDrives=all_drives,
+    #    supportsAllDrives=all_drives,
+    #    pageSize=50,
+    #    q=search_value
+    #).execute()
 
     if 'nextPageToken' in filedata and filedata['nextPageToken']:
         return({'success':False, 'result_count_exceeded':True})
@@ -215,7 +260,6 @@ def googlelogout():
         return({
             'error': ['Failed to log out'],
             'status_code': resp.status_code,
-            'message': resp.message,
             'json': resp.json()
         })
 

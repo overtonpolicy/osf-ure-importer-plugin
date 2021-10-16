@@ -203,26 +203,42 @@ class OSFAuth {
         window.close();
     }
 
+    /** Call the osf api. Parameters are the same as local() except the url is not required.
+     * 
+     * @param {*} params 
+     * @returns 
+     */
+    apiget({apipath = null, params = null, success = null, error = ureAjaxError, relogin = true, json = true}){
 
-    apiget(api_url, api_params, success, failure, json=true){
-        var server_url = json ? '/osf/data' : '/osf/api';
-        var params = {
-            url: api_url,
-            params: api_params,
+        var localparams = {
+            url: json ? '/osf/data' : '/osf/api',
+            params: {url: apipath, params: params},
+            success: success, 
+            error: error, 
+            relogin: relogin, 
         };
-        return(this.local(server_url, params, success, failure, json))
+        return(this.local(localparams));
     }
 
-    local(url, params, success, failure, json=true){
+    /**
+     * 
+     * @param {} url 
+     * @param {} params 
+     * @param {} failure 
+     * @param {} success
+     * @param {} json: If true, return json  
+     * @param {} relogin: If true, automatically relogin if the token is stale  
+     */
+    local({url = null, params = null, success = null, error = ureAjaxError, relogin = true, json = true}){
         var self = this;
-        if(!failure)
-            failure = ureAjaxError;
+        console.log("local called");
+        console.log(relogin);
 
         $.ajax({
             url: url,
             method: 'POST',
             data: params,
-            error: failure,            
+            error: error,            
             success: function(resp){
                 // check for errors
                 if(!resp.errors){
@@ -233,12 +249,16 @@ class OSFAuth {
                 if(![-1, 401,403].includes(resp.status_code)){
                     return(ureAjaxError(resp))
                 }
-                // attempt to log back in one time.
+                // attempt to log back in one time, unless relogin is fall
+                if(!relogin){
+                    self.registerLogout();
+                    return;
+                }
                 console.log("User no longer logged in - attempting to log in again.")
-		$('#osf-authentication-status').html('<b>New log in to OSF required</b>. If the login window does not appear, you need to allow pop-ups for uremethods and reload (instructions <a href="https://support.google.com/chrome/answer/95472?hl=en&co=GENIE.Platform%3DDesktop&oco=0" target="_blank">here</a>)')
+		        $('#osf-authentication-status').html('<b>New log in to OSF required</b>. If the login window does not appear, you need to allow pop-ups for uremethods and reload (instructions <a href="https://support.google.com/chrome/answer/95472?hl=en&co=GENIE.Platform%3DDesktop&oco=0" target="_blank">here</a>)')
                 self.launchAuthWindow({
                     success: function(){
-			$('#osf-authentication-status').html('');
+			            $('#osf-authentication-status').html('');
                         $.ajax({ 
                             url: url,
                             method: 'POST',
@@ -262,20 +282,29 @@ class OSFAuth {
             },            
         })
     }
-
-    getme(success, failure=ureAjaxError){
-        this.apiget('/users/me/', {}, success, failure);
+    /**
+     * 
+     * @param {function} success (optional): A callback to execute on success. 
+     * @param {function} failure (optional): A callback to execute on failure.
+     * @param {boolean} relogin (optional): If False, do not attempt to automatically log in if the authentication is stale. Default is true.
+     */
+    getme(params){
+        params.apipath = '/users/me/'; 
+        console.log("getme called");
+        console.log(params);
+        this.apiget(params);
     }
 
-    getMyProjects(callback, author_only=true, include_components=false, failure=ureAjaxError){        
-        console.log("getting my projects!");
-        this.local('/osf/nodes', {
+    getMyProjects({success=null, author_only=true, include_components=false, error=ureAjaxError}){        
+        this.local({
+            url:'/osf/nodes', 
+            params:{
                 'bibliographic': author_only,
                 'include_components': include_components,
             },
-            callback,
-            failure,
-        );
+            success:success,
+            error:error,
+        });
     }
 
     registerLogin(me){
@@ -307,13 +336,13 @@ class OSFAuth {
         }
         else{
             // update the label and conduct any custom callbacks
-            self.getme(function(me){            
+            self.getme({success:function(me){            
                 self.me = me;
                 $('#osf-authentication-status').html('You are logged in as '+me.attributes.full_name+'.');
                 self.loginCallbacks.forEach(function(callback){
                     callback(me);
                 });
-            });
+            }});
         }
         console.log("Login complete");
         
@@ -380,5 +409,9 @@ $(document).ready(function () {
     $('#osf-login').show();
     $('#osf-logout').hide();
     $('#osf-revoke').hide();
-    osf.getme( function(me){osf.registerLogin(me)}, function(){osf.registerLogout()} );
+    osf.getme({ 
+        success: function(me){osf.registerLogin(me)}, 
+        error: function(){osf.registerLogout()},
+        relogin: false,
+    });
 });
