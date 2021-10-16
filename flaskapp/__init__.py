@@ -1,6 +1,6 @@
 import os
 from flask import Flask
-from . import auth,db,importer,osf, google
+from . import auth,importer,osf,google
 
 def create_app(test_config=None):
     # create and configure the app
@@ -26,9 +26,6 @@ def create_app(test_config=None):
     @app.route('/')
     def index():
         return('There are not the droids you are looking for.')
-
-    # register the db
-    db.init_app(app)
 
     # register the blueprints
     app.register_blueprint(auth.bp)
