@@ -8,7 +8,12 @@
 {% endblock %}
     
 {% block topmatter %}
-<div class="right-justify">
-    {% include "partials/login-widget.html" %}
+<div class="flexnav">
+    <div class="left-justify">
+        {% include "partials/page-navigation.html" %}
+    </div>
+    <div class="right-justify">
+        {% include "partials/login-widget.html" %}
+    </div>
 </div>
 {% endblock %}
