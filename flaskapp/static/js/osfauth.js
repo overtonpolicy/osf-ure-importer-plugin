@@ -311,7 +311,6 @@ class OSFAuth {
         var self = this;
         $('#osf-login').hide();
         $('#osf-logout').show();
-        $('#osf-revoke').show();
         $('.osf-login-required').each(function(){
             $(this).show();
         });
@@ -352,7 +351,6 @@ class OSFAuth {
         var self = this;
         $('#osf-login').show();
         $('#osf-logout').hide();
-        $('#osf-revoke').hide();
         $('#osf-authentication-status').html('You are not logged in.');
         $('.osf-login-required').each(function(){
             $(this).hide();
@@ -399,16 +397,11 @@ $(document).ready(function () {
         osf.revokeCurrentToken();
     });
 
-    $('#osf-revoke').click(function(){
-        osf.revokeCurrentToken();
-    });
-
     //
     // Initialize based on current activity
     //
     $('#osf-login').show();
     $('#osf-logout').hide();
-    $('#osf-revoke').hide();
     osf.getme({ 
         success: function(me){osf.registerLogin(me)}, 
         error: function(){osf.registerLogout()},

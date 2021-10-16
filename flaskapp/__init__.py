@@ -1,10 +1,10 @@
 import os
-from flask import Flask
+import flask
 from . import auth,importer,osf,google
 
 def create_app(test_config=None):
     # create and configure the app
-    app = Flask(__name__, instance_relative_config=True)
+    app = flask.Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
         SECRET_KEY='dev',
         DATABASE=os.path.join(app.instance_path, 'osfapp.sqlite'),
@@ -25,7 +25,8 @@ def create_app(test_config=None):
 
     @app.route('/')
     def index():
-        return('There are not the droids you are looking for.')
+        return(flask.render_template('index.html'))
+ 
 
     # register the blueprints
     app.register_blueprint(auth.bp)

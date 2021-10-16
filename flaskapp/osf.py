@@ -140,7 +140,12 @@ def osfgetdata(url, url_params=None, fetch_all=False):
             if type(nextdata) is list:
                 return(data + nextdata)
             if nextdata['errors']:
-                raise Exception(f"Unexpected result. Data returned was an array for the first page but not an array for the follow pages")
+                return({
+                    'errors': nextdata['errors'],
+                    'status_code': nextdata['status_code'],
+                    'debug': nextdata,
+                })
+                #raise Exception(f"Unexpected result. Data returned was an array for the first page but not an array for the follow pages")
             return(nextdata)
     
     return(data)

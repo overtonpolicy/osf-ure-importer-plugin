@@ -14,6 +14,20 @@
     font-weight: bold;
 }
 
+.elegant-list{
+    color: #606060;
+	list-style-type: none;
+	list-style: none;
+    margin-top:15px;
+    margin-left:10px;
+    font-weight: 300;
+    font-size: 1.1em;
+}
+
+.elegant-list a{
+    text-decoration:none;
+}
+
 .program-area{
     display: inline-block;
     padding: 5px;
