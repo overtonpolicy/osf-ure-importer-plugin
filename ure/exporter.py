@@ -223,10 +223,16 @@ class Docx(BaseExporter):
         hyperlink.set(docx.oxml.shared.qn('r:id'), r_id, )
         
         children = element['children'] or [{'type': 'text', 'text': element['link']}] 
+        child_runs = []
         for child in children:
             #import pdb;pdb.set_trace()
-            run = self.process_text(container, child)
-            
+            run = self.render_element(container, child)
+            if type(run) is list:
+                child_runs.extend(run)
+            else:
+                child_runs.append(run)
+        
+        for run in child_runs:
             # set the link color
             run.font.color.rgb = RGBColor.from_string('000080')
             # underline the link
@@ -236,21 +242,6 @@ class Docx(BaseExporter):
             run._r.append(xml_rPr)
             hyperlink.append(run._r)
 
-            #xml_ul = docx.oxml.shared.OxmlElement('w:u')
-            #xml_ul.set(docx.oxml.shared.qn('w:val'), 'single')
-            #xml_rPr.append(xml_ul)
-
-            #xml_run = docx.oxml.shared.OxmlElement('w:r')
-            #xml_rPr = docx.oxml.shared.OxmlElement('w:rPr')
-            #xml_run.append(xml_rPr)
-            #xml_run.text = child['text']
-            #hyperlink.append(xml_run)
-            
-            #run._r.append(hyperlink)
-            #run.font.color.theme_color = docx.enum.dml.MSO_THEME_COLOR_INDEX.HYPERLINK
-            #run.font.underline = True
-
-            #result.append(run)
         container._p.append(hyperlink)
         return(container)
 
@@ -332,7 +323,6 @@ class Docx(BaseExporter):
 
     def process_codespan(self, container, element):
         return(container.add_run(element['text'], style="Code"))
-
 
     def process_mathspan(self, container, element):
         warn("Redirecting analysis of mathspan to codespan")
