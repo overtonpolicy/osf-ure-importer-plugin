@@ -1,6 +1,6 @@
 import os
 import flask
-from . import auth,importer,osf,google
+from . import auth,importer,osf,google, exporter
 
 def create_app(test_config=None):
     # create and configure the app
@@ -33,6 +33,7 @@ def create_app(test_config=None):
     app.register_blueprint(importer.bp)
     app.register_blueprint(osf.bp)
     app.register_blueprint(google.bp)
+    app.register_blueprint(exporter.bp)
 
 
     return app

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.21/dist/katex.min.css" integrity="sha384-4Y/XYS9mD9HJ+dIEpYViUGob3atehZCmTPqyUCOLZHfe1iKgH/3tCGDCIDx+WNZc" crossorigin="anonymous">
+
+    <!-- The loading of KaTeX is deferred to speed up page rendering -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.21/dist/katex.min.js" integrity="sha384-YT8NmKMJkaFK5r+P/VDFRWM8rjcA0BdmAc0fH8+gbzCiRgmxOZf9ws29ixle0N5w" crossorigin="anonymous"></script>
+
+    <!-- To automatically render math in text elements, include the auto-render extension: -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.21/dist/contrib/auto-render.min.js" integrity="sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR" crossorigin="anonymous"
+        onload="renderMistuneKaTex();"></script>
+    <script type="text/javascript">
+      const katex_macros = {};
+      function renderMistuneKaTex(){        
+        debugger;
+        var mathelems = document.getElementsByClassName("mathexpr");
+        for (var i = 0; i < mathelems.length; i++) {
+          katex.render(mathelems[i].textContent, mathelems[i], {
+            throwOnError: false,
+            katex_macros
+        });
+        }
+      }
+    </script>
+  </head>
+ 
+<body>
+
+  <h1>Mathspan Example</h1>
+  <h2>Math Block</h2>
+  <p>To declare a variable:
+  <div class="mathexpr">var math = \frac{1}{\sqrt{x^2 + 1}}</div>
+  </p>
+  <h1>A new heading</h1>
+  <div class="mathexpr">\alpha\beta*2^{3i}</div>
+  <p>Some more things:
+  <div class="mathexpr">\begin{array}{cc} a & b \\ c & d \end{array}</div>
+  </p>
+  <p>Next paragraph.
+
+    # Another heading
+  <div class="mathexpr">\alpha = 16663;
+    \beta = 46*2^{3i}</div>
+  </p>
+  <h1>Heading</h1>
+  <div class="mathexpr">\alpha
+    \beta
+    *2^{3i}</div>
+  <p>Next paragraph
+
+    This should be on a separate line :
+  <div class="mathexpr">\\alpha\\beta*2^{3i}</div>
+  </p>
+  <p>This line should be standalone on a new line.
+
+    This should be on a separate line :
+  <div class="mathexpr">\\alpha
+    \\beta
+    *2^{3i}</div>
+  </p>
+  <p>This line should be standalone on a new line.
+    .
+
+    Test single character:
+  <div class="mathexpr">k</div>
+  </p>
+  <p>-Math block.
+
+
+
+    This is something inline: &lt;span class=&quot;mathexpr&quot;&gt;\sum_{i=0}^n i^2 =
+    \frac{(n^2+n)(2n+1)}{6}&lt;/span&gt;
+  <div class="mathexpr">\sum_{i=0}^n i^2 = \frac{(n^2+n)(2n+1)}{6}</div>
+  </p>
+  <p>$$
+    \begin{matrix}
+    1 &amp;amp; x &amp;amp; x^2 \
+    1 &amp;amp; y &amp;amp; y^2 \
+    1 &amp;amp; z &amp;amp; z^2 \
+    \end{matrix}
+    $$
+
+    This block does start inline, but it's a block:
+  <div class="mathexpr">\begin{matrix}
+    1 & x & x^2 \\
+    1 & y & y^2 \\
+    1 & z & z^2 \\
+    \end{matrix}</div>
+  </p>
+  <p>This is also a block:
+  <div class="mathexpr">\left[
+    \begin{array}{cc|c}
+    1&2&3\\
+    4&5&6
+    \end{array}
+    \right]</div>
+  </p>
+  <p>this runs on afterward
+
+    What are we looking for in an inline block? &lt;span class=&quot;mathexpr&quot;&gt;\bigl( \begin{smallmatrix} a
+    &amp; b \\ c &amp; d \end{smallmatrix} \bigr)&lt;/span&gt; and then additional text
+  <div class="mathexpr">\begin{align}
+    \sqrt{37} & = \sqrt{\frac{73^2-1}{12^2}} \\
+    & = \sqrt{\frac{73^2}{12^2}\cdot\frac{73^2-1}{73^2}} \\
+    & = \sqrt{\frac{73^2}{12^2}}\sqrt{\frac{73^2-1}{73^2}} \\
+    & = \frac{73}{12}\sqrt{1 - \frac{1}{73^2}} \\
+    & \approx \frac{73}{12}\left(1 - \frac{1}{2\cdot73^2}\right)
+    \end{align}</div>
+  </p>
+  <div class="mathexpr">\begin{array}{c|lcr}
+    n & \text{Left} & \text{Center} & \text{Right} \\
+    \hline
+    1 & 0.24 & 1 & 125 \\
+    2 & -1 & 189 & -8 \\
+    3 & -20 & 2000 & 1+10i
+    \end{array}</div>
+  <h1>Double Dollar Sign on a separate line. Is this supported?</h1>
+  <p>$$
+    \left{
+    \begin{array}{c}
+    a_1x+b_1y+c_1z=d_1 \
+    a_2x+b_2y+c_2z=d_2 \
+    a_3x+b_3y+c_3z=d_3
+    \end{array}
+    \right.
+    $$</p>
+  <p>This is the end of the html.</p>
+</body>
+
+</html>

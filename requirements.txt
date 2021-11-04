@@ -8,3 +8,15 @@ google-auth
 google-auth-oauthlib 
 google-auth-httplib2
 flask
+pillow
+
+# mistune docx
+mistune
+python-docx
+sympy
+
+# These are required for sympy / math rendering
+# Ubuntu packages:
+# texlive-latex-base
+# texlive-latex-extra
+# dvipng

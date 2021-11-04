@@ -134,6 +134,14 @@ h3{
     vertical-align: top;
 }
 
+.form-radio{
+    margin-left: 35px;
+}
+.form-radio label{
+    font-weight: 500;
+    color: #505050;
+}
+
 .indicator-input{
     max-width:95%;
 }

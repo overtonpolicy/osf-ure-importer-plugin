@@ -31,7 +31,7 @@ def parse_parameters(checkbox_params=None):
             parameters[checkboxparam] = checkboxparam in parameters
     return(parameters)
 
-def osfapicall(url, reqparams, method, quiet=True):
+def osfapicall(url, reqparams=None, method='get', quiet=True, return_json=True):
 
     if not url:
         raise Exception('must provide a url')    
@@ -109,8 +109,11 @@ def osfapicall(url, reqparams, method, quiet=True):
             'errors': False,
         })
 
-    js = req.json()
-    return(js)     
+    if return_json:
+        js = req.json()
+        return(js)
+    else:
+        return(req.text)     
 
 def osfpost(url, url_params=None, **kwargs):
     return(osfapicall(url, url_params, method='post', **kwargs))
