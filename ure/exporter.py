@@ -1,26 +1,33 @@
-# -*- coding: utf-8 -*-
 import os,sys
-import shutil
-import glob
 import re
-import itertools
-import argparse
-import tempfile
-import requests
-from PIL import Image 
 from warnings import warn
+import pprint
 
 import docx
 from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_COLOR_INDEX
 from docx.shared import Pt, Cm, RGBColor
 
-import mistune
+# PIL is necessary to get the image size.
+from PIL import Image 
 
-from pprint import pprint 
+# request are needed to fetch images based on their source links.
+# they are saved to a tempfile in order to be loaded
+import tempfile
+import requests
+
+# etree and latex2maathml are necessary to process math equations
+from lxml import etree
+import latex2mathml.converter
+
+# mistune translates markdown into an Abstract Syntax Tree (AST), 
+# which is what we process to generate the export
+import mistune
 
 class BaseExporter():
 
-    def __init__(self, include_components=True, wiki_break_type=None, component_break_type='page'):        
+    def __init__(self, include_components=True, wiki_break_type=None, component_break_type='page', add_component_titles=True, add_wiki_titles=False):
+        self.add_component_titles = add_component_titles        
+        self.add_wiki_titles = add_wiki_titles        
         self.include_components = include_components
         self.wiki_break_type = wiki_break_type
         self.component_break_type = component_break_type
@@ -42,7 +49,7 @@ class Docx(BaseExporter):
 
         # set up the renderer
         self.markdown_analyzer = mistune.create_markdown(
-            renderer='ast',#DocxRenderer(self.style_template),
+            renderer='ast',
             plugins=[
                 'table', 
                 'strikethrough', 
@@ -51,6 +58,29 @@ class Docx(BaseExporter):
             ]
         )
 
+    def process_markdown(self, osfmarkdown):
+        doc = docx.Document(os.path.abspath(self.style_template))
+
+        for icomp, (title, component) in enumerate(osfmarkdown):
+            if icomp > 0:
+                # render a break
+                self.render_break(doc, self.component_break_type)            
+                # every component after the root project
+                if self.add_component_titles:
+                    doc.add_heading(title, level=1)
+            for iwiki, (wikititle, content) in enumerate(component):
+                # every wiki after the home 
+                if iwiki > 0:
+                    self.render_break(doc, self.wiki_break_type)  
+                    if self.add_wiki_titles:
+                        doc.add_heading(wikititle, level=1)          
+                self.render_section(doc, content)
+        
+        # now save to the output 
+        #doc.save(os.path.abspath(args.output))        
+        return(doc)
+
+
     #
     # Blocks
     #
@@ -58,7 +88,10 @@ class Docx(BaseExporter):
         return(doc.add_paragraph("\n"))
 
     def process_thematic_break(self, doc, element):
-        raise Exception("what is a thematic break?")
+        # -- We already handle breaks separately, so we don't do anything here.
+        # NOTE: This may not be intended
+        #return(self.render_break(doc, 'page'))
+        return([])
 
     def process_block_code(self, doc, element):
         if 'info' in element:
@@ -70,16 +103,18 @@ class Docx(BaseExporter):
 
     def process_heading(self, doc, element):
         head = doc.add_heading(
+
             level = element['level'],
         )      
         for child in element['children']:
             self.render_element(head, child) 
         return(head)
 
-    def process_block_quote(self, doc, element):
+    def process_block_quote(self, doc, element, style=None):
+        """style, if provided, will be ignored """
         children = []
         for i, child in enumerate(element['children']):
-            if child['type'] is not 'paragraph':
+            if child['type'] not in ('paragraph', 'block_text'):
                 raise Exception(f"Unknown type as child of block quote '{child['type']}'")
             if i == 0: 
                 para = doc.add_paragraph(style="Quote")
@@ -109,14 +144,15 @@ class Docx(BaseExporter):
 
         children = []
         for child in element['children']:
-            if child['type'] in ('block_text', 'paragraph'):
-                para = self.process_paragraph(doc, child, style=list_style)
-                children.append(para)
-            elif child['type'] == 'list':
-                sublist_children = self.process_list(doc, child)
-                children.extend(sublist_children)
+            if child['type'] in ('paragraph', 'block_text'):
+                xren = self.render_element(doc, child, style=list_style)
             else:
-                raise Exception(f"render_list_item does not know how to process a child block of type '{child['type']}'")
+                xren = self.render_element(doc, child)
+
+            if type(xren) is list:
+                children.extend(xren)
+            else:
+                children.append(xren)
         return(children)
 
     def process_block_html(self, doc, element):
@@ -224,8 +260,15 @@ class Docx(BaseExporter):
         
         children = element['children'] or [{'type': 'text', 'text': element['link']}] 
         child_runs = []
-        for child in children:
-            #import pdb;pdb.set_trace()
+        while children:
+            child = children.pop(0)
+            # there are weird cases when mistune renders links children of links.
+            # If that's the case we're just going add them to the children list
+            if child['type'] == 'link':
+                if child['children']:
+                    children.extend(child['children'])
+                continue
+
             run = self.render_element(container, child)
             if type(run) is list:
                 child_runs.extend(run)
@@ -285,6 +328,20 @@ class Docx(BaseExporter):
                 img (container.add_picture(fh, width=max_width, height=max_height))
         return(img)
 
+    def process_strikethrough(self, container, element): 
+        
+        runs = []
+        for child in element['children']:
+            run = self.render_element(container, child)
+            if type(run) is list:
+                for r in run:
+                    r.font.strike = True
+                runs.extend(run)
+            else:
+                run.font.strike = True
+                runs.append(run)
+        return(runs)
+
     def process_emphasis(self, container, element): 
         #italic
         runs = []
@@ -331,6 +388,8 @@ class Docx(BaseExporter):
         #return(self.process_codespan(container, {'text': element['expression']}))
 
     def render_break(self, doc, break_type):
+        if not break_type:
+            return
         if break_type == 'page':
             doc.add_page_break()
         elif break_type == 'section':
@@ -339,53 +398,28 @@ class Docx(BaseExporter):
         elif break_type == 'line':
             self.process_newline(doc, None)
         else:
-            raise Exception("Unknown break")
-        return
+            raise Exception(f"Unknown break '{break_type}'")
 
-    def render_element(self, docelem, element):
+    def render_element(self, docelem, element, **kwargs):
         funcname = 'process_' + element['type']
         func = getattr(self, funcname)
-        return(func(docelem, element))
-
-    #def render_paragraph(self, para, element):
+        return(func(docelem, element, **kwargs))
 
     def render_section(self, doc, mkdtext):
         ast = self.markdown_analyzer(mkdtext)
-        pprint(ast, width=200)
-
+        stringified = pprint.pformat(ast, width=200, indent=5) 
+        with open('current_mkd.md', 'w') as fh:
+            fh.write(mkdtext)
+        with open('current_ast.js', 'w') as fh:
+            fh.write(stringified)
+        
+        print(stringified)
         for element in ast:
             self.render_element(doc, element)
-
-
-    def process_markdown(self, osfmarkdown):
-        #raise Exception("process_source must be defined in the subclass to return a ure-markdown datastructure")
-
-        doc = docx.Document(os.path.abspath(self.style_template))
-
-        for icomp, (title, component) in enumerate(osfmarkdown):
-            if icomp > 0:
-                # every component after the root project
-                # rend a break
-                self.render_break(doc, self.component_break_type)            
-            for iwiki, (wikititle, content) in enumerate(component):
-                # every wiki after the home 
-                if iwiki > 0:
-                    self.render_break(doc, self.wiki_break_type)            
-                self.render_section(doc, content)
         
-
-        # now save to the output 
-        #doc.save(os.path.abspath(args.output))        
-        return(doc)
-        
-
-from docx import Document
-from lxml import etree
-import latex2mathml.converter
 
 
 def latex_to_word(latex_input):
-    print("Really trying to do this for Input: ", latex_input)
     mathml = latex2mathml.converter.convert(latex_input)
     tree = etree.fromstring(mathml)
     xslt = etree.parse(

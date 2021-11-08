@@ -239,10 +239,10 @@ class OSFAuth {
             method: 'POST',
             data: params,
             error: error,            
-            success: function(resp){
+            success: function(resp, status, jqXHR){
                 // check for errors
                 if(!resp.errors){
-                    return(success(resp));
+                    return(success(resp, status, jqXHR));
                 }
                 // is it just authentication timeout / failure?
                 // If not, fail now.
