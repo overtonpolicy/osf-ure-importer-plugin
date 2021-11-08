@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+
+{% block javascript %}
+{{ super() }}
+<script type="text/javascript"
+    src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+<script type="text/javascript"
+    src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/additional-methods.min.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/osf-project-select.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/exportgeneral.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+
+<form id="project-export" method="POST" enctype="application/x-www-form-urlencoded">
+    <fieldset>
+
+        {% include 'partials/osf-project-select.html' %}
+
+        {% block export_content %}
+        {% endblock %}
+
+        <div id="doc-options" class="form-options">
+            <h3>Document Option</h3>
+            <div>
+                <div class="form-item">
+                    <label>
+                        Export Format
+                        <div class="help-text">
+                            Select the document format for the output.
+                        </div>
+                    </label>
+                    <div class="form-radio">
+                        <input type="radio" id="export-docx" name="export-format" value="docx" checked />
+                        <label for="export-docx">Microsoft Word</label>
+                    </div>
+                    <div class="form-radio">
+                        <input type="radio" id="export-odt" name="export-format" value="odt" />
+                        <label for="export-odt">OpenDocument Format</label>
+                    </div>
+                    <div class="form-radio">
+                        <input type="radio" id="export-md" name="export-format" value="md" />
+                        <label for="export-md">Markdown Text</label>
+                    </div>
+                </div>
+                <div class="form-item">
+                    <div class="form-element">
+                        <input type="checkbox" id="include-components" value="" name="include-components"
+                            class='inline-input' CHECKED />
+                        <label class="inline-label" for="include-components">
+                            Include Subcomponents
+                            <div class="help-text">
+                                Include wikis from subcomponents.
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-item">
+                    <div class="form-element">
+                        <input type="checkbox" id="add-component-titles" value="" name="add-component-titles" class='inline-input' CHECKED=CHECKED />
+                        <label class="inline-label" for="add-component-titles">
+                            Add Component Titles
+                            <div class="help-text">
+                                Do you want the titles of any components to be added as headings in the document? This is not necessary if the Home wiki of subcomponents have top-level headings.
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-item">
+                    <div class="form-element">
+                        <input type="checkbox" id="add-wiki-titles" value="" name="add-wiki-titles" class='inline-input' />
+                        <label class="inline-label" for="add-wiki-titles">
+                            Add Wiki Titles
+                            <div class="help-text">
+                                Do you want the wiki titles as headings in the document? This is useful if you have multiple wikis (besides Home) and they do not have top-level headings.
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="break-options" class="form-options">
+            <h3>Break Options</h3>
+            <div>
+                <div class="form-item">
+                    <label>
+                        Break Between Wikis
+                        <div class="help-text">
+                            In the exported document, what type of break would you like inserted between Wiki
+                            Pages?
+                        </div>
+                    </label>
+                    <select id="wiki-break-policy" name="wiki-break-policy">
+                        <option value="" SELECTED>No break</option>
+                        <option value="page">Page Break</option>
+                        <option value="section">Section Break</option>
+                    </select>
+                </div>
+                <div class="form-item">
+                    <label>
+                        Break Between Components
+                        <div class="help-text">
+                            In the exported document, what type of break would you like inserted between
+                            subcomponents?
+                        </div>
+                    </label>
+                    <select id="component-break-policy" name="component-break-policy">
+                        <option value="">No break</option>
+                        <option value="page" SELECTED>Page Break</option>
+                        <option value="section">Section Break</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="form-item">
+            <div style="width:550px">
+                <input type="submit" id="export-button" value="Export">
+            </div>
+        </div>
+    </fieldset>
+</form>
+
+{% endblock %}
