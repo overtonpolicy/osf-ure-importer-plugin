@@ -1,8 +1,7 @@
 
 function show_export_results(data, status, jqXHR){
     $('#wait-dialog').dialog("close");
-    
-    $('#result-header').html('<h1>Export Complete</h1><ul><li><a href="" onclick=\'$("#wait-dialog").dialog("close")\'>Click Here</a> to close this window and return to the exporter.</li><li><a href="http://osf.io/'+data.rootnodeid+'/">Click Here</a> to leave the exporter and go to the '+data.rootnodename+' Project.</li><li><a href="/">Click Here</a> to return to the URE Methods extensions index.</li></ul><p class="help-text">Below is a list of completed actions. Click on the links to open a <i>new window</i> for the page.</p><p>If you accidentally overwrote a wiki page, you can <b>revert</b> it to the old <b>Version</b> via the wiki page. If you accidentally deleted a wiki or component, it cannot be recovered.</p><p>' + data.markdown)
+    $('#result-header').html('<h1>Export Complete</h1><ul><li><a href="" onclick=\'$("#wait-dialog").dialog("close")\'>Click Here</a> to close this window and return to the exporter.</li><li><a href="http://osf.io/'+$('#osf-project-id').val()+'/">Click Here</a> to leave the exporter and go to the '+$('#osf-project-name').val()+' Project.</li><li><a href="/">Click Here</a> to return to the URE Methods extensions index.</li></ul>')
 
     //$('#result-message').html(div)
     $('#result-dialog').dialog('open');
@@ -39,9 +38,8 @@ function export_to_osf(){
         url: window.location.pathname, // the server handles posts as form input
         data: $('#project-export').serialize(),
         method: 'POST',
-        error: ureAjaxError,            
+        error: function(d,s,x){ $('#wait-dialog').dialog('close'); ureAjaxError(d,s,x)},            
         success: show_export_results,
-        //dataType: 'binary',
         processData: 'false',
         responseType: 'blob',
         xhrFields: {

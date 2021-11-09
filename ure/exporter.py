@@ -176,6 +176,14 @@ class Docx(BaseExporter):
         warn("Redirecting analysis of mathblock to codeblock")
         word_math = latex_to_word(element['expression'])
 
+        if type(word_math) is dict:
+            # this means an error happened in latex_to_word
+            # TODO: Better error resolution
+            if isinstance(container, docx.text.paragraph.Paragraph):
+                return(self.process_codespan(container, {'text': element['expression']}))
+            else:
+                return(self.process_block_code(container, {'text': element['expression']}))
+            
         children = []
         if isinstance(container, docx.text.paragraph.Paragraph):
             # a little hacky, you can't add a paragraph to a paragraph, so we need to add a run with breaks
@@ -384,6 +392,11 @@ class Docx(BaseExporter):
     def process_mathspan(self, container, element):
         warn("Redirecting analysis of mathspan to codespan")
         word_math = latex_to_word(element['expression'])
+        if type(word_math) is dict:
+            # this means an error happened in latex_to_word
+            # TODO: Better error resolution
+            return(self.process_codespan(container, {'text': element['expression']}))
+
         return(container._element.append(word_math))
         #return(self.process_codespan(container, {'text': element['expression']}))
 
@@ -420,11 +433,14 @@ class Docx(BaseExporter):
 
 
 def latex_to_word(latex_input):
-    mathml = latex2mathml.converter.convert(latex_input)
-    tree = etree.fromstring(mathml)
-    xslt = etree.parse(
-        'conf/MML2OMML.XSL'
-        )
-    transform = etree.XSLT(xslt)
-    new_dom = transform(tree)
-    return new_dom.getroot()
+    try:
+        mathml = latex2mathml.converter.convert(latex_input)
+        tree = etree.fromstring(mathml)
+        xslt = etree.parse(
+            'conf/MML2OMML.XSL'
+            )
+        transform = etree.XSLT(xslt)
+        new_dom = transform(tree)
+        return new_dom.getroot()
+    except Exception as e:
+        return({'error': 'could not parse', 'math_input': latex_input})

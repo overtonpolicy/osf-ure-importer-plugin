@@ -69,6 +69,7 @@ $(document).ready(function () {
  * A generic function that can be added as the failure response for any ajax call - really just processes the data and deleges to the error dialog.
  */
  function ureAjaxError(data, status, xhr){
+    debugger;
     var messages;
     if(typeof(data) == "string")
         messages = data;
