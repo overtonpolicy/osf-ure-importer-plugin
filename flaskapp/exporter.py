@@ -12,7 +12,6 @@ import ure.exporter
 
 bp = flask.Blueprint('export', __name__, url_prefix='/export')
 
-
 @bp.route('/file', methods=('GET', 'POST'))
 def export_to_file():
     """ The endpoint for the document exporter. If a GET request, returns the web form. POST is expected to be an ajax call to submit the import."""
@@ -37,6 +36,13 @@ def file_export():
         parameters['osf-project-name'],
         include_components=parameters['include-components'],
     )
+    if type(mkd) is dict:
+        # error - should be al ist
+        if 'errors' in mkd:
+            # known error - return this
+            flask.abort(mkd['status_code'])
+        else:
+            raise Exception(f"Unknown structure returned from get_project_markdown: {mkd}")
 
     exporter = ure.exporter.Docx(
         style_template="conf/APA Double Space.docx",
@@ -89,9 +95,29 @@ def get_project_markdown(projectid, projectname, include_components):
 
     # -- now get all the wikis 
     all_wikis = osf.osfgetdata(f"/nodes/{projectid}/wikis/", fetch_all=True)
-    
+
+    if not all_wikis:
+        # there are no wikis in this project, so we return nothing
+        return(content)
+    elif type(all_wikis) is dict:
+        if 'errors' in all_wikis:
+            if all_wikis['status_code'] == 404:
+                # this is indicative of there being a page but no wiki content.
+                # return nothing here as well
+                return(content)
+            elif all_wikis['status_code'] in (401,403):
+                # authentication failure. Return the error, which should get picked up
+                # on the clientside
+                return(all_wikis)
+            else:
+                raise Exception(f"Error returned when trying to fetch wiki content: {all_wikis['errors']}")
+        else:
+            raise Exception(f"Unknown data returned when trying to fetch wiki content: {all_wikis}")
+
     project_wikis = []
     # -- handle the home wiki. If add_titles is true, this should be the node title, not the wiki title
+    print("ALL WIKIS")
+    print(all_wikis)
     home = all_wikis.pop(0)
     homecontent = osf.osfapicall(home['links']['download'], return_json=False)
     project_wikis.append([projectname, html.unescape(homecontent)])
@@ -113,11 +139,3 @@ def get_project_markdown(projectid, projectname, include_components):
             )
             content.extend(subcontent)
     return(content)
-
-
-    md = [
-        ['Main Project', [
-            ['Wiki', text],
-        ]],
-    ]
-

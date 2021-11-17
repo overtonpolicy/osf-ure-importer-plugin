@@ -158,7 +158,7 @@ class Docx(BaseExporter):
     def process_block_html(self, doc, element):
         warn("Found html bock as follows. Delegating to code block:\n{element['text']}")
         return(doc.add_paragraph(
-            text=element['raw'],
+            text=element['text'],
             style="Code"
         ))
 
@@ -299,7 +299,13 @@ class Docx(BaseExporter):
     def process_image(self, container, element):
         resp = requests.get(element['src'], stream=True)
         if not resp.ok:
-            raise Exception(f"Could not download image at {element['src']}")
+            # TODO: record error for feedback
+            # the link is bad, so return information
+            if isinstance(container, docx.text.paragraph.Paragraph):
+                # paragraphs cannot add pictures, but runs can.
+                return(self.process_codespan(container, {'text': f"[Image with broken link: '{element['src']}']"}))
+            else:
+                return(self.process_block_code(container, {'text': f"[Image with broken link: '{element['src']}']"}))
 
         extm = re.search(r'\.([^\.]+)$', element['src'].strip())
         if extm:
@@ -328,12 +334,11 @@ class Docx(BaseExporter):
                     max_height = docx.shared.Inches(5)
                     max_width = None
 
-            print(f"LIMITED to {max_width} x {max_height}")
             if isinstance(container, docx.text.paragraph.Paragraph):
                 # paragraphs cannot add pictures, but runs can.
                 img = (container.add_run().add_picture(fh, width=max_width, height=max_height))
             else:
-                img (container.add_picture(fh, width=max_width, height=max_height))
+                img = (container.add_picture(fh, width=max_width, height=max_height))
         return(img)
 
     def process_strikethrough(self, container, element): 
