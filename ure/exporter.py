@@ -23,9 +23,12 @@ import latex2mathml.converter
 # which is what we process to generate the export
 import mistune
 
+fakenewline = re.compile(r'\s*(?<!\n)\n(?!\n)\s*')
+
 class BaseExporter():
 
-    def __init__(self, include_components=True, wiki_break_type=None, component_break_type='page', add_component_titles=True, add_wiki_titles=False):
+    def __init__(self, include_components=True, wiki_break_type=None, component_break_type='page', auto_titles=True, add_component_titles=False, add_wiki_titles=False):
+        self.auto_titles = auto_titles
         self.add_component_titles = add_component_titles        
         self.add_wiki_titles = add_wiki_titles        
         self.include_components = include_components
@@ -67,13 +70,16 @@ class Docx(BaseExporter):
                 self.render_break(doc, self.component_break_type)            
                 # every component after the root project
                 if self.add_component_titles:
-                    doc.add_heading(title, level=1)
+                    doc.add_heading(title, level=1)    
+
             for iwiki, (wikititle, content) in enumerate(component):
                 # every wiki after the home 
                 if iwiki > 0:
                     self.render_break(doc, self.wiki_break_type)  
-                    if self.add_wiki_titles:
-                        doc.add_heading(wikititle, level=1)          
+                    if self.add_wiki_titles or self.auto_titles and not re.match(r'\s*#', content):
+                        doc.add_heading(wikititle, level=1)   
+                elif self.auto_titles and not self.add_component_titles and not re.match(r'\s*#', content):
+                    doc.add_heading(title, level=1) 
                 self.render_section(doc, content)
         
         # now save to the output 
@@ -246,6 +252,9 @@ class Docx(BaseExporter):
     # Inline 
     #
     def process_text(self, container, element):
+        # OSF markdown has newlines entered at 80 characters
+        # so we need to strip those out as they don't actually belong in the text run
+        element['text'] = fakenewline.sub(' ', element['text'])
         return(container.add_run(element['text']))
 
     def process_link(self, container, element):

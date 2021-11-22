@@ -39,6 +39,10 @@
                         <label for="export-odt">OpenDocument Format</label>
                     </div>
                     <div class="form-radio">
+                        <input type="radio" id="export-pdf" name="export-format" value="pdf" />
+                        <label for="export-odt">PDF Document</label>
+                    </div>
+                    <div class="form-radio">
                         <input type="radio" id="export-md" name="export-format" value="md" />
                         <label for="export-md">Markdown Text</label>
                     </div>
@@ -57,11 +61,22 @@
                 </div>
                 <div class="form-item">
                     <div class="form-element">
-                        <input type="checkbox" id="add-component-titles" value="" name="add-component-titles" class='inline-input' CHECKED=CHECKED />
+                        <input type="checkbox" id="auto-titles" value="" name="auto-titles" class='inline-input' CHECKED=CHECKED />
                         <label class="inline-label" for="add-component-titles">
-                            Add Component Titles
+                            Add titles as necessary.
                             <div class="help-text">
-                                Do you want the titles of any components to be added as headings in the document? This is not necessary if the Home wiki of subcomponents have top-level headings.
+                                Add titles if the wiki does not start with one. This is useful if headings may not be consistent.  
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-item">
+                    <div class="form-element">
+                        <input type="checkbox" id="add-component-titles" value="" name="add-component-titles" class='inline-input' />
+                        <label class="inline-label" for="add-component-titles">
+                            Always add <i>Component</i> titles.
+                            <div class="help-text">
+                                Always add the component title. This is useful if the component name doesn't appear on the home wiki page, but other headings might.
                             </div>
                         </label>
                     </div>
@@ -70,9 +85,9 @@
                     <div class="form-element">
                         <input type="checkbox" id="add-wiki-titles" value="" name="add-wiki-titles" class='inline-input' />
                         <label class="inline-label" for="add-wiki-titles">
-                            Add Wiki Titles
+                            Always add <i>Wiki</i> titles.
                             <div class="help-text">
-                                Do you want the wiki titles as headings in the document? This is useful if you have multiple wikis (besides Home) and they do not have top-level headings.
+                                Always add the wiki title. This is useful if wiki names don't appear in the text, but other headings might.
                             </div>
                         </label>
                     </div>

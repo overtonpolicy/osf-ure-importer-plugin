@@ -26,7 +26,7 @@ def file_export():
     #
     # render parameters 
     #
-    parameters = osf.parse_parameters(checkbox_params=['include-components', 'add-wiki-titles', 'add-component-titles']) 
+    parameters = osf.parse_parameters(checkbox_params=['include-components', 'add-wiki-titles', 'add-component-titles', 'auto-titles']) 
     fmt = parameters['export-format']
     if fmt not in ('odt', 'docx', 'md'):
         raise Exception(f"Unknown export format '{fmt}'") 
@@ -47,6 +47,7 @@ def file_export():
     exporter = ure.exporter.Docx(
         style_template="conf/APA Double Space.docx",
         add_component_titles=parameters['add-component-titles'],
+        auto_titles=parameters['auto-titles'],
         add_wiki_titles=parameters['add-wiki-titles'],
         wiki_break_type=parameters['wiki-break-policy'],
         component_break_type=parameters['component-break-policy'],
@@ -100,6 +101,7 @@ def get_project_markdown(projectid, projectname, include_components):
         # there are no wikis in this project, so we return nothing
         return(content)
     elif type(all_wikis) is dict:
+        # this signifies an error
         if 'errors' in all_wikis:
             if all_wikis['status_code'] == 404:
                 # this is indicative of there being a page but no wiki content.
@@ -114,18 +116,30 @@ def get_project_markdown(projectid, projectname, include_components):
         else:
             raise Exception(f"Unknown data returned when trying to fetch wiki content: {all_wikis}")
 
-    project_wikis = []
-    # -- handle the home wiki. If add_titles is true, this should be the node title, not the wiki title
-    print("ALL WIKIS")
-    print(all_wikis)
-    home = all_wikis.pop(0)
-    homecontent = osf.osfapicall(home['links']['download'], return_json=False)
-    project_wikis.append([projectname, html.unescape(homecontent)])
-
+    #
+    # Unfortunately, OSF wikis are displayed alphabetically and are returned... I don't know how. So we' first process them as a dict and then sort them so that we render them in the document in the order they appear online. Odds are OSF users realize this and have made accommodations for it.
+    #
+    wikis = {}
     for wiki in all_wikis:
         wiki_title = wiki['attributes']['name']        
         wikicontent = osf.osfapicall(wiki['links']['download'], return_json=False)
-        project_wikis.append([wiki_title, html.unescape(wikicontent)])
+        wikis[wiki_title] = html.unescape(wikicontent).strip()
+        #print(wikicontent)
+
+    project_wikis = []
+    # -- handle the home wiki. If add_titles is true, this should be the node title, not the wiki title
+    if 'home' in wikis:
+        homecontent = wikis.pop('home')
+    elif 'Home' in wikis:
+        homecontent = wikis.pop('Home')
+    else:
+        raise Exception("Cannot identify home wiki. Is this possible?")
+    project_wikis.append([projectname, html.unescape(homecontent)])
+
+    # now go through the rest of the wikis in alphabetical order    
+    for wiki_title in sorted(wikis):
+        wiki_content = html.unescape(wikis[wiki_title])
+        project_wikis.append([wiki_title, wiki_content])
 
     content.append( (projectname, project_wikis) )
 
