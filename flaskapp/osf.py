@@ -12,7 +12,7 @@ abspath = re.compile(r'https?://', re.I)
 osf_server = "https://api.osf.io/v2"
 
 
-def parse_parameters(checkbox_params=None):
+def parse_parameters(param_items=None, checkbox_params=None):
     """ Render the url/form/data parameters to create a python dict of it.
     
     This ends up being different from calling `flask.request.values.to_dict()` because:
@@ -20,9 +20,13 @@ def parse_parameters(checkbox_params=None):
     - It handles wonky serialization of certain form elements. When `jQuery.serialize()` encounters checkboxes, it passes checked checkboxes as emptry strings, and False checkboxes are not included at all. So, we translate that to an accurate boolean.
 
     Args:
+        param_items (dict): A dictionary of parameter items to parse. The default, which is appropriate for flask-webpages contexts, is flask.request.values
         checkbox_params (list): A list of form items to translate. If they exist in the incoming parameter, their value will be set to true. If they do not exist, they will be added and set to False.  
     """
-    parameters = {k:None if v == '' else v for k,v in flask.request.values.items()}
+    if param_items is None:
+        param_items = flask.request.values
+
+    parameters = {k:None if v == '' else v for k,v in param_items.items()}
     #
     # jQuery.serialize is dumb. Checked checkboxes are encoded as empty hash values, and unchecked checkboxes are not present in the paraemeter list.
     # So we fix that here
@@ -31,7 +35,17 @@ def parse_parameters(checkbox_params=None):
             parameters[checkboxparam] = checkboxparam in parameters
     return(parameters)
 
-def osfapicall(url, reqparams=None, method='get', quiet=True, return_json=True):
+def osfapicall(url:str, reqparams:dict=None, method:str='get', quiet:bool=True, return_json:bool=True, access_token:str=None, debug:bool=True):
+    """ Shorthand call to the OSF API. Use this to curry a request on to OSF from a plugin or web app.
+    
+    Args:
+        url: The url search path for the *OSF API* - for example, "/nodes/38p21". This should not be a full URL.
+        reqparams: The parameters to send along with the request. How this is passed into the requests library call depends on the type of call - these are the URL arguments for a GET call or the data arguments for a POST call. At present, this function does not support passing both GET and DATA parameters separately into a POST.
+        method: The type of http method call. Default is GET.
+        access_token: If provided, the OSF access_token for a current session. If not provided, It will attempt to get it from the flask session.
+        debug: If True, print out extra information about the request.
+        
+    """
 
     if not url:
         raise Exception('must provide a url')    
@@ -42,7 +56,9 @@ def osfapicall(url, reqparams=None, method='get', quiet=True, return_json=True):
     if not abspath.match(url):
         url = osf_server + url
 
-    access_token = flask.session.get('access_token')
+    if not access_token:
+        access_token = flask.session.get('access_token')
+    
     if not access_token:
         return({
             'errors': [{'detail': "You must be logged in to OSF to perform this action."}],
@@ -50,7 +66,7 @@ def osfapicall(url, reqparams=None, method='get', quiet=True, return_json=True):
             'status_code': -1,
         })
     
-    if flask.request.url_root == 'http://localhost:3000/':
+    if debug:
         print(f"about to make {method} req:\n\t{url}\n\t{reqparams}\n\tToken: {access_token}", file=sys.stderr)
     if method == 'get':
         # 'params' is the payload, not 'data'
@@ -75,7 +91,7 @@ def osfapicall(url, reqparams=None, method='get', quiet=True, return_json=True):
         #
         # 401 - this happens when our access token is incorrect or expired
         #
-        if flask.request.url_root == 'http://localhost:3000/':
+        if debug:
             print("\t*** Request Respone: User is no longer logged in", file=sys.stderr)
 
         js = req.json()
@@ -95,7 +111,7 @@ def osfapicall(url, reqparams=None, method='get', quiet=True, return_json=True):
                 'params': reqparams,
             })
         error_response = f"Attempt to {method} {url} returned unexpected status code {req.status_code}.\n<h3>Debug Info</h3>\nResponse Status Code: {req.status_code}\nResponse Reason: {req.reason}\nResponse Headers: {req.headers}\nResponse Text: {req.text}"
-        if flask.request.url_root == 'http://localhost:3000/':
+        if debug:
             print("\t*** Response Failed: " + error_response, file=sys.stderr)
         raise Exception(error_response)
 

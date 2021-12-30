@@ -27,7 +27,7 @@ class DocX(BaseImporter):
         filepath = os.path.abspath(self.filename)
         moduledir = os.path.dirname(os.path.abspath(__file__))
         tempfile = self.hack_docx(filepath)
-        exc = subprocess.run(['pandoc', '-f', 'docx', '-t', 'markdown_mmd', tempfile], capture_output=True, check=True)
+        exc = subprocess.run(['pandoc', '-f', 'docx', '-t', 'markdown', '--wrap=preserve', tempfile], capture_output=True, check=True)
         os.remove(tempfile) #clean up the temp file
         return(self.clean_pandoc_markdown(exc.stdout.decode('utf-8')))
         
