@@ -4,6 +4,7 @@ import re
 import urllib.parse
 import html
 import sys
+import json 
 
 # get the local osf requests library
 from . import osf, google
@@ -169,7 +170,6 @@ def render_import(importer, parameters):
 
     # Now handle all the components
     for component_name, compwikis in allcomponents:
-        component_name = standardized_decode(component_name)
         if component_name in existingnodes:
             newactions = render_wikis(existingnodes[component_name], compwikis, overwrite=overwrite, deleteold=deleteold)
             for k,v in newactions.items():
@@ -189,7 +189,7 @@ def render_import(importer, parameters):
                     'category': 'software'
                 }
             )
-            # at the new component to the name lookup hash
+            # add the new component to the name lookup hash
             nodelookup[new_component['data']['id']] = component_name
             # add it to the action log
             componentactions['created'].append([ new_component['data']['id'], component_name])
@@ -274,7 +274,6 @@ def render_wikis(nodeid, wikis, overwrite=True, deleteold=False):
     # Go through the rest of the wikis / sections
     #
     for wikiname, text in wikis:   
-        wikiname = standardized_decode(wikiname)     
         if wikiname in existingwikis:
             # wiki exists - update it if we can overwrite, else ignore
             if not overwrite:
