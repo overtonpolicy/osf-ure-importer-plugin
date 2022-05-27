@@ -292,6 +292,8 @@ def render_wikis(nodeid, wikis, overwrite=True, deleteold=False):
                 'content': text,
                 'name': wikiname,
             }) 
+            if 'data' not in resp:
+                raise Exception(resp['errors'][0])
             actions['created'].append([nodeid, wikiname, resp['data']['id']])
 
     #
