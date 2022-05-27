@@ -1,15 +1,20 @@
-<div class="form-item">
-    <label class="form-label" for="osf-project-name">OSF Project</label>
-    <!-- This html is intended to be used with osf-project-select.js, which must be added to the header manually -->
-    <div class="form-element">
-        <div class="hide-after-login help-text">
-            You must log into your OSF account first.
-        </div>
-        <div id="osf-panel" style="display:none" class="osf-login-required" >
-            <input type="hidden" name="osf-project-id" value="" id="osf-project-id" />
-            <input type="text" name="osf-project-name" class="form-input autocomplete-panel" value="" id="osf-project-name" />            
-            <span id="osf-project-fetch-info" class="help-text" ></span>
-            <div class="help-text">Once your data finishes loading, start typing the OSF Project Name and select it when it appears.</div>
-        </div>
+<div class="row">
+    <div class="col">
+        <h3>OSF Project</h3>
+    </div>
+</div>
+
+<!-- This html is intended to be used with osf-project-select.js, which must be added to the header manually -->
+<div class="hide-after-login help-text row">
+    <div class="col">
+        You must log into your OSF account first.
+    </div>
+</div>
+<div id="osf-panel" style="display:none" class="osf-login-required row" >
+    <div class="col">
+        <input type="hidden" name="osf-project-id" value="" id="osf-project-id" />
+        <input type="text" name="osf-project-name" class="form-input autocomplete-panel" value="" id="osf-project-name" />            
+        <span id="osf-project-fetch-info" class="help-text" ></span>
+        <div class="help-text">Once your data finishes loading, start typing the OSF Project Name and select it when it appears.</div>
     </div>
 </div>

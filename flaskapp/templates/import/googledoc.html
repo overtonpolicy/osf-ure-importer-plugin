@@ -8,15 +8,17 @@
 {% endblock %}
 
 {% block import_content %}
-<div class="form-item">
-    <label class="form-label" for="google-document-name">Google Document</label>
-    {% include "partials/googleauth-widget.html" %}
-    <div class="google-login-required">
-        <input type="hidden" name="google-document-id" value="" id="google-document-id" />
-        <input type="text" name="google-document-name" class="form-input autocomplete-panel" value="" id="google-document-name" />
-        <input type="checkbox" name="google-include-shared" id="google-include-shared" /><span title="If you want to search for a document in a Shared Drive, check here">Use Shared Drives</span>            
-        <span id="google-project-fetch-info" class="help-text" ></span>
-        <div class="help-text">Start typing the Google Document and select it when it appears. Check <i>Use Shared Drives</i> if you have a <b>dedicated</b> Shared/Team Drive - this doesn't apply to files simply shared with others. </div>
+<div class="row pt-3">
+    <div class="col">
+        <h3>Google Document</h3>
     </div>
+</div>
+{% include "partials/googleauth-widget.html" %}
+<div class="row google-login-required">
+    <input type="hidden" name="google-document-id" value="" id="google-document-id" />
+    <input type="text" name="google-document-name" class="form-input autocomplete-panel" value="" id="google-document-name" />
+    <input type="checkbox" name="google-include-shared" id="google-include-shared" /><span title="If you want to search for a document in a Shared Drive, check here">Use Shared Drives</span>            
+    <span id="google-project-fetch-info" class="help-text" ></span>
+    <div class="help-text">Start typing the Google Document and select it when it appears. Check <i>Use Shared Drives</i> if you have a <b>dedicated</b> Shared/Team Drive - this doesn't apply to files simply shared with others. </div>
 </div>
 {% endblock %}

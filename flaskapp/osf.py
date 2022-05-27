@@ -76,8 +76,18 @@ def osfapicall(url:str, reqparams:dict=None, method:str='get', quiet:bool=True, 
             headers={"Authorization" : "Bearer " + access_token},
             params=reqparams,
         )
-    elif method in ('post', 'delete'):
+    elif method == 'delete':
         # 'data' is the payload. 'params' is available for explicit url params, but this doesn't exist in the OSF API
+        req = getattr(requests, method)(
+            url,
+            headers={"Authorization" : "Bearer " + access_token},
+            data=reqparams,
+        )    
+    elif method == 'post':
+        # 'data' is the payload. 'params' is available for explicit url params, but this doesn't exist in the OSF API
+        import json
+        if reqparams:
+            reqparam = json.dumps(reqparams)
         req = getattr(requests, method)(
             url,
             headers={"Authorization" : "Bearer " + access_token},

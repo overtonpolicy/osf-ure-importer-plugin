@@ -169,7 +169,6 @@ def render_import(importer, parameters):
 
     # Now handle all the components
     for component_name, compwikis in allcomponents:
-        component_name = standardized_decode(component_name)
         if component_name in existingnodes:
             newactions = render_wikis(existingnodes[component_name], compwikis, overwrite=overwrite, deleteold=deleteold)
             for k,v in newactions.items():
@@ -274,7 +273,6 @@ def render_wikis(nodeid, wikis, overwrite=True, deleteold=False):
     # Go through the rest of the wikis / sections
     #
     for wikiname, text in wikis:   
-        wikiname = standardized_decode(wikiname)     
         if wikiname in existingwikis:
             # wiki exists - update it if we can overwrite, else ignore
             if not overwrite:
@@ -293,6 +291,8 @@ def render_wikis(nodeid, wikis, overwrite=True, deleteold=False):
                 'content': text,
                 'name': wikiname,
             }) 
+            if 'data' not in resp:
+                raise Exception(resp['errors'][0])
             actions['created'].append([nodeid, wikiname, resp['data']['id']])
 
     #
