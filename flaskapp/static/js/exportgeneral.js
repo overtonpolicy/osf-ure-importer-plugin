@@ -1,10 +1,13 @@
 
 function show_export_results(data, status, jqXHR){
-    $('#wait-dialog').dialog("close");
-    $('#result-header').html('<h1>Export Complete</h1><ul><li><a href="" onclick=\'$("#wait-dialog").dialog("close")\'>Click Here</a> to close this window and return to the exporter.</li><li><a href="http://osf.io/'+$('#osf-project-id').val()+'/">Click Here</a> to leave the exporter and go to the '+$('#osf-project-name').val()+' Project.</li><li><a href="/">Click Here</a> to return to the URE Methods extensions index.</li></ul>')
+    bootstrap.Modal.getInstance(document.getElementById('wait-dialog')).hide();
 
-    //$('#result-message').html(div)
-    $('#result-dialog').dialog('open');
+    $('#result-header').html('Export Complete');
+    $('#result-preamble').html('<p class="lead"><a href="" onclick=\'bootstrap.Modal.getInstance(document.getElementById("result-dialog")).hide()\'>Click Here</a> to close this window and return to the importer.</p><p class="lead"><a href="http://osf.io/'+$('#osf-project-id').val()+'/">Click Here</a> to leave the exporter and go to the '+$('#osf-project-name').val()+' Project.</p><p class="lead"><a href="/">Click Here</a> to return to the URE Methods extensions index.</p>')
+    $('#result-details').html('');
+
+    bootstrap.Modal.getInstance(document.getElementById('result-dialog')).hide();
+
     var disposition = jqXHR.getResponseHeader('Content-Disposition');
     var filename;
     if (disposition && disposition.indexOf('attachment') !== -1) {
@@ -33,12 +36,15 @@ function show_export_results(data, status, jqXHR){
 
 
 function export_to_osf(){ 
-    $('#wait-dialog').dialog('open');
+    bootstrap.Modal.getInstance(document.getElementById('wait-dialog')).show();
+
     $.ajax({
         url: window.location.pathname, // the server handles posts as form input
         data: $('#project-export').serialize(),
         method: 'POST',
-        error: function(d,s,x){ $('#wait-dialog').dialog('close'); ureAjaxError(d,s,x)},            
+        error: function(d,s,x){ 
+            bootstrap.Modal.getInstance(document.getElementById('wait-dialog')).hide(); ureAjaxError(d,s,x)
+        },            
         success: show_export_results,
         processData: 'false',
         responseType: 'blob',
@@ -53,10 +59,12 @@ function export_to_osf(){
 $(document).ready(function () {
     $('#project-export')
         .submit(function(e){e.preventDefault()}) // disable default action
-        .validate({
+        .validate({            
             ignore:[],
+            errorClass: 'is-invalid',
             errorPlacement: function(error, element){
-                var parent = element.parent();                
+                var parent = element.parent(); 
+                error.addClass('invalid-feedback');                             
                 parent.append(error);
                 parent[0].scrollIntoView();                
             },

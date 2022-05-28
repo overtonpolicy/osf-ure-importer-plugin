@@ -1,5 +1,9 @@
 $(document).ready(function () {
-
+    
+    $('.modal').each(function(){
+        var modal = new bootstrap.Modal(this);
+    });
+    /*
     // Dialog-ify all the dialogs - automatically adds a message div.
     $('.response-dialog').each(function(){
         var diag = jQuery(this);
@@ -20,6 +24,7 @@ $(document).ready(function () {
             buttons: buttons,
         });
     });
+    */
 
     // anything with form-options group should be accordian-ized
     $('.form-options').each(function(){
@@ -47,21 +52,26 @@ $(document).ready(function () {
  * @param {string|array} error_message - The message(s) to display.
  */
  function UREErrorDialog(error_message){
-
-    var errdiag = $('#error-dialog');
+    var errdiag = document.getElementById('error-dialog');
     
     if(!errdiag){
         alert(error_message);
         return;
     }
-    var msgdiv = errdiag.find('.message');
-    if(typeof(error_message) == 'array'){
-        msgdiv.html(data.error_message[0].detail);
-    }
-    else{
-        msgdiv.html(error_message);
-    }
-    errdiag.dialog('open');
+    var msgdiv = $('#error-message');
+    var messagehtml = '<div class="lead">';
+    if(typeof(error_message) == 'array')
+        messagehtml += error_message[0].detail;
+    else
+        messagehtml += error_message;
+    messagehtml += "</div>";
+
+    messagehtml += '<div class="text-muted mt-4">If you believe this error is a problem and needs attention, please report it to the <a href="mailto:kevin@uremethods.org">URE Methods tech support team.</div>';
+
+    msgdiv.html(messagehtml);
+    
+    var modaldiag = new bootstrap.Modal(errdiag);
+    modaldiag.show();
 }
 
 
@@ -69,12 +79,13 @@ $(document).ready(function () {
  * A generic function that can be added as the failure response for any ajax call - really just processes the data and deleges to the error dialog.
  */
  function ureAjaxError(data, status, xhr){
-    debugger;
     var messages;
     if(typeof(data) == "string")
         messages = data;
     if(data.responseText)
         messages = data.responseText;
+    else if(data.statusText && data.status)
+        messages = "Server returned status code " + data.status + ": " + data.statusText;
     else if(data.errors){
         messages = [];
         data.errors.forEach(function(err){
@@ -92,7 +103,6 @@ $(document).ready(function () {
         messages = data.message;
     else if(data.error)
         messages = data.error;
-    //debugger;
     UREErrorDialog(messages);
 }
 

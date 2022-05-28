@@ -35,15 +35,14 @@ function updateProjectSelect(nodes) {
             $('#osf-project-id').val(ui.item.id);
         },
     });
+    $('#osf-project-name').prop('placeholder', 'Start typing and select the target project.');
     $('#osf-project-fetch-info').html('<img src="/static/images/mcol_tick.png" height=20px style="vertical-align:middle"/>');
 }
 
 $(document).ready(function () {
-    $('#osf-project-fetch-info').html('<div class="dot-pulse" style="display:inline-block;margin-left:20px"></div>');
     $('#osf-project-name').prop('disabled', true);
 
     osf.addLoginCallback(function(){
-    	$('#osf-project-fetch-info').html('<div class="dot-pulse" style="display:inline-block;margin-left:20px"></div>');
     	$('#osf-project-name').prop('disabled', true);
         
 	osf.getMyProjects({success:updateProjectSelect});

@@ -263,7 +263,7 @@ class OSFAuth {
                             url: url,
                             method: 'POST',
                             data: params,                            
-                            error: failure,
+                            error: error,
                             success: function(resp){
                                 if(resp.errors)
                                     return ureAjaxError(resp);

@@ -46,8 +46,11 @@ $(document).ready(function () {
         .submit(function(e){e.preventDefault()}) // disable default action
         .validate({
             ignore:[],
+            errorClass: 'is-invalid',
             errorPlacement: function(error, element){
-                var parent = element.parent();                
+                var parent = element.parent();  
+                // add the invalid-feedback class to the element
+                error.addClass('invalid-feedback');              
                 parent.append(error);
                 parent[0].scrollIntoView();                
             },

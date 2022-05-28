@@ -13,8 +13,9 @@
 <div id="osf-panel" style="display:none" class="osf-login-required row" >
     <div class="col">
         <input type="hidden" name="osf-project-id" value="" id="osf-project-id" />
-        <input type="text" name="osf-project-name" class="form-input autocomplete-panel" value="" id="osf-project-name" />            
-        <span id="osf-project-fetch-info" class="help-text" ></span>
-        <div class="help-text">Once your data finishes loading, start typing the OSF Project Name and select it when it appears.</div>
+        <div class="input-group mb-3">
+            <span id="osf-project-label" class="input-group-text">OSF Project</span>
+            <input type="text" id="osf-project-name" name="osf-project-name" class="form-control autocomplete-panel" placeholder="Please wait until OSF projects load..." aria-label="XXX" aria-describedby="osf-project-label" value=""  />
+          </div>          
     </div>
 </div>

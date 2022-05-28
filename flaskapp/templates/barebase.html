@@ -1,74 +1,118 @@
 <!doctype html>
 <html lang="en">
+
 <head>
     {% block meta %}
-        <!-- Required meta tags -->
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     {% endblock %}
     {% block head %}
-        <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 
-        {% block css %}
-            <!-- Bootstrap CSS -->
-            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-            <!-- jQuery UI CSS -->        
-            <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='ext/jquery-ui/jquery-ui.min.css')}}" />
+    {% block css %}
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <!-- jQuery UI CSS -->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='ext/jquery-ui/jquery-ui.min.css')}}" />
 
-            <link rel="stylesheet" href="{{url_for('static', filename='ext/three-dots/three-dots.min.css') }}">
+    <link rel="stylesheet" href="{{url_for('static', filename='ext/three-dots/three-dots.min.css') }}">
 
-            <!-- link rel="stylesheet" href="{{ url_for('static', filename='css/general.css') }}" -->            
-        {% endblock %}
+    <!-- link rel="stylesheet" href="{{ url_for('static', filename='css/general.css') }}" -->
+    {% endblock %}
 
-        {%block javascript %}
+    {%block javascript %}
 
-        <!-- bootstrap 5 js -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-        <!-- jQuery js -->
-        <script type="text/javascript" src="{{ url_for('static', filename='ext/jquery.min.js') }}"></script>
-        <script type="text/javascript" src="{{ url_for('static', filename='ext/jquery-ui/jquery-ui.min.js') }}"></script>
+    <!-- bootstrap 5 js -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+    <!-- jQuery js -->
+    <script type="text/javascript" src="{{ url_for('static', filename='ext/jquery.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='ext/jquery-ui/jquery-ui.min.js') }}"></script>
 
-        {# our general javascript #}
-        <script type="text/javascript" src="{{ url_for('static', filename='js/general.js') }}"></script>
-        {% endblock %}
-    <title>{% block title %}{% endblock %}</title>    
+    {# our general javascript #}
+    <script type="text/javascript" src="{{ url_for('static', filename='js/general.js') }}"></script>
+    {% endblock %}
+    <title>{% block title %}{% endblock %}</title>
     {% endblock %}
 </head>
 <section class="content">
+
     <body>
         <div id="content" class="m-5 container border bg-light">
-        	{% block topmatter %}{% endblock %}
-		    {% block content %}{% endblock %}
-        	{% block footer %}{% endblock %}
-	    </div>
+            {% block topmatter %}{% endblock %}
+            {% block content %}{% endblock %}
+            {% block footer %}{% endblock %}
+        </div>
     </body>
 </section>
 
 <section class="dialogs">
-    <div id="error-dialog" title="Error in Form" class="response-dialog">
-        <p>There is an error you need to fix.</p>
-        <div id="error-message"></div>
+    <div class="modal fade" id="error-dialog" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="error-title" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="error-title">Error in Form</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div id="error-message" class="modal-body"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div id="wait-dialog" title="Please Wait" class="response-dialog no-buttons" width=500 >
-        <h1 class="dialog-heading">Please wait.</h1>
-        <center>
-            <div id="wait-beacon" class="dot-typing" ></div>
-        </center>
-        <p class="dialog-text">We are processing your request. It may take a few minutes. You <b><i>should</i></b> get an error message if it fails.</p>
-        <p><span style="font-size: 0.75em; color:#999"><i>But also don't forget we are testing here, so don't spend all day staring at this box before your suspect it crashed. We recommend trying again. Please <a href="mailto:kevin@uremethods.org">contact the URE Methods tech support if it persists.</a></i></span></p>
+    <div class="modal fade" id="wait-dialog" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="wait-title" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="wait-title">Please wait.</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="row mt-3 mb-4">
+                        <center>
+                            <div id="wait-beacon col" class="dot-typing"></div>
+                        </center>
+                    </div>
+                    <div class="row my-3">
+                        <div class="col">We are processing your request. It may take a few minutes. You
+                            <b><i>should</i></b> get an error message if it fails.
+                        </div>
+                    </div>
+                    <div class="row my-3">
+                        <div class="col text-muted"><i>But also don't forget we are testing here, so don't spend all day
+                                staring at this box before your suspect it crashed. We recommend trying again. Please <a
+                                    href="mailto:kevin@uremethods.org">contact the URE Methods tech support if it
+                                    persists.</a></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div id="result-dialog" title="Results" class="response-dialog">
-        <div id="result-header"></div>
-        <div id="result-message"></div>
-        <div id="result-footer"></div>
-    </div>
 
-    <div id="confirm-dialog" title="Confirm Choice" class="response-dialog">
-        <h1>Are you sure?</h1>
-        <p>This will completely wipe the project clean before importing. Any changes, editors, or components that your
-            colleagues created will be destroyed. This is not reversible.</p>
+    <div class="modal fade" id="result-dialog" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="result-title" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="result-header"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div id="results-content" class="modal-body p-4">
+                    <div id="result-preamble"></div>
+                    <div id="result-details"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
     </div>
 </section>
+
 </html>
