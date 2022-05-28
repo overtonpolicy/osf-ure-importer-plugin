@@ -84,8 +84,12 @@ $(document).ready(function () {
         messages = data;
     if(data.responseText)
         messages = data.responseText;
-    else if(data.statusText && data.status)
-        messages = "Server returned status code " + data.status + ": " + data.statusText;
+    else if(data.statusText && data.status){
+        messages = "<div>Server returned status code " + data.status + ": " + data.statusText + "</div>";
+        if(data.status == 400){
+            messages += "<div class='text-muted'>Sometimes the service providers will time out or log you out of your account on the remote end, leading to this error. If this error has only happened once, please Log out of OSF any other services and try again</div>" 
+        }
+    }
     else if(data.errors){
         messages = [];
         data.errors.forEach(function(err){
