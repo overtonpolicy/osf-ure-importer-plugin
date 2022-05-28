@@ -20,116 +20,164 @@
         {% block export_content %}
         {% endblock %}
 
-        <div id="doc-options" class="form-options">
-            <h3>Document Option</h3>
-            <div>
-                <div class="form-item">
-                    <label>
-                        Export Format
-                        <div class="help-text">
+        <div class="accordian mt-3" id="export-accordian">
+            <div id="doc-options" class="accordian-item">
+                <h2 class="accordian-header" id="doc-options-header">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#doc-options-item" aria-controls="doc-options-item"
+                        aria-expanded="true">
+                        Document Options
+                    </button>
+                </h2>
+                <div id="doc-options-item" class="accordion-collapse collapse show"
+                aria-labelledby="doc-options-header">
+                <div class="accordion-body">
+                    <div class="row">
+                        <div class="col h4">Export Format</div>
+                    </div>
+                    <div class="row">
+                        <div class="col text-muted">
                             Select the document format for the output.
                         </div>
-                    </label>
-                    <div class="form-radio">
-                        <input type="radio" id="export-docx" name="export-format" value="docx" checked />
-                        <label for="export-docx">Microsoft Word</label>
                     </div>
-                    <div class="form-radio">
-                        <input type="radio" id="export-odt" name="export-format" value="odt" />
-                        <label for="export-odt">OpenDocument Format</label>
+                    <div class="row  form-check">
+                        <div class="col-sm-1">
+                            <input type="radio" class="form-check-input" id="export-docx" name="export-format" value="docx" checked />
+                        </div>
+                        <div class="col">
+                            <label class="form-check-label" for="export-docx">Microsoft Word</label>
+                        </div>
                     </div>
-                    <div class="form-radio">
-                        <input type="radio" id="export-pdf" name="export-format" value="pdf" />
-                        <label for="export-odt">PDF Document</label>
+                    <div class="row  form-check">
+                        <div class="col-sm-1">
+                            <input type="radio" class="form-check-input" id="export-odt" name="export-format" value="odt" />
+                        </div>
+                        <div class="col">
+                            <label class="form-check-label" for="export-odt">OpenDocument Format</label>
+                        </div>
                     </div>
-                    <div class="form-radio">
-                        <input type="radio" id="export-md" name="export-format" value="md" />
-                        <label for="export-md">Markdown Text</label>
+                    <div class="row  form-check">
+                        <div class="col-sm-1">
+                            <input type="radio" class="form-check-input" id="export-pdf" name="export-format" value="pdf" />
+                        </div>
+                        <div class="col">
+                            <label class="form-check-label" for="export-pdf">PDF Document</label>
+                        </div>
                     </div>
-                </div>
-                <div class="form-item">
-                    <div class="form-element">
-                        <input type="checkbox" id="include-components" value="" name="include-components"
-                            class='inline-input' CHECKED />
-                        <label class="inline-label" for="include-components">
+                    <div class="row  form-check">
+                        <div class="col-sm-1">
+                            <input type="radio" class="form-check-input" id="export-md" name="export-format" value="md" />
+                        </div>
+                        <div class="col">
+                            <label class="form-check-label" for="export-md">Markdown Text</label>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col h4">Additional Options</div>
+                    </div>
+                    <div class="row form-check">
+                        <div class="col-sm-1">
+                            <input type="checkbox" id="include-components" value="" name="include-components"
+                            class='form-check-input' CHECKED />
+                        </div>
+                        <div class="col">
+                            <label class="inline-label" for="include-components">
                             Include Subcomponents
-                            <div class="help-text">
+                            <div class="text-muted">
                                 Include wikis from subcomponents.
                             </div>
-                        </label>
+                            </label>
+                        </div>
                     </div>
-                </div>
-                <div class="form-item">
-                    <div class="form-element">
-                        <input type="checkbox" id="auto-titles" value="" name="auto-titles" class='inline-input' CHECKED=CHECKED />
-                        <label class="inline-label" for="add-component-titles">
+                    <div class="row  form-check">
+                        <div class="col-sm-1">
+                            <input type="checkbox" id="auto-titles" value="" name="auto-titles" class='form-check-input' CHECKED=CHECKED />
+                        </div>
+                        <div class="col">
+                            <label class="inline-label" for="add-component-titles">
                             Add titles as necessary.
-                            <div class="help-text">
+                            <div class="text-muted">
                                 Add titles if the wiki does not start with one. This is useful if headings may not be consistent.  
                             </div>
-                        </label>
+                            </label>
+                        </div>
                     </div>
-                </div>
-                <div class="form-item">
-                    <div class="form-element">
-                        <input type="checkbox" id="add-component-titles" value="" name="add-component-titles" class='inline-input' />
-                        <label class="inline-label" for="add-component-titles">
+                    <div class="row  form-check">
+                        <div class="col-sm-1">
+                            <input type="checkbox" id="add-component-titles" value="" name="add-component-titles" class='form-check-input' />
+                        </div>
+                        <div class="col">
+                            <label class="inline-label" for="add-component-titles">
                             Always add <i>Component</i> titles.
-                            <div class="help-text">
+                            <div class="text-muted">
                                 Always add the component title. This is useful if the component name doesn't appear on the home wiki page, but other headings might.
                             </div>
-                        </label>
+                            </label>
+                        </div>
                     </div>
-                </div>
-                <div class="form-item">
-                    <div class="form-element">
-                        <input type="checkbox" id="add-wiki-titles" value="" name="add-wiki-titles" class='inline-input' />
-                        <label class="inline-label" for="add-wiki-titles">
+                    <div class="row  form-check">
+                        <div class="col-sm-1">
+                            <input type="checkbox" id="add-wiki-titles" value="" name="add-wiki-titles" class='form-check-input' />
+                        </div>
+                        <div class="col">
+                            <label class="inline-label" for="add-wiki-titles">
                             Always add <i>Wiki</i> titles.
-                            <div class="help-text">
+                            <div class="text-muted">
                                 Always add the wiki title. This is useful if wiki names don't appear in the text, but other headings might.
                             </div>
-                        </label>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="break-options" class="accordian-item">
+                <h2 class="accordian-header" id="break-options-header"><button class="accordion-button" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#break-options-item" aria-controls="break-options-item"
+                    aria-expanded="true">
+                    Break Options
+                </button>
+            </h2>
+            <div id="break-options-item" class="accordion-collapse collapse show"
+                aria-labelledby="break-options-header">
+                <div class="accordion-body">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <select id="wiki-break-policy" name="wiki-break-policy" class="form-select form-select-md">
+                                <option value="" SELECTED>No break</option>
+                                <option value="page">Page Break</option>
+                                <option value="section">Section Break</option>
+                            </select>
+                        </div>  
+                        <div class="col">
+                            Break Between Wikis
+                            <div class="text-muted">
+                                In the exported document, what type of break would you like inserted between Wiki
+                                Pages?
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <select id="component-break-policy" name="component-break-policy" class="form-select form-select-md">
+                                <option value="">No break</option>
+                                <option value="page" SELECTED>Page Break</option>
+                                <option value="section">Section Break</option>
+                            </select>
+                        </div>
+                        <div class="col">
+                            Break Between Components
+                            <div class="text-muted">
+                                In the exported document, what type of break would you like inserted between
+                                subcomponents?
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div id="break-options" class="form-options">
-            <h3>Break Options</h3>
-            <div>
-                <div class="form-item">
-                    <label>
-                        Break Between Wikis
-                        <div class="help-text">
-                            In the exported document, what type of break would you like inserted between Wiki
-                            Pages?
-                        </div>
-                    </label>
-                    <select id="wiki-break-policy" name="wiki-break-policy">
-                        <option value="" SELECTED>No break</option>
-                        <option value="page">Page Break</option>
-                        <option value="section">Section Break</option>
-                    </select>
-                </div>
-                <div class="form-item">
-                    <label>
-                        Break Between Components
-                        <div class="help-text">
-                            In the exported document, what type of break would you like inserted between
-                            subcomponents?
-                        </div>
-                    </label>
-                    <select id="component-break-policy" name="component-break-policy">
-                        <option value="">No break</option>
-                        <option value="page" SELECTED>Page Break</option>
-                        <option value="section">Section Break</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-        <div class="form-item">
-            <div style="width:550px">
-                <input type="submit" id="export-button" value="Export">
+        <div class="row">
+            <div class="pb-4 pt-3 px-4">
+                <input type="submit" class="btn btn-primary btn-lg" id="export-button" value="Export">
             </div>
         </div>
     </fieldset>

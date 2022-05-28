@@ -5,32 +5,56 @@
 <script type="text/javascript" src="{{ url_for('static', filename='js/importdocx.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='ext/simpleUpload.min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/simpleUploadClient.js') }}"></script>
+<style>
+.drag-n-drop-box {
+	display: inline-block;
+	width: 85px;
+	height: 85px;
+	background-color: white;
+	border: 4px dashed #B5B5B5;
+	color: #B5B5B5;
+	font-size: 50px;
+	text-align: center;
+    vertical-align: middle;
+}
+
+</style>
 {% endblock %}
 
 {% block import_content %}
-<div class="form-item">
 
-    <label class="form-label" for="docx-file-div">
-        Microsoft Word Document
-        <div class="help-text">
-            Upload your document here. Note that only modern (<b>docx</b>) Word Documents are supported. Old style "doc" files will not process.
-          </div>
-    </label>    
-    <div class="form-element">
-        <div id="docx-upload-div" class="form-highlight">
-            <label for="upload-docx">
-                <div class="drag-n-drop-box">+</div>
-            </label>
-            <div class="fileselected-label">
-                <div>File selected: <span id="filename" style="background: #ffff00">none</span></div>
-                <div>Upload Status: <span id="upload-status"  style="background: #ffff00"></span></div>
-                <div id="upload-progress"></div>
-                <input type="file" id="upload-docx" name="upload-docx" class='simple-upload' style="display:none" onchange="$('#docx-upload-div.file_name').text(this.value);" />
-                <input type="hidden" id="fileid" name="fileid" value="" />
-            </div>
-            
-        </div>
+<div class="row pt-3">
+    <div class="col">
+        <h3>Microsoft Word Document</h3>
+    </div>
+</div>
+<div class="row">
+    <div class="col text-muted">
+        Upload your document here. Note that only modern (<b>docx</b>) Word Documents are supported. Old style "doc" files will not process.
     </div>
 </div>
 
+<div class="row">
+    <div id="docx-upload-div" class="col">
+        <label for="upload-docx">
+            <div class="drag-n-drop-box m-4">+</div>
+        </label>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-3 h6">Filename:</div>
+    <div class="col" id="filename"></div>
+</div>
+<div class="row">
+    <div class="col-sm-3 h6">Upload Status:</div>
+    <div class="col" id="upload-status"></div>
+</div>
+<div class="row">
+    <div class="col">
+        <div id="upload-progress"></div>
+        <input type="file" id="upload-docx" name="upload-docx" class='simple-upload' style="display:none" onchange="$('#docx-upload-div.file_name').text(this.value);" />
+        <input type="hidden" id="fileid" name="fileid" value="" />
+    </div>    
+</div>
+            
 {% endblock %}

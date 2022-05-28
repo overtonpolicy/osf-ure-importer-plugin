@@ -1,21 +1,24 @@
 
 function import_to_osf(){
-    $('#wait-dialog').dialog('open');
+    var modaldiag = bootstrap.Modal.getInstance(document.getElementById('wait-dialog'));
+    modaldiag.show();
+
     osf.local({
         url: window.location.pathname, // the server handles posts as form input
         params: $('#document-import').serialize(),
         success: show_import_results,
         error: function(data){
-            $('#wait-dialog').dialog("close");
+            bootstrap.Modal.getInstance(document.getElementById('wait-dialog')).hide();
             ureAjaxError(data);
         }
     });
 }
 
 function show_import_results(data){
-    $('#wait-dialog').dialog("close");
-    
-    $('#result-header').html('<h1>Import Complete</h1><ul><li><a href="" onclick=\'$("#wait-dialog").dialog("close")\'>Click Here</a> to close this window and return to the importer.</li><li><a href="http://osf.io/'+data.rootnodeid+'/">Click Here</a> to leave the importer and go to the '+data.rootnodename+' Project.</li><li><a href="/">Click Here</a> to return to the URE Methods extensions index.</li></ul><p class="help-text">Below is a list of completed actions. Click on the links to open a <i>new window</i> for the page.</p><p>If you accidentally overwrote a wiki page, you can <b>revert</b> it to the old <b>Version</b> via the wiki page. If you accidentally deleted a wiki or component, it cannot be recovered.</p>')
+    var modaldiag = bootstrap.Modal.getInstance(document.getElementById('wait-dialog'));
+    modaldiag.hide();
+    $('#result-header').html('Import Complete')
+    $('#result-preamble').html('<p class="lead"><a href="" onclick=\'bootstrap.Modal.getInstance(document.getElementById("result-dialog")).hide()\'>Click Here</a> to close this window and return to the importer.</p><p class="lead"><a href="http://osf.io/'+data.rootnodeid+'/">Click Here</a> to leave the importer and go to the '+data.rootnodename+' Project.</p><p class="lead"><a href="/">Click Here</a> to return to the URE Methods extensions index.</p><p class="text-muted">Below is a list of completed actions. Click on the links to open a <i>new window</i> for the page.</p><p class="text-muted>If you accidentally overwrote a wiki page, you can <b>revert</b> it to the old <b>Version</b> via the wiki page. If you accidentally deleted a wiki or component, it cannot be recovered.</p>')
     var div = $('<div></div>');
 
     ['ignored', 'deleted', 'updated', 'created'].forEach(function(type){
@@ -37,7 +40,7 @@ function show_import_results(data){
     ['ignored', 'deleted',  'updated', 'created'].forEach(function(type){
         var actions = data.wikiactions[type];
         if(actions && actions.length){
-            div.append('<h2>Wikis ' + type[0].toUpperCase() + type.slice(1)+ '</h2>');
+            div.append('<h4 class="mt-3">Wikis ' + type[0].toUpperCase() + type.slice(1)+ '</h4>');
             var ul = div.append('<ul></ul>')
             actions.forEach(function(comp){
                 if(type == 'deleted')
@@ -46,7 +49,7 @@ function show_import_results(data){
             });
         }
     });
-    $('#result-message').html(div)
-    $('#result-dialog').dialog('open');
+    $('#result-details').html(div)
+    bootstrap.Modal.getInstance(document.getElementById('result-dialog')).show();
     console.log("Import complete")
 }
