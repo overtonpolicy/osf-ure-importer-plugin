@@ -1,0 +1,16 @@
+
+.article-authors{
+    color: #555;
+    font-size: .9em;
+}
+#search-results{
+    width: 100%;
+}
+/* Highlight on hover */
+table#search-results.dataTable tbody tr:hover {
+    background-color: #ffa;
+}
+   
+table#search-results.dataTable tbody tr:hover > .sorting_1 {
+    background-color: #ffa;
+}

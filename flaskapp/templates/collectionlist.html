@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <script type="text/javascript" src="{{ url_for('static', filename='ext/jquery.min.js') }}"></script>
+</head>
+<body>
+    {% include "partials/page-navigation.html" %}
+    {# 
+        This provides a single-page example of the collection list, allowing testing and viewing of the collection list before deployment. Because the collection list is only an element of the main page, however, this needs to be copied into the HTML Code of the front page. 
+
+        To deploy as a component of a Wordpress webpage:
+        1. Create an HTML custom element in Elementor
+        2. Copy the inline javascript at the end of the script block to the Custom JS for the page. 
+            i. In Elementor, edit the page of interest.
+            ii. Go to Page settings (gear at bottom left - not the "site settings")
+            iii. Go to Advanced
+            iv. Custom JS
+        3. Copy all of the html below this comment block and above the comment block at the end, EXCLUDING the inline script at the end of the script block.     
+        4. Update the hrefs in all the js and css entries to point to a correct location. Because the domains in which these are located are testing.uremethods.org or plugins.uremethods.org, the relative urls will not work in final deployment.
+    #}
+
+
+    <link rel="stylesheet" type="text/css" href="/static/ext/jquery-datatables/datatables.min.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/urewordpress.css" />  
+
+    <script type="text/javascript" src="/static/ext/jquery-ui/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="/static/ext/jquery-datatables/datatables.min.js"></script>
+
+    <script type="text/javascript">
+    /**** Custom JS block - add this to Custom JS, do not add this to the HTML Element in wordpress *****/
+    jQuery(document).ready(function () {
+
+        jQuery('#osf-collection').dataTable({
+            lengthChange: false,
+            pageLength: 10,
+            responsive:true,
+            pagingType: "simple",
+            "order": [[ 0, "desc" ]],
+            "columns": [
+                { "type": 'date', "visible": false },
+                { "className": "article-link" },
+                { "className": "article-authors" },
+                null,
+            ]
+        });
+
+        jQuery.getJSON("/static/data/collectioninfo.json", function (data) {
+                var collectiontable = jQuery('#osf-collection').DataTable();
+                collectiontable.draw(false);
+                data.forEach(function(node){
+                    var date = new Date(node.date_modified);
+                    collectiontable.row.add([
+                    (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear(),
+                        '<a href="' + node.url + '" target="_blank"><div class="article-title">' + node.title + '</div><div class="article-date"><label>Last Modified</label>: '+(date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear()+'</div></a>',
+                        node.contributors.map(x => '<a href="'+x.url+'" target="_blank">' + x.name + '</a>').join(', '),
+                        (node.program_area ? '<span class="program-area">' + node.program_area + '</span>' : '') +
+                        (node.collected_type ? '<span class="collected-type">' + node.collected_type + '</span>' : ''),
+                    ]);
+                });
+                collectiontable.columns.adjust().draw();
+            }
+        ).fail(function(jqxhr, textStatus, error){
+            alert("Failed to get collection details. Please report this error to kevin.crouse@rutgers.edu")
+        });
+
+    });
+    /***** END CUSTOM JS BLOCK  ******/
+    </script>
+    
+
+    <div id="osf-collection-list">
+    <table id="osf-collection" class="display">
+        <thead>
+            <tr>
+            <th class="date-col">Last Modified</th>
+            <th class="title-col">Project</th>
+                <th class="author-col">Authors</th>
+        <th class="program-col"><span class="program-area">Program Area</span><span class="collected-type">Method Type</span></th>
+            </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+    </table>
+    </div>  
+
+{# When adding to wordpress, do not include the end tags below this line #}
+</body>
+</html>

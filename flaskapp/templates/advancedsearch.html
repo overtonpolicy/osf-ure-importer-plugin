@@ -1,0 +1,63 @@
+{% extends 'barebase.html' %}
+
+{%block javascript %}
+{{ super() }}
+<script type="text/javascript" src="{{ url_for('static', filename='ext/jquery-ui/jquery-ui.min.js') }}"></script>
+<script type="text/javascript"
+    src="{{ url_for('static', filename='ext/jquery-datatables/datatables.min.js') }}"></script>
+<script type="text/javascript"
+    src="{{ url_for('static', filename='ext/jquery-datatables/Responsive-2.2.6/js/dataTables.responsive.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/general.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/ure-search.js') }}"></script>
+{% endblock %}
+
+{%block css %}
+{{ super() }}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='ext/jquery-ui/jquery-ui.min.css' ) }}" />
+<link rel="stylesheet" type="text/css" href="{{ url_for('static',
+    filename='ext/jquery-datatables/DataTables-1.10.22/css/jquery.dataTables.min.css' ) }}" />
+<link rel="stylesheet" type="text/css" href="{{ url_for('static',
+    filename='ext/jquery-datatables/Responsive-2.2.6/css/responsive.dataTables.min.css' ) }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/urewordpress.css' ) }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/advancedsearch.css' ) }}" />
+
+{% endblock %}
+
+{% block topmatter %}
+<div class="row pt-3">
+    <div class="col">
+        {% include "partials/page-navigation.html" %}
+    </div>
+</div>
+<h2 class="m-3">Search</h2>
+<div class="text-muted mx-5 mb-3">
+    This is the advanced search page. Enter in any freeform text that you would like. Results will include URE Method projects that match all words in the title, authors, abstract, or wiki pages. The Filter box further filters the results, but that only filters on the title and author text shown.
+</div>
+<div id="search-box" class="mb-5 p-3">
+    <div class="input-group">
+        <div class="input-group-prepend">
+            <span class="input-group-text" id="search-label">Search Text</span>
+        </div>
+        <input type="text" class="form-control" placeholder="Enter text to search for" aria-label="search-text" aria-describedby="search-label" id="search-text" name="search-text"  />
+        <button id="search-button" class="btn btn-primary">Advanced Search</button>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+
+<h2 class="m-3">Results</h2>
+<div id="osf-search">
+    <table id="search-results" class="display">
+        <thead>
+            <tr>
+                <th class="title-col">Project</th>
+                <th class="matched-col">Authors</th>
+            </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+    </table>
+</div>
+{% endblock %}
