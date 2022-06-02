@@ -1,6 +1,6 @@
 
 function show_export_results(data, status, jqXHR){
-    bootstrap.Modal.getInstance(document.getElementById('wait-dialog')).hide();
+    hideWait()
 
     $('#result-header').html('Export Complete');
     $('#result-preamble').html('<p class="lead"><a href="" onclick=\'bootstrap.Modal.getInstance(document.getElementById("result-dialog")).hide()\'>Click Here</a> to close this window and return to the importer.</p><p class="lead"><a href="http://osf.io/'+$('#osf-project-id').val()+'/">Click Here</a> to leave the exporter and go to the '+$('#osf-project-name').val()+' Project.</p><p class="lead"><a href="/">Click Here</a> to return to the URE Methods extensions index.</p>')
@@ -36,14 +36,15 @@ function show_export_results(data, status, jqXHR){
 
 
 function export_to_osf(){ 
-    bootstrap.Modal.getInstance(document.getElementById('wait-dialog')).show();
+    showWait()
 
     $.ajax({
         url: window.location.pathname, // the server handles posts as form input
         data: $('#project-export').serialize(),
         method: 'POST',
         error: function(d,s,x){ 
-            bootstrap.Modal.getInstance(document.getElementById('wait-dialog')).hide(); ureAjaxError(d,s,x)
+            hideWait()
+            ureAjaxError(d,s,x);
         },            
         success: show_export_results,
         processData: 'false',

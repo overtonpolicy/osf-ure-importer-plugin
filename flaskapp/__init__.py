@@ -1,6 +1,6 @@
 import os
 import flask
-from . import auth,importer,osf,google, exporter
+from . import auth,importer,osf,google, exporter, search
 
 def create_app(test_config=None):
     # create and configure the app
@@ -26,7 +26,10 @@ def create_app(test_config=None):
     @app.route('/')
     def index():
         return(flask.render_template('index.html'))
- 
+
+    @app.route('/collectionlist')
+    def collectionlist():
+        return(flask.render_template('collectionlist.html'))
 
     # register the blueprints
     app.register_blueprint(auth.bp)
@@ -34,6 +37,7 @@ def create_app(test_config=None):
     app.register_blueprint(osf.bp)
     app.register_blueprint(google.bp)
     app.register_blueprint(exporter.bp)
+    app.register_blueprint(search.bp)
 
 
     return app

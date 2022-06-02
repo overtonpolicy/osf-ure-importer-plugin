@@ -4,7 +4,6 @@ import re
 import urllib.parse
 import html
 import sys
-import json 
 
 # get the local osf requests library
 from . import osf, google
@@ -189,7 +188,7 @@ def render_import(importer, parameters):
                     'category': 'software'
                 }
             )
-            # add the new component to the name lookup hash
+            # at the new component to the name lookup hash
             nodelookup[new_component['data']['id']] = component_name
             # add it to the action log
             componentactions['created'].append([ new_component['data']['id'], component_name])
