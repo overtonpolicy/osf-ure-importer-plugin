@@ -170,11 +170,16 @@ def api(service_path, method_list, params=None):
 
 @bp.route("/getme", methods=('GET', 'POST'))
 def google_get_authenticated_user():
-
-    return(api(
-        service_path=['oauth2','v2'],
-        method_list=['userinfo','get'] 
-    ))
+    try:
+        authuser = api(
+            service_path=['oauth2','v2'],
+            method_list=['userinfo','get'] 
+        )
+    except google.auth.exceptions.RefreshError as referr:
+        # - this means the token is out and needs to be 
+        flask.session['google_token'] = None
+        return({'error': "Not logged into Google.", 'status_code': 401})
+    return(authuser)
 
     if 'google_token' not in flask.session or not flask.session['google_token']:
         return({'error': "Not logged into Google.", 'status_code': 401})

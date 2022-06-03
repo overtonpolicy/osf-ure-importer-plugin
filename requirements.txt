@@ -9,6 +9,7 @@ google-auth-oauthlib
 google-auth-httplib2
 flask
 pillow
+duckdb
 
 # mistune docx
 mistune
