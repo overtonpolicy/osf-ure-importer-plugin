@@ -50,6 +50,14 @@ class GoogleAuth {
                     if(error_callback)
                         error_callback();
                 }
+                else if(event.data.code){
+                    // Note: this started to be noticed and received after initial development
+                    // The code appears to be the access code, so I'm assuming it's just passed 
+                    // along folowing a successful authentication
+                    console.log('Code received, assuming log in successful and closing.') 
+                    child.postMessage('close', window.location.origin); 
+                    self.completeAuthorization({success:params.success, error:params.error});                
+                }
                 else{
                     console.warn("Not authenticated and not revoked");
                     console.log(event.data);
