@@ -69,25 +69,33 @@ class BaseImporter():
             policy = policies['page break']
             del policies['page break']
             if policy == 'wiki':
-                mkdtext = mkdtext.replace("\n\n# @@@NEWPAGE@@@", "\n&&&&&&")
+                mkdtext = mkdtext.replace("\n\n# |||NEWPAGE|||", "\n&&&&&&")
+                mkdtext = mkdtext.replace("\n\n# \|\|\|NEWPAGE\|\|\|", "\n&&&&&&")
             elif policy == 'component':
-                mkdtext = mkdtext.replace("\n\n# @@@NEWPAGE@@@", "\n%%%%%%")
+                mkdtext = mkdtext.replace("\n\n# |||NEWPAGE|||", "\n%%%%%%")
+                mkdtext = mkdtext.replace("\n\n# \|\|\|NEWPAGE\|\|\|", "\n%%%%%%")
             else:
-                mkdtext = mkdtext.replace("\n\n# @@@NEWPAGE@@@", '')
+                mkdtext = mkdtext.replace("\n\n# |||NEWPAGE|||", '')
+                mkdtext = mkdtext.replace("\n\n# \|\|\|NEWPAGE\|\|\|", '')
         else:
-            mkdtext = mkdtext.replace("\n\n# @@@NEWPAGE@@@", '')
+            mkdtext = mkdtext.replace("\n\n# |||NEWPAGE|||", '')
+            mkdtext = mkdtext.replace("\n\n# \|\|\|NEWPAGE\|\|\|", '')
 
         if 'section break' in policies:
             policy = policies['section break']
             del policies['section break']
             if policy == 'wiki':
-                mkdtext = mkdtext.replace("\n\n# @@@NEWSECTION@@@", "\n&&&&&&")
+                mkdtext = mkdtext.replace("\n\n# |||NEWSECTION|||", "\n&&&&&&")
+                mkdtext = mkdtext.replace("\n\n# \|\|\|NEWSECTION\|\|\|", "\n&&&&&&")
             elif policy == 'component':
-                mkdtext = mkdtext.replace("\n\n# @@@NEWSECTION@@@", "\n%%%%%%")
+                mkdtext = mkdtext.replace("\n\n# |||NEWSECTION|||", "\n%%%%%%")
+                mkdtext = mkdtext.replace("\n\n# \|\|\|NEWSECTION\|\|\|", "\n%%%%%%")
             else:
-                mkdtext = mkdtext.replace("\n\n# @@@NEWSECTION@@@", '')
+                mkdtext = mkdtext.replace("\n\n# |||NEWSECTION|||", '')
+                mkdtext = mkdtext.replace("\n\n# \|\|\|NEWSECTION\|\|\|", '')
         else:
-            mkdtext = mkdtext.replace("\n\n# @@@NEWSECTION@@@", '')
+            mkdtext = mkdtext.replace("\n\n# |||NEWSECTION|||", '')
+            mkdtext = mkdtext.replace("\n\n# \|\|\|NEWSECTION\|\|\|", '')
 
         # -- go through all of the style types and apply our custom markups 
         for style, break_type in policies.items():

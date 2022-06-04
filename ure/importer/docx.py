@@ -71,7 +71,7 @@ class DocX(BaseImporter):
                             <w:pStyle w:val="Heading1"/>
                         </w:pPr>
                         <w:r>
-                            <w:t>@@@NEWSECTION@@@</w:t>
+                            <w:t>|||NEWSECTION|||</w:t>
                         </w:r>
                     </w:p>
                 """))
@@ -100,7 +100,7 @@ class DocX(BaseImporter):
                                 <w:pStyle w:val="Heading1"/>
                             </w:pPr>
                             <w:r>
-                                <w:t>@@@NEWPAGE@@@</w:t>
+                                <w:t>|||NEWPAGE|||</w:t>
                             </w:r>
                         </w:p>
                         """))
