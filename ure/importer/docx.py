@@ -23,11 +23,23 @@ class DocX(BaseImporter):
         self.filename = filename
 
     def process_source(self):
-        """ Process the source document. We use pandoc to do the primary translation of docx data to markdown (via the markdown_mmd format). However, pandoc absolutely has no ability to process page or section breaks from docx, so we actually go through and hack new headings to indicate page and sections breaks via the hack_docx() method, which returns a tempfile that has the modifications made to it. """
+        """ Process the source document. We use pandoc to do the primary translation of docx data to markdown (via the markdown_mmd format). However, pandoc absolutely has no ability to process page or section breaks from docx, so we actually go through and hack new headings to indicate page and sections breaks via the hack_docx() method, which returns a tempfile that has the modifications made to it. 
+        
+        To conform to OSF standards, we force pandoc to output pipe tables and not any other table extension.
+
+        """
         filepath = os.path.abspath(self.filename)
         moduledir = os.path.dirname(os.path.abspath(__file__))
         tempfile = self.hack_docx(filepath)
-        exc = subprocess.run(['pandoc', '-f', 'docx', '-t', 'markdown', '--wrap=preserve', tempfile], capture_output=True, check=True)
+        exc = subprocess.run([
+            'pandoc', 
+            '-f', 'docx', 
+            '-t', 'markdown+pipe_tables-simple_tables-multiline_tables-grid_tables', 
+            '--wrap=preserve', 
+            tempfile], 
+            capture_output=True, 
+            check=True
+        )
         os.remove(tempfile) #clean up the temp file
         return(self.clean_pandoc_markdown(exc.stdout.decode('utf-8')))
         
