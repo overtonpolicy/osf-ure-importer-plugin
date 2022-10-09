@@ -156,7 +156,7 @@ def render_import(importer, parameters):
 
     allcomponents = importer.markdown    
     root_project = allcomponents.pop(0)    
-    root_wikis = root_project[1]
+    root_wikis = root_project[1:]
     
     # Now render all the wikis for the main project
     wikiactions = render_wikis(projectid, root_wikis, overwrite=overwrite, deleteold=deleteold)
@@ -168,7 +168,7 @@ def render_import(importer, parameters):
     }
 
     # Now handle all the components
-    for component_name, compwikis in allcomponents:
+    for component_name, *compwikis in allcomponents:
         if component_name in existingnodes:
             newactions = render_wikis(existingnodes[component_name], compwikis, overwrite=overwrite, deleteold=deleteold)
             for k,v in newactions.items():

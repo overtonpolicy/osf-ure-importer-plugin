@@ -1,6 +1,8 @@
 import re
 
 class BaseImporter():
+    """ 
+    """
 
     def __init__(self, h1_break='wiki', h2_break=None, section_break='component', page_break=None):
         self._markdown = None
@@ -12,6 +14,7 @@ class BaseImporter():
 
     @staticmethod 
     def check_break_type(break_type):
+        """ Verify a break type is valid. """
         if break_type is None:
             return(True)
         if break_type in ('wiki', 'component'):
@@ -20,6 +23,7 @@ class BaseImporter():
 
     @staticmethod 
     def check_style_type(style_type):
+        """ Verify a style type is valid. """
         if style_type in range(1,6):
             return(True)
         if style_type in ('section break', 'page break'):
@@ -33,8 +37,27 @@ class BaseImporter():
 
     @property
     def markdown(self):
+        """ The markdown text translate from the document. 
+        
+        Note that `postprocess_markdown` is run by the setter to allow for simpler subclass 
+        overrides and to translate raw markdown text into the multi-component, multi-wiki 
+        structure supported by OSF. 
+
+        The final data structure will be a multi-level list following this structure:
+
+            [
+                [ 'Node 0_Title', [
+                    ['Wiki_0_Title', 'Wiki_0_Text'],
+                    ['Wiki_1_Title', 'Wiki_1_Text'],
+                    ...,
+                ]],
+                [ 'Component_1_Title', [ ... ]],
+                ...
+            ]
+
+        """
         if not self._markdown:
-            self._markdown = self.postprocess_markdown(self.process_source())
+            self.markdown = self.process_source()
         return(self._markdown)
 
     @markdown.setter
@@ -44,22 +67,17 @@ class BaseImporter():
         # does the additional datastructure creation that we use for everything here
         self._markdown = self.postprocess_markdown(mkd)
 
-    @classmethod
-    def sanitize_text(self, text):
-        """ Intended for things like rendering page names - remove characers or strings that are invalid. 
-        Examples:
-            Page names cannot include foreward slashes
-        """
-        text = re.sub(r'\/', '-', text.strip()) # change characters to hyphens
-        text = re.sub(r'\n', ' ', text) # change characters to spaces
-        text = re.sub(r'\r', '', text) # remove characters
-        return(text)
-
     def process_source(self):
         raise Exception("process_source must be defined in the subclass to return a ure-markdown datastructure")
 
     def postprocess_markdown(self, mkdtext):
-        """ Do additional processing based on the parameters provided to create the datastructure to import into osf """
+        """ Do additional processing based on the parameters provided 
+        to create the datastructure to import into osf.
+
+        The baseclass postprocess uses the page break and section break policy to identify and break 
+        up the document appropriately to generate the correct structure.
+
+        """
 
         mkdtext = mkdtext.strip()
 
@@ -70,32 +88,32 @@ class BaseImporter():
             del policies['page break']
             if policy == 'wiki':
                 mkdtext = mkdtext.replace("\n\n# |||NEWPAGE|||", "\n&&&&&&")
-                mkdtext = mkdtext.replace("\n\n# \|\|\|NEWPAGE\|\|\|", "\n&&&&&&")
+                #mkdtext = mkdtext.replace("\n\n# \|\|\|NEWPAGE\|\|\|", "\n&&&&&&")
             elif policy == 'component':
                 mkdtext = mkdtext.replace("\n\n# |||NEWPAGE|||", "\n%%%%%%")
-                mkdtext = mkdtext.replace("\n\n# \|\|\|NEWPAGE\|\|\|", "\n%%%%%%")
+                #mkdtext = mkdtext.replace("\n\n# \|\|\|NEWPAGE\|\|\|", "\n%%%%%%")
             else:
                 mkdtext = mkdtext.replace("\n\n# |||NEWPAGE|||", '')
-                mkdtext = mkdtext.replace("\n\n# \|\|\|NEWPAGE\|\|\|", '')
+                #mkdtext = mkdtext.replace("\n\n# \|\|\|NEWPAGE\|\|\|", '')
         else:
             mkdtext = mkdtext.replace("\n\n# |||NEWPAGE|||", '')
-            mkdtext = mkdtext.replace("\n\n# \|\|\|NEWPAGE\|\|\|", '')
+            #mkdtext = mkdtext.replace("\n\n# \|\|\|NEWPAGE\|\|\|", '')
 
         if 'section break' in policies:
             policy = policies['section break']
             del policies['section break']
             if policy == 'wiki':
                 mkdtext = mkdtext.replace("\n\n# |||NEWSECTION|||", "\n&&&&&&")
-                mkdtext = mkdtext.replace("\n\n# \|\|\|NEWSECTION\|\|\|", "\n&&&&&&")
+                #mkdtext = mkdtext.replace("\n\n# \|\|\|NEWSECTION\|\|\|", "\n&&&&&&")
             elif policy == 'component':
                 mkdtext = mkdtext.replace("\n\n# |||NEWSECTION|||", "\n%%%%%%")
-                mkdtext = mkdtext.replace("\n\n# \|\|\|NEWSECTION\|\|\|", "\n%%%%%%")
+                #mkdtext = mkdtext.replace("\n\n# \|\|\|NEWSECTION\|\|\|", "\n%%%%%%")
             else:
                 mkdtext = mkdtext.replace("\n\n# |||NEWSECTION|||", '')
-                mkdtext = mkdtext.replace("\n\n# \|\|\|NEWSECTION\|\|\|", '')
+                #mkdtext = mkdtext.replace("\n\n# \|\|\|NEWSECTION\|\|\|", '')
         else:
             mkdtext = mkdtext.replace("\n\n# |||NEWSECTION|||", '')
-            mkdtext = mkdtext.replace("\n\n# \|\|\|NEWSECTION\|\|\|", '')
+            #mkdtext = mkdtext.replace("\n\n# \|\|\|NEWSECTION\|\|\|", '')
 
         # -- go through all of the style types and apply our custom markups 
         for style, break_type in policies.items():
@@ -160,24 +178,57 @@ class BaseImporter():
                     print("*** Appending subpage to " + wiki_pages[-1][0])
                     wiki_pages[-1][1] += "\n\n" + wiki_mkd
                 else:
-                    wiki_pages.append([self.sanitize_text(m.group(1)), wiki_mkd])
+                    wiki_pages.append([self.sanitize_title(m.group(1)), wiki_mkd])
             # Now append the full data structure to nodes, with the title of the home wiki as the title for the node. 
-            nodes.append([self.sanitize_text(title), wiki_pages])
+            nodes.append([self.sanitize_title(title), *wiki_pages])
 
         return(nodes)
 
     @classmethod
+    def sanitize_title(cls, text):
+        """ Remove characters or strings that are invalid from the wiki/node titles. 
+
+            Page names cannot include foreward slashes, carriage returns, or newlines.
+
+            Args:
+                text: The text to sanitize.
+            Returns:
+                The sanitized text.
+        """
+        text = re.sub(r'\/', '-', text.strip()) # change slash to hyphens
+        text = re.sub(r'\n', ' ', text) # change newlines to spaces
+        text = re.sub(r'\r', '', text) # remove carriage returns 
+        return(text)
+
+
+    ulmd_re = re.compile(r'\[([^\]]+)\]\{\.underline\}', flags=re.MULTILINE | re.I)
+    boldline_re = re.compile(r'^(#+\s+)\*\*(.+)\*\*\s*$', flags=re.MULTILINE )
+    supmd_re = re.compile(r'\^([^\^]+)\^', flags=re.MULTILINE | re.I)
+    
+    # ~i~ is subscript, but ~~i~~ is strikethrough, so the regex is more complicated
+    submd_re = re.compile(r'(?<!~)~([^\~]+)~(?!~)', flags=re.MULTILINE | re.I) 
+    
+    @classmethod
     def clean_pandoc_markdown(cls, mkdtext):
-        """ Cleans the bad formatting that comes out of pandoc """
-        import sys
-        #print("[[Original Text]]\n\n" + mkdtext, file=sys.stderr)        
-        # Replace an initial heading with the #-based heading
-        cnt = -1
-        while cnt:
-            mkdtext, cnt = re.subn(r'(^|\n*)([^\n]+)\n\s{0,3}(=|-)+\s*(\n|$)', lambda m: ("\n\n# " if m.group(3) == '=' else '\n\n##') + m.group(2) + "\n", mkdtext)
+        """ Cleans formatting that comes out of pandoc to handle the slightly different dialect
+        that OSF  """
 
-        # remove bold from headings
-        mkdtext = re.sub(r'^(#+\s+)\*\*(.+)\*\*\s*$', lambda m: m.group(1) + m.group(2), mkdtext, flags=re.MULTILINE)
+        # pandoc formats underlining as [text]{.underline}, which isn't standard.
+        # OSF does not support underline at all (i.e., not even html <u> tags).
+        # Current function is to just remove the pandoc underline markup and print the inner text.
+        # Consideration: possibly italicize it, but quasi-links or link-like objects can end up with 
+        #      underline characteristics, and that is not appropriate to italicize.
+        mkdtext = cls.ulmd_re.sub(lambda m: m.group(1), mkdtext)
+               
+        # remove bold from headings (if the entire heading is bolded) as it leads to weird markdown
+        mkdtext = cls.boldline_re.sub(lambda m: m.group(1) + m.group(2), mkdtext)
 
-        #print("\n\n[[New Text]]\n\n" + mkdtext, file=sys.stderr)
+        # superscript: markdown superscript is ^{text}^, i.e. 3^2^, but this is not supported by OSF.
+        # translate it to html <sup>{text}</sup>, which OSF allows.
+        mkdtext = cls.supmd_re.sub(lambda m: '<sup>' + m.group(1) + '</sup>', mkdtext)
+
+        # subscript: markdown subscript is ~{text}~, i.e. Z~i~, but this is not supported by OSF.
+        # translate it to html <sub>{text}</sub>, which OSF allows.
+        mkdtext = cls.submd_re.sub(lambda m: '<sub>' + m.group(1) + '</sub>', mkdtext)
+
         return(mkdtext)

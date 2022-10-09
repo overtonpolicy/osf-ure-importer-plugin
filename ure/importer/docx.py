@@ -11,7 +11,6 @@ from .baseclass import BaseImporter
 def print_xml(element):
     print(lxml.etree.tostring(element, encoding='Unicode', pretty_print=True))
 
-
 class DocX(BaseImporter):
 
     def __init__(self, filename, **kwargs):
@@ -30,16 +29,36 @@ class DocX(BaseImporter):
         """
         filepath = os.path.abspath(self.filename)
         moduledir = os.path.dirname(os.path.abspath(__file__))
+        filterdir = moduledir + '/pandoc'
         tempfile = self.hack_docx(filepath)
         exc = subprocess.run([
             'pandoc', 
             '-f', 'docx', 
-            '-t', 'markdown+pipe_tables-simple_tables-multiline_tables-grid_tables', 
+            '-t', 'markdown+pipe_tables-simple_tables-fancy_lists',
+            # don't add blank lines between list items
+            '--lua-filter', filterdir + '/compact-lists-filter.lua',
+            # don't use letters or roman numerals for lower-level ordered lists 
+
+            # pandoc will soon be moving to this:
+            #'--markdown-headings=atx', 
+            '--atx-headers', 
             '--wrap=preserve', 
             tempfile], 
             capture_output=True, 
-            check=True
+            check=False
         )
+        if not exc.returncode == 0:
+            print(f"pandoc docx -> markdown failed:", file = sys.stderr)
+            if exc.stdout:
+                print("STDOUT:\n" \
+                    + textwrap.indent(exc.stdout.decode('utf-8'), "    "),
+                    file = sys.stderr
+                )
+            if exc.stderr:
+                print("\nSTDERR:\n" \
+                    + textwrap.indent(exc.stderr.decode('utf-8'), "    "), 
+                    file = sys.stderr)
+            raise Exception(f"pandoc call failed with exit code {exc.returncode}")
         os.remove(tempfile) #clean up the temp file
         return(self.clean_pandoc_markdown(exc.stdout.decode('utf-8')))
         

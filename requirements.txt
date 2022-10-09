@@ -10,6 +10,7 @@ google-auth-httplib2
 flask
 pillow
 duckdb
+panflute
 
 # mistune docx
 mistune
