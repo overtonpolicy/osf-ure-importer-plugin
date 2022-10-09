@@ -201,7 +201,7 @@ class BaseImporter():
         return(text)
 
 
-    ulmd_re = re.compile(r'\[([^\]]+)\]\{\.underline\}', flags=re.MULTILINE | re.I)
+    ulmd_re = re.compile(r'\[([^\]]+)\]\{\.(underline|ul)\}', flags=re.MULTILINE | re.I)
     boldline_re = re.compile(r'^(#+\s+)\*\*(.+)\*\*\s*$', flags=re.MULTILINE )
     supmd_re = re.compile(r'\^([^\^]+)\^', flags=re.MULTILINE | re.I)
     
