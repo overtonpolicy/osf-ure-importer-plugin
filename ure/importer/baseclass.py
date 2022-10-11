@@ -77,8 +77,8 @@ class BaseImporter():
         The baseclass postprocess uses the page break and section break policy to identify and break 
         up the document appropriately to generate the correct structure.
 
+        TODO: there are cases in which this does not correctly identify preamble text in all configurations.  See the failing test.
         """
-
         mkdtext = mkdtext.strip()
 
         policies = self.break_policy.copy()
@@ -88,32 +88,32 @@ class BaseImporter():
             del policies['page break']
             if policy == 'wiki':
                 mkdtext = mkdtext.replace("\n\n# |||NEWPAGE|||", "\n&&&&&&")
-                #mkdtext = mkdtext.replace("\n\n# \|\|\|NEWPAGE\|\|\|", "\n&&&&&&")
+                mkdtext = mkdtext.replace("\n\n# \\|\\|\\|NEWPAGE\\|\\|\\|", "\n&&&&&&")
             elif policy == 'component':
                 mkdtext = mkdtext.replace("\n\n# |||NEWPAGE|||", "\n%%%%%%")
-                #mkdtext = mkdtext.replace("\n\n# \|\|\|NEWPAGE\|\|\|", "\n%%%%%%")
+                mkdtext = mkdtext.replace("\n\n# \\|\\|\\|NEWPAGE\\|\\|\\|", "\n%%%%%%")
             else:
                 mkdtext = mkdtext.replace("\n\n# |||NEWPAGE|||", '')
-                #mkdtext = mkdtext.replace("\n\n# \|\|\|NEWPAGE\|\|\|", '')
+                mkdtext = mkdtext.replace("\n\n# \\|\\|\\|NEWPAGE\\|\\|\\|", '')
         else:
             mkdtext = mkdtext.replace("\n\n# |||NEWPAGE|||", '')
-            #mkdtext = mkdtext.replace("\n\n# \|\|\|NEWPAGE\|\|\|", '')
+            mkdtext = mkdtext.replace("\n\n# \\|\\|\\|NEWPAGE\\|\\|\\|", '')
 
         if 'section break' in policies:
             policy = policies['section break']
             del policies['section break']
             if policy == 'wiki':
                 mkdtext = mkdtext.replace("\n\n# |||NEWSECTION|||", "\n&&&&&&")
-                #mkdtext = mkdtext.replace("\n\n# \|\|\|NEWSECTION\|\|\|", "\n&&&&&&")
+                mkdtext = mkdtext.replace("\n\n# \\|\\|\\|NEWSECTION\\|\\|\\|", "\n&&&&&&")
             elif policy == 'component':
                 mkdtext = mkdtext.replace("\n\n# |||NEWSECTION|||", "\n%%%%%%")
-                #mkdtext = mkdtext.replace("\n\n# \|\|\|NEWSECTION\|\|\|", "\n%%%%%%")
+                mkdtext = mkdtext.replace("\n\n# \\|\\|\\|NEWSECTION\\|\\|\\|", "\n%%%%%%")
             else:
                 mkdtext = mkdtext.replace("\n\n# |||NEWSECTION|||", '')
-                #mkdtext = mkdtext.replace("\n\n# \|\|\|NEWSECTION\|\|\|", '')
+                mkdtext = mkdtext.replace("\n\n# \\|\\|\\|NEWSECTION\\|\\|\\|", '')
         else:
             mkdtext = mkdtext.replace("\n\n# |||NEWSECTION|||", '')
-            #mkdtext = mkdtext.replace("\n\n# \|\|\|NEWSECTION\|\|\|", '')
+            mkdtext = mkdtext.replace("\n\n# \\|\\|\\|NEWSECTION\\|\\|\\|", '')
 
         # -- go through all of the style types and apply our custom markups 
         for style, break_type in policies.items():
@@ -159,6 +159,11 @@ class BaseImporter():
             if headmatch:
                 title = headmatch.group(1)
             else:
+                # check to make sure there is content here.
+                # if there are, say, multiple page breaks in a row,
+                # or a section break followed by a page break,
+                # we don't want to import that artifice
+                
                 # this if there are no headings for the entire document.
                 title = '(No Title)'
             wiki_pages = [
@@ -175,7 +180,7 @@ class BaseImporter():
                 m = headingre.search(wiki_mkd)   
                 if not m:
                     # -- so there is no heading in this segment. We add it to the previous wiki page.
-                    print("*** Appending subpage to " + wiki_pages[-1][0])
+                    #print("*** Appending subpage to " + wiki_pages[-1][0])
                     wiki_pages[-1][1] += "\n\n" + wiki_mkd
                 else:
                     wiki_pages.append([self.sanitize_title(m.group(1)), wiki_mkd])

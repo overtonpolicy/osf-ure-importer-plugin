@@ -31,7 +31,8 @@ class DocX(BaseImporter):
         moduledir = os.path.dirname(os.path.abspath(__file__))
         filterdir = moduledir + '/pandoc'
         tempfile = self.hack_docx(filepath)
-        exc = subprocess.run([
+        
+        pandoc_command = [
             'pandoc', 
             '-f', 'docx', 
             '-t', 'markdown+pipe_tables-simple_tables-fancy_lists',
@@ -43,7 +44,12 @@ class DocX(BaseImporter):
             #'--markdown-headings=atx', 
             '--atx-headers', 
             '--wrap=preserve', 
-            tempfile], 
+            tempfile,
+        ]
+        
+        #print(" ".join(pandoc_command))
+        exc = subprocess.run(
+            pandoc_command, 
             capture_output=True, 
             check=False
         )
@@ -116,7 +122,7 @@ class DocX(BaseImporter):
                 breakcontainer = wrxml.getparent() # the whole page break 
                 body = breakcontainer.getparent() # the whole doc, because
                 break_index =  body.index(breakcontainer) 
-                body.insert(break_index, hack_element)
+                body.insert(break_index+1, hack_element)
 
 
             if child.tag[-2:] == 'br' and len(items) and items[0][1] == 'page' and child.prefix == 'w' and child.values and child.values() and child.values()[0] == 'page':

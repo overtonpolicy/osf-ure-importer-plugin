@@ -1,24 +1,263 @@
 import pytest
 import os,sys,re
 import pdb,warnings
-import textwrap
+import textwrap, pprint
 
 sys.path.insert(0, os.path.dirname(__file__) + '/..')
 import ure
 input_dir = os.path.dirname(__file__) + '/input'
 
 
-#def test_simple_tables():
-#    ''' Test docx -> markdown import of features from t/input/simple_tables.docx'''
-#    compare_import_to_markdown("simple_tables.docx")
+def test_basic_formatting():
+    compare_import_to_markdown("Basic Formatting.docx")
 
-#def test_basic_formatting():
-#    compare_import_to_markdown("ure_formatting_test.docx")
+def test_tables():
+    compare_import_to_markdown("Tables.docx")
+
+
+""" In the following tests, we test that the different types of breaks and headings work based on the docx file "Component and Wiki Breaks.docx", in particular:
+
+- Text prior to the first heading doesn't lead to weirdness
+- Text between a page/section break and a heading still render good wiki/component names
+- breaks occur sensibly
+
+The ordering of significant headings is as follows:
+- "First Heading 1: Abstract 1.1.1"
+- "Heading 2, Section 1.1.2"
+- "Heading 2, Section 1.1.3"
+- "Heading 1, Section 2.1.1"
+- "Heading 2, Section 2.1.2"
+- page break
+- "Heading 1, After Page Break 1, Section 3.1.1"
+- "Heading 2, Section 3.1.2" (no text between this and prior H1)
+- "Heading 3, Section 3.1.3"
+- "Heading 3, Section 3.1.4"
+- page break
+- "Heading 1, Section 4.1.1"
+- continuous section break
+- "Heading 1, After section break, Section 5.1.1"
+- next page section break
+- "Heading 1, After section break, Section 6.1.1"
+- "Heading 3, Section 6.1.2"
+- "Heading 1, Section 7.1.0"
+- "Heading 1, Section 8.1.0 immediately after 7.1.0"
+- "Heading 2, Section 8.2.0, immediately after 8.1.0"
+- continuous section break followed immediately by a page break
+- "Heading 1, After Section + Page + Spaces, Section 7.1.1"
+"""
+
+def compare_headings(md, reference):
+    refiter = iter(reference)
+    i = 0
+    for node_title, *node_data in md:
+        refnode = next(refiter)        
+        assert node_title == refnode[0], f"Node {i} title does not match: Expected '{refnode[0]}', received '{node_title}'"
+
+        refwiki = refnode[1]
+        assert len(node_data) == len(refwiki), f"Node {i} does not match on wiki count. Markdown has {len(node_data)} wikis and the reference has {len(refwiki)}:\n\tMarkdown wiki titles: {[n[0] for n in node_data]}\n\tReference  wiki titles: {refwiki}"
+        w = 0
+        for wiki_title, wiki_text in node_data:
+            assert wiki_title == refwiki[w], f"Node {i}, Wiki {w} title does not match: Expected '{refwiki[w]}', received '{wiki_title}'"
+            w += 1
+        i += 1
+
+
+
+def test_default_break_options():
+
+    importer = ure.importer.from_file(input_dir + "/Component and Wiki Breaks.docx")
+    imported_md = importer.markdown
+
+    reference_data = [
+        [
+            'First Heading 1: Abstract 1.1.1',
+            [
+                'home_wiki',
+                'Heading 1, Section 2.1.1',
+                'Heading 1, After Page Break 1, Section 3.1.1',
+                'Heading 1, Section 4.1.1',
+            ],
+        ],
+        [
+            'Heading 1, After section break, Section 5.1.1',
+            [ 'home_wiki' ],
+        ],
+        [
+            'Heading 1, After section break, Section 6.1.1',
+            [
+                'home_wiki',
+                'Heading 1, Section 7.1.0',
+                'Heading 1, Section 8.1.0 immediately after 7.1.0',
+            ],
+        ],
+        [
+            'Heading 1, After Section + Page + Spaces, Section 7.1.1',
+            [ 'home_wiki' ],
+        ],
+    ]
+
+    compare_headings(imported_md, reference_data)
+
+    explicit_importer = ure.importer.from_file(
+        input_dir + "/Component and Wiki Breaks.docx",
+        h1_break='wiki', 
+        h2_break=None, 
+        section_break='component', 
+        page_break=None,
+
+    )
+    compare_headings(explicit_importer.markdown, reference_data)
+
+def test_ignore_section_breaks():
+
+    explicit_importer = ure.importer.from_file(
+        input_dir + "/Component and Wiki Breaks.docx",
+        h1_break='wiki', 
+        h2_break=None, 
+        section_break=None, 
+        page_break='component',
+
+    )
+
+    reference_data = [
+        [
+            'First Heading 1: Abstract 1.1.1',
+            [
+                'home_wiki',
+                'Heading 1, Section 2.1.1',
+            ],
+        ],
+        [
+            'Heading 1, After Page Break 1, Section 3.1.1',
+            [ 'home_wiki' ],
+        ],
+        [
+            'Heading 1, Section 4.1.1',
+            [
+                'home_wiki',
+                'Heading 1, After section break, Section 5.1.1',
+                'Heading 1, After section break, Section 6.1.1',
+                'Heading 1, Section 7.1.0',
+                'Heading 1, Section 8.1.0 immediately after 7.1.0',
+            ],
+        ],
+        [
+            'Heading 1, After Section + Page + Spaces, Section 7.1.1',
+            [ 'home_wiki' ],
+        ],
+    ]
+    compare_headings(explicit_importer.markdown, reference_data)
+
+
+
+def test_h1_component_h2_wiki_breaks():
+
+    explicit_importer = ure.importer.from_file(
+        input_dir + "/Component and Wiki Breaks.docx",
+        h1_break='component', 
+        h2_break='wiki', 
+        section_break=None, 
+        page_break=None,
+    )
+    reference_data = [
+        [
+            'First Heading 1: Abstract 1.1.1',
+            [
+                'home_wiki',
+                'Heading 2, Section 1.1.2',
+                'Heading 2, Section 1.1.3',
+            ],
+        ],
+        [
+            'Heading 1, Section 2.1.1',
+            [
+                'home_wiki',
+                'Heading 2, Section 2.1.2',
+            ],
+        ],
+        [
+            'Heading 1, After Page Break 1, Section 3.1.1',
+            [
+                'home_wiki',
+                'Heading 2, Section 3.1.2',
+            ],
+        ],
+        [
+            'Heading 1, Section 4.1.1',
+            [ 'home_wiki' ],
+        ],
+        [
+            'Heading 1, After section break, Section 5.1.1',
+            [ 'home_wiki' ],
+        ],
+        [
+            'Heading 1, After section break, Section 6.1.1',
+            [ 'home_wiki' ],
+        ],
+        [
+            'Heading 1, Section 7.1.0',
+            [ 'home_wiki' ],
+        ],
+        [
+            'Heading 1, Section 8.1.0 immediately after 7.1.0',
+            [
+                'home_wiki',
+                'Heading 2, Section 8.2.0, immediately after 8.1.0',
+            ],
+        ],
+    ]
+
+    compare_headings(explicit_importer.markdown, reference_data)
+
+
+def test_new_break_options():
+
+    importer = ure.importer.from_file(
+        input_dir + "/Component and Wiki Breaks.docx",
+        h1_break='component', 
+        h2_break='wiki', 
+        section_break=None, 
+        page_break=None,
+
+    )
+    imported_md = importer.markdown
+
+    # For advanced debugging, set PRINT_FULL to True
+    # to include the text in the debugging output
+    PRINT_FULL = False
+
+    nodes = []
+    i = 0
+    print("\n\n    reference_data = [")
+    for node_title, *node_data in imported_md:
+        print(" "*8 + "[")
+        print(" "*12 + f"'{node_title}',")
+        wikis = []
+        w = 0        
+        if len(node_data) == 1 and not PRINT_FULL:
+            print(" "*12 + f"[ '{node_data[0][0]}' ],")
+        else:
+            print(" "*12 + "[")
+            for wiki_title, wiki_text in node_data:
+                wikis.append(wiki_title)
+                print(" "*16 + f"'{wiki_title}',")
+                if PRINT_FULL:
+                    print(textwrap.indent(pprint.pformat(wiki_text, width = 80), " "*20))
+                w += 1
+            print(" "*12 + "],")
+        print(" "*8 + "],")
+        nodes.append([node_title, wikis])
+        i += 1
+    print("    ]")
+    
+
+
+
 
 def test_new_test():
     # Use this to see what the markdown output will be for a new file to import.
 
-    print_rendered_markdown("Basic Formatting.docx")
+    #print_rendered_markdown("Basic Formatting.docx")
     pass
 
 def compare_import_to_markdown(filename):
@@ -39,16 +278,16 @@ def compare_import_to_markdown(filename):
     markdown_iter = iter(actual_md)
 
     i = 0
-    for node_title, node_data in imported_md:
+    for node_title, *node_data in imported_md:
         actual_node = next(markdown_iter)
         assert node_title == actual_node[0], f"Node {i} title is '{node_title}', but the comparison data thinks it should be '{actual_node[0]}'"
 
-        actual_wiki_iter = iter(actual_node[1])
+        actual_wiki_iter = iter(actual_node[1:])
         w = 0
         for wiki_title, wiki_text in node_data:
-            actual_wiki = next(actual_wiki_iter)
-            assert wiki_title == actual_wiki[0], f"Node {i}, Wiki {w} title is '{wiki_title}', but the comparison data thinks it should be '{actual_wiki[0]}'"
-            assert wiki_text == actual_wiki[1], f"Node {i}, Wiki {w} ('{wiki_title}') does not have matching text!"
+            actual_wiki_title, actual_text = next(actual_wiki_iter)
+            assert wiki_title == actual_wiki_title, f"Node {i}, Wiki {w} title is '{wiki_title}', but the comparison data thinks it should be '{actual_wiki_title}'"
+            assert wiki_text == actual_text, f"Node {i}, Wiki {w} ('{wiki_title}') does not have matching text!"
             w += 1
         i += 1
 
@@ -74,11 +313,24 @@ def load_md_file(test_file):
     
     if os.path.exists(f"t/md/{base_filename}.0.0.md"):
         # files are broken down by project-component AND multiple wikis
+        nodes = []
         iprj = 0        
         while os.path.exists(f"t/md/{base_filename}.{iprj}.0.md"):
+            node_title = None
             iwiki = 0
+            wikis = []
             while os.path.exists(f"t/md/{base_filename}.{iprj}.{iwiki}.md"):
+                with open(f"t/md/{base_filename}.{iprj}.{iwiki}.md") as fh:
+                    if iwiki == 0:
+                        node_title = fh.readline().strip()
+                    wiki_title = fh.readline().strip()
+                    text = fh.read().strip()
+                    wikis.append([wiki_title, text])        
                 iwiki += 1
+            nodes.append([node_title, *wikis])
+            iprj += 1
+            return(nodes)
+
     elif os.path.exists(f"t/md/{base_filename}.0.md"):
         node_wikis = []
         node_title = None
@@ -87,11 +339,12 @@ def load_md_file(test_file):
             with open(f"t/md/{base_filename}.{iwiki}.md") as fh:
                 if iwiki == 0:
                     node_title = fh.readline().strip()
-                title = fh.readline()
-                text = fh.read()
-                node_wikis.append([title.strip(), text.strip()])        
+                wiki_title = fh.readline().strip()
+                text = fh.read().strip()
+                node_wikis.append([wiki_title, text])        
             iwiki += 1
-        return([[node_title, node_wikis]])
+        return([node_title, *node_wikis])
+
     elif os.path.exists(f"t/md/{base_filename}.md"):
         node_wikis = []
         node_title = None
@@ -99,7 +352,7 @@ def load_md_file(test_file):
             node_title = fh.readline().strip()
             wiki_title = fh.readline().strip()
             text = fh.read().strip()
-        return([[node_title, [[wiki_title, text]]]])
+        return([node_title, [wiki_title, text]])
     else:
         raise Exception(f"Cannot find a file with a base name {test_file}")
 
