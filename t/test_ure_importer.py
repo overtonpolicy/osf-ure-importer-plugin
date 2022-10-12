@@ -20,30 +20,6 @@ def test_tables():
 - Text prior to the first heading doesn't lead to weirdness
 - Text between a page/section break and a heading still render good wiki/component names
 - breaks occur sensibly
-
-The ordering of significant headings is as follows:
-- "First Heading 1: Abstract 1.1.1"
-- "Heading 2, Section 1.1.2"
-- "Heading 2, Section 1.1.3"
-- "Heading 1, Section 2.1.1"
-- "Heading 2, Section 2.1.2"
-- page break
-- "Heading 1, After Page Break 1, Section 3.1.1"
-- "Heading 2, Section 3.1.2" (no text between this and prior H1)
-- "Heading 3, Section 3.1.3"
-- "Heading 3, Section 3.1.4"
-- page break
-- "Heading 1, Section 4.1.1"
-- continuous section break
-- "Heading 1, After section break, Section 5.1.1"
-- next page section break
-- "Heading 1, After section break, Section 6.1.1"
-- "Heading 3, Section 6.1.2"
-- "Heading 1, Section 7.1.0"
-- "Heading 1, Section 8.1.0 immediately after 7.1.0"
-- "Heading 2, Section 8.2.0, immediately after 8.1.0"
-- continuous section break followed immediately by a page break
-- "Heading 1, After Section + Page + Spaces, Section 7.1.1"
 """
 
 def compare_headings(md, reference):
@@ -64,6 +40,25 @@ def compare_headings(md, reference):
 
 
 def test_default_break_options():
+    # the default break options currently will create 
+    # component breaks on section breaks and wiki breaks
+    # on new "Heading 1" styles. 
+    # 
+    # I originally considered using a page break as a default,
+    # but page breaks are frequently used for layout/formatting
+    # to simply move tables or segments that would be split 
+    # onto the next page, and the annoyance of accidentally 
+    # creating components based on that seemed bad.
+    #
+    # OTOH, there is an argument that section breaks should 
+    # also not create components by default becuse section 
+    # breaks may be used to change between single and multiple
+    # columns; however, as markdown doesn't support multiple 
+    # columns and will completely change the formatting, 
+    # this seems less likely to significantly impair use, and 
+    # may even be seen as valuable because column changes likely
+    # come with their own conceptual differences that may be 
+    # suitable for a new component.
 
     importer = ure.importer.from_file(input_dir + "/Component and Wiki Breaks.docx")
     imported_md = importer.markdown
