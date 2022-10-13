@@ -2,6 +2,7 @@ import os,sys
 import re
 from warnings import warn
 import pprint
+import pdb
 
 import docx
 from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_COLOR_INDEX
@@ -134,7 +135,6 @@ class Docx(BaseExporter):
     def process_list(self, doc, element):
         level = element['level']
         is_ordered = element['ordered']
-        #import pdb; pdb.set_trace()
         children = []
         for i, child in enumerate(element['children']):
             children.append(self.render_list_item(doc, child, ordered=is_ordered, level=level))
@@ -142,7 +142,6 @@ class Docx(BaseExporter):
 
     def render_list_item(self, doc, element, ordered, level):
         item_level = element['level']
-        #import pdb; pdb.set_trace()
         if ordered:
             list_style = "List Number" if item_level == 1 else f"List Number {item_level}"
         else:
@@ -173,6 +172,8 @@ class Docx(BaseExporter):
 
     def process_paragraph(self, doc, element, style=None):
         para = doc.add_paragraph(style=style)
+        # -- here's where we need to 
+
         children = []
         for child in element['children']:
             children.append(self.render_element(para, child))
@@ -251,11 +252,36 @@ class Docx(BaseExporter):
     #
     # Inline 
     #
+    specialre = re.compile(r'(.*?)--(su[bp])-->(.*?)<--su[bp]--(.*)')
     def process_text(self, container, element):
         # OSF markdown has newlines entered at 80 characters
         # so we need to strip those out as they don't actually belong in the text run
-        element['text'] = fakenewline.sub(' ', element['text'])
-        return(container.add_run(element['text']))
+        text = fakenewline.sub(' ', element['text'])
+        # identify superscript and subscript 
+        m = self.specialre.fullmatch(text)
+        if not m:
+            return(container.add_run(element['text']))
+
+        runs = []
+        before, tagtype, inside, after = m.groups()
+        if before:
+            runs.append(container.add_run(before))
+
+        special_run = container.add_run(inside)
+        if tagtype == 'sup':
+            special_run.font.superscript = True
+        elif tagtype == 'sub':
+            special_run.font.subscript = True
+        runs.append(special_run)
+
+        if after:
+            # recursively call process_text, because there could be more special types
+            afterruns = self.process_text(container, {'text': after})
+            if type(afterruns) is list:
+                runs.extend(afterruns)
+            else:
+                runs.append(afterruns)
+        return(runs)            
 
     def process_link(self, container, element):
 
@@ -393,7 +419,7 @@ class Docx(BaseExporter):
         return(runs)
 
     def process_linebreak(self, container, element):
-        return(container.add_run("[linebreak]\n"))
+        return(container.add_run("\n"))
 
     def process_inline_html(self, container, element):
         # delegete to codespan
@@ -433,10 +459,11 @@ class Docx(BaseExporter):
         return(func(docelem, element, **kwargs))
 
     def render_section(self, doc, mkdtext):
-        ast = self.markdown_analyzer(mkdtext)
+        preprocessed_md = self.preprocess_markdown(mkdtext)
+        ast = self.markdown_analyzer(preprocessed_md)
         stringified = pprint.pformat(ast, width=200, indent=5) 
         with open('current_mkd.md', 'w') as fh:
-            fh.write(mkdtext)
+            fh.write(preprocessed_md)
         with open('current_ast.js', 'w') as fh:
             fh.write(stringified)
         
@@ -444,7 +471,21 @@ class Docx(BaseExporter):
         for element in ast:
             self.render_element(doc, element)
         
-
+    bolditalic_re = re.compile(r'(?<!\*)\*\*\*(?!\*)(\S.*?\S)(?<!\*)\*\*\*(?!\*)')
+    subscript_re = re.compile(r'</?sub>', re.I)
+    super_re = re.compile(r'</?sup>', re.I)
+    def preprocess_markdown(self, md):
+        """ preprocesss markdown downloaded from OSF that breaks mistune"""
+        # translate super and subscript from html to the actual markdown tags
+        #md = self.super_re.sub('^', md)
+        #md = self.subscript_re.sub('~', md)
+        md = md.replace('<sup>', '--sup-->')
+        md = md.replace('</sup>', '<--sup--')
+        md = md.replace('<sub>', '--sub-->')
+        md = md.replace('</sub>', '<--sub--')
+        # mistune doesn't correctly pick up ***bold italic***, but does pick up _**bold italic**_
+        md = self.bolditalic_re.sub(lambda m: '_**' + m.group(1) + '**_', md)
+        return(md)
 
 def latex_to_word(latex_input):
     try:
