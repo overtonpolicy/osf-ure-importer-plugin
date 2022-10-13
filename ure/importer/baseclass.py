@@ -152,7 +152,6 @@ class BaseImporter():
             # HOWEVER, the processed title/heading from the home wiki becomes the component title because the home wiki is, obviously, 'Home'.
             headmatch = headingre.search(home_wiki)
             while other_mkd and not headmatch:
-                print("*** Appending subpage to HOME")
                 home_wiki += "\n\n" + other_mkd.pop(0)
                 headmatch = headingre.search(home_wiki)
 
@@ -180,7 +179,6 @@ class BaseImporter():
                 m = headingre.search(wiki_mkd)   
                 if not m:
                     # -- so there is no heading in this segment. We add it to the previous wiki page.
-                    #print("*** Appending subpage to " + wiki_pages[-1][0])
                     wiki_pages[-1][1] += "\n\n" + wiki_mkd
                 else:
                     wiki_pages.append([self.sanitize_title(m.group(1)), wiki_mkd])
@@ -227,7 +225,7 @@ class BaseImporter():
                
         # remove bold from headings (if the entire heading is bolded) as it leads to weird markdown
         mkdtext = cls.boldline_re.sub(lambda m: m.group(1) + m.group(2), mkdtext)
-
+        #import pdb; pdb.set_trace()
         # superscript: markdown superscript is ^{text}^, i.e. 3^2^, but this is not supported by OSF.
         # translate it to html <sup>{text}</sup>, which OSF allows.
         mkdtext = cls.supmd_re.sub(lambda m: '<sup>' + m.group(1) + '</sup>', mkdtext)

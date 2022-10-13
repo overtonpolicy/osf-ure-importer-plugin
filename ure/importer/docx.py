@@ -35,7 +35,7 @@ class DocX(BaseImporter):
         pandoc_command = [
             'pandoc', 
             '-f', 'docx', 
-            '-t', 'markdown+pipe_tables-simple_tables-fancy_lists',
+            '-t', 'markdown+pipe_tables-simple_tables-fancy_lists-grid_tables-multiline_tables',
             # don't add blank lines between list items
             '--lua-filter', filterdir + '/compact-lists-filter.lua',
             # don't use letters or roman numerals for lower-level ordered lists 
