@@ -1,5 +1,6 @@
 #!/bin/sh
 
-export FLASK_APP=flaskapp
+export PYTHONPATH=python
+export FLASK_APP=python/flaskapp
 export FLASK_ENV=development
 flask run -p 3000
