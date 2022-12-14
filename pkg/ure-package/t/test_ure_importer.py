@@ -3,9 +3,11 @@ import os,sys,re
 import pdb,warnings
 import textwrap, pprint
 
+pdb.set_trace()
 sys.path.insert(0, os.path.dirname(__file__) + '/..')
 import ure
 input_dir = os.path.dirname(__file__) + '/input'
+md_dir = os.path.dirname(__file__) + '/md'
 
 
 def test_basic_formatting():
@@ -306,16 +308,16 @@ def load_md_file(test_file):
 
     base_filename = re.sub(r'\.[^\.]+$', '', test_file)
     
-    if os.path.exists(f"t/md/{base_filename}.0.0.md"):
+    if os.path.exists(f"{md_dir}/{base_filename}.0.0.md"):
         # files are broken down by project-component AND multiple wikis
         nodes = []
         iprj = 0        
-        while os.path.exists(f"t/md/{base_filename}.{iprj}.0.md"):
+        while os.path.exists(f"{md_dir}/{base_filename}.{iprj}.0.md"):
             node_title = None
             iwiki = 0
             wikis = []
-            while os.path.exists(f"t/md/{base_filename}.{iprj}.{iwiki}.md"):
-                with open(f"t/md/{base_filename}.{iprj}.{iwiki}.md") as fh:
+            while os.path.exists(f"{md_dir}/{base_filename}.{iprj}.{iwiki}.md"):
+                with open(f"{md_dir}/{base_filename}.{iprj}.{iwiki}.md") as fh:
                     if iwiki == 0:
                         node_title = fh.readline().strip()
                     wiki_title = fh.readline().strip()
@@ -326,12 +328,12 @@ def load_md_file(test_file):
             iprj += 1
             return(nodes)
 
-    elif os.path.exists(f"t/md/{base_filename}.0.md"):
+    elif os.path.exists(f"{md_dir}/{base_filename}.0.md"):
         node_wikis = []
         node_title = None
         iwiki = 0
-        while os.path.exists(f"t/md/{base_filename}.{iwiki}.md"):
-            with open(f"t/md/{base_filename}.{iwiki}.md") as fh:
+        while os.path.exists(f"{md_dir}/{base_filename}.{iwiki}.md"):
+            with open(f"{md_dir}/{base_filename}.{iwiki}.md") as fh:
                 if iwiki == 0:
                     node_title = fh.readline().strip()
                 wiki_title = fh.readline().strip()
@@ -340,10 +342,10 @@ def load_md_file(test_file):
             iwiki += 1
         return([node_title, *node_wikis])
 
-    elif os.path.exists(f"t/md/{base_filename}.md"):
+    elif os.path.exists(f"{md_dir}/{base_filename}.md"):
         node_wikis = []
         node_title = None
-        with open(f"t/md/{base_filename}.md") as fh:
+        with open(f"{md_dir}/{base_filename}.md") as fh:
             node_title = fh.readline().strip()
             wiki_title = fh.readline().strip()
             text = fh.read().strip()
