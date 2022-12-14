@@ -475,9 +475,9 @@ class Docx(BaseExporter):
         preprocessed_md = self.preprocess_markdown(mkdtext)
         ast = self.markdown_analyzer(preprocessed_md)
         stringified = pprint.pformat(ast, width=200, indent=5) 
-        with open('current_mkd.md', 'w') as fh:
+        with open('tmp/current_mkd.md', 'w') as fh:
             fh.write(preprocessed_md)
-        with open('current_ast.js', 'w') as fh:
+        with open('tmp/current_ast.js', 'w') as fh:
             fh.write(stringified)
         
         print(stringified)

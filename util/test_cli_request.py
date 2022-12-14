@@ -9,7 +9,7 @@ sys.path.append('.')
 import osf
 
 def run_program():
-    with open('cfg/test.cfg') as fh:
+    with open('conf/osf.pat') as fh:
         token = fh.read().strip()
     print(token)
     stuff = osf.session(token)

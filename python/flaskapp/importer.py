@@ -10,7 +10,7 @@ from . import osf, google
 # Our webserver-unaware packages for processing things
 import ure
 
-UPLOADDIR = 'tmpfiles'
+UPLOADDIR = 'uploads'
 bp = flask.Blueprint('import', __name__, url_prefix='/import')
 
 def standardized_decode(text):
