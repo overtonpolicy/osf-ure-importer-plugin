@@ -132,23 +132,10 @@ class Docx(BaseExporter):
             children.append(para)
         return(children)
 
-    next_num_id = 1000
     def process_list(self, doc, element):
         level = element['level']
         is_ordered = element['ordered']
         children = []
-        """
-        if is_ordered and level == 1:
-            # get the new list level
-            doc._part.numbering_part.numbering_definitions.add_num(abstractNumId, True)
-            
-            next_num_id = self._next_numId
-            num = CT_Num.new(next_num_id, abstractNum_id)
-            
-            num = CT_Num.new(str(next_num_id), abstractNum_id)
-            num.add_lvlOverride(ilvl=0).add_startOverride(1)
-            pdb.set_trace()
-        """    
         for i, child in enumerate(element['children']):
             children.append(self.render_list_item(doc, child, ordered=is_ordered, level=level))
         return(children)
@@ -475,9 +462,9 @@ class Docx(BaseExporter):
         preprocessed_md = self.preprocess_markdown(mkdtext)
         ast = self.markdown_analyzer(preprocessed_md)
         stringified = pprint.pformat(ast, width=200, indent=5) 
-        with open('tmp/current_mkd.md', 'w') as fh:
+        with open('current_mkd.md', 'w') as fh:
             fh.write(preprocessed_md)
-        with open('tmp/current_ast.js', 'w') as fh:
+        with open('current_ast.js', 'w') as fh:
             fh.write(stringified)
         
         print(stringified)
