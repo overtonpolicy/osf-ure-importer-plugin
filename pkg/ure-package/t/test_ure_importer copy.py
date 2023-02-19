@@ -1,0 +1,209 @@
+import pytest
+import os,sys,re
+import pdb,warnings
+import textwrap
+
+sys.path.insert(0, os.path.dirname(__file__) + '/..')
+import ure
+input_dir = os.path.dirname(__file__) + '/input'
+
+
+def test_basic_formatting():
+    compare_import_to_markdown("Basic Formatting.docx")
+
+def test_tables():
+    compare_import_to_markdown("Tables.docx")
+
+#def test_mathjax():
+
+def test_different_break_options():
+    """ Test that the different types of breaks and headings work, in particular:
+
+    - Text prior to the first heading doesn't lead to weirdness
+    - Text between a page/section break and a heading still render good wiki/component names
+    - breaks occur sensibly
+
+    The ordering of significant headings is as follows:
+    - "First Heading 1: Abstract 1.1.1"
+    - "Heading 2, Section 1.1.2"
+    - "Heading 2, Section 1.1.3"
+    - "Heading 1, Section 2.1.1"
+    - "Heading 2, Section 2.1.2"
+    - page break
+    - "Heading 1, After Page Break 1, Section 3.1.1"
+    - "Heading 2, Section 3.1.2" (no text between this and prior H1)
+    - "Heading 3, Section 3.1.3"
+    - "Heading 3, Section 3.1.4"
+    - page break
+    - "Heading 1, Section 4.1.1"
+    - continuous section break
+    - "Heading 1, After section break, Section 5.1.1"
+    - next page section break
+    - "Heading 1, After section break, Section 6.1.1"
+    - "Heading 3, Section 6.1.2"
+    - "Heading 1, Section 7.1.0"
+    - "Heading 1, Section 8.1.0 immediately after 7.1.0"
+    - "Heading 2, Section 8.2.0, immediately after 8.1.0"
+    - continuous section break followed immediately by a page break
+    - "Heading 1, After Section + Page + Spaces, Section 7.1.1"
+    """
+
+    
+    importer = ure.importer.from_file(input_dir + "/Component and Wiki Breaks.docx")
+    assert importer, f"Importer created successfully"
+    imported_md = importer.markdown
+    assert imported_md, f"markdown created with default parameters"
+
+    i = 0
+    for node_title, *node_data in imported_md:
+        print(f"Node {i}: {node_title}")
+        w = 0
+        for wiki_title, wiki_text in node_data:
+            print(f"    Wiki {i}.{w}: {wiki_title}")
+            w += 1
+        i += 1
+
+
+
+def test_new_test():
+    # Use this to see what the markdown output will be for a new file to import.
+
+    #print_rendered_markdown("Basic Formatting.docx")
+    pass
+
+def compare_import_to_markdown(filename):
+    """ Helper function to compare the markdown rendered by an importer to expected markdown output.
+    
+    This imports the markdown from the proivded filename, which is expected to be in the t/input 
+    directory, to saved markdown output, which is expected to be in the t/md directory and 
+    will be loaded by calling `load_md_file`     
+    """
+
+    importer = ure.importer.from_file(input_dir + '/' + filename)
+    assert importer, f"Importer created for {filename}"
+    imported_md = importer.markdown
+    assert imported_md, f"markdown created from document {filename}"
+    
+    actual_md = load_md_file(filename)
+    assert actual_md, f"raw markdown comparison files found"
+    markdown_iter = iter(actual_md)
+
+    i = 0
+    for node_title, *node_data in imported_md:
+        actual_node = next(markdown_iter)
+        assert node_title == actual_node[0], f"Node {i} title is '{node_title}', but the comparison data thinks it should be '{actual_node[0]}'"
+
+        actual_wiki_iter = iter(actual_node[1:])
+        w = 0
+        for wiki_title, wiki_text in node_data:
+            actual_wiki_title, actual_text = next(actual_wiki_iter)
+            assert wiki_title == actual_wiki_title, f"Node {i}, Wiki {w} title is '{wiki_title}', but the comparison data thinks it should be '{actual_wiki_title}'"
+            assert wiki_text == actual_text, f"Node {i}, Wiki {w} ('{wiki_title}') does not have matching text!"
+            w += 1
+        i += 1
+
+def load_md_file(test_file):
+    """ takes a filename with any extension and loads the structure from the t/md file.
+    
+    This is intended to be shorthand to load the file or files from t/md based on an input document.
+
+    The files saved in t/md can be in one of several formats:
+        - just a single `filename.md` if there's only one wiki output to compare
+        - a series `filename.0.md`, `filename.1.md` if there are multiple wikis
+        - a series `filename.0.0.md`, `filename.0.1.md` if there are multiple nodes and wikis 
+
+    Args:
+        test_file: the filename to constuct a base from. This is expected to be an input filename,
+            and the extension will be stripped.
+    
+    Returns:
+        A parallel nested list structure like what will be returned by the ure.importer  
+    """
+
+    base_filename = re.sub(r'\.[^\.]+$', '', test_file)
+    
+    if os.path.exists(f"t/md/{base_filename}.0.0.md"):
+        # files are broken down by project-component AND multiple wikis
+        nodes = []
+        iprj = 0        
+        while os.path.exists(f"t/md/{base_filename}.{iprj}.0.md"):
+            node_title = None
+            iwiki = 0
+            wikis = []
+            while os.path.exists(f"t/md/{base_filename}.{iprj}.{iwiki}.md"):
+                with open(f"t/md/{base_filename}.{iprj}.{iwiki}.md") as fh:
+                    if iwiki == 0:
+                        node_title = fh.readline().strip()
+                    wiki_title = fh.readline().strip()
+                    text = fh.read().strip()
+                    wikis.append([wiki_title, text])        
+                iwiki += 1
+            nodes.append([node_title, *wikis])
+            iprj += 1
+            return(nodes)
+
+    elif os.path.exists(f"t/md/{base_filename}.0.md"):
+        node_wikis = []
+        node_title = None
+        iwiki = 0
+        while os.path.exists(f"t/md/{base_filename}.{iwiki}.md"):
+            with open(f"t/md/{base_filename}.{iwiki}.md") as fh:
+                if iwiki == 0:
+                    node_title = fh.readline().strip()
+                wiki_title = fh.readline().strip()
+                text = fh.read().strip()
+                node_wikis.append([wiki_title, text])        
+            iwiki += 1
+        return([node_title, *node_wikis])
+
+    elif os.path.exists(f"t/md/{base_filename}.md"):
+        node_wikis = []
+        node_title = None
+        with open(f"t/md/{base_filename}.md") as fh:
+            node_title = fh.readline().strip()
+            wiki_title = fh.readline().strip()
+            text = fh.read().strip()
+        return([node_title, [wiki_title, text]])
+    else:
+        raise Exception(f"Cannot find a file with a base name {test_file}")
+
+
+def print_rendered_markdown(test_file):
+    """ Prints out the markdown generated by a file in the t/input directory
+
+    This is used when writing new tests. It will print out the text as currently rendered, 
+    which can be reified into a test easily.
+
+    Remember to run pytest `t/test_ure_importer.py -s -vv`
+
+    Args:
+        test_file: the fileanme within the t/input folder that will get parsed.
+    
+    
+    """
+
+    importer = ure.importer.from_file(input_dir + '/' + test_file)
+    md = importer.markdown
+    
+    m = re.fullmatch(r'(.*)\.([^\.]+)', test_file)
+    test_func = m.group(1)
+    ext = m.group(2)
+
+    print(f"""
+    \ndef test_{test_func}():
+    ''' Test {ext} -> markdown import of features from t/input/{test_file}'''
+
+    importer = ure.importer.from_file(input_dir + '/' + "{test_file}")
+    md = importer.markdown
+    
+    assert md[0][0] == '{md[0][0]}', "Project title is correct"
+    """)
+    i = 0
+    for wiki_title, wiki_text in md[0][1]:
+        print(f"""
+    # Check Wiki {i}
+    wiki_{i} = md[0][1][0]
+    assert wiki_{i}[0] == '{wiki_title}', "Wiki {i} title is correct\"
+    assert wiki_{i}[1] == textwrap.dedent('''\n""" \
+            + textwrap.indent(wiki_text, '        ') \
+            + f"\n        ''').strip(), \"Wiki {i} text is correct\"")
