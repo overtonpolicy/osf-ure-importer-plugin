@@ -30,8 +30,8 @@ def run_search():
 
     words = ['%' + word + '%' for word in re.split(r'\s+', parameters['searchtext'].lower())]
     script_dir = os.path.dirname(os.path.realpath(__file__))
-    print(f"Attempting to open {script_dir + '/data/collectiondb.duckdb'}") 
-    dbh = duckdb.connect(database=script_dir + '/data/collectiondb.duckdb', read_only=True)
+    print(f"Attempting to open {script_dir + '/../../data/collectiondb.duckdb'}") 
+    dbh = duckdb.connect(database=script_dir + '/../../data/collectiondb.duckdb', read_only=True)
     sth = dbh.cursor()
     sth.execute("select project, authors, url from node_text where " + " AND ".join(["text like ?" for i in words]), words)
     

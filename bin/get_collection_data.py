@@ -13,7 +13,6 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--debug', '-d', action='store_true', help='print things')
 args = parser.parse_args()
 
-sys.path.append('.')
 import osf
 
 
@@ -158,7 +157,7 @@ def do_stuff():
 
     load_duckdb(collection_data)
 
-    with open('flaskapp/data/collectioninfo.json', 'w') as fh:
+    with open('data/collectioninfo.json', 'w') as fh:
         json.dump(collection_data, fh)    
 
 def load_duckdb(collection_data):
@@ -194,7 +193,7 @@ def load_duckdb(collection_data):
             ' '.join([t.lower() for t in textpieces])
         ])
     dbh.close()
-    shutil.copy(tfpath, 'flaskapp/data/collectiondb.duckdb')
+    shutil.copy(tfpath, 'data/collectiondb.duckdb')
 
 
 if not args.debug:
