@@ -20,6 +20,25 @@ OSF and Google require developers to register their application in order to acce
 
 Register your application in **Developer Apps** for [OSF Production](https://osf.io/settings/applications)
 
+## Set up Virtual Env
+
+### Install the virtual-env package
+
+```bash
+sudo apt install python3-venv
+```
+
+From the root directory of the repo, run:
+
+```bash
+python -m venv osfvenv
+source osfvenv/bin/activate
+pip install -r requirements.txt
+pip install pkg/mistune-package/
+pip install pkg/osf-package
+pip install pkg/ure-package
+```
+
 ## License
 
 All code is licensed under the GNU License, v 3.0, and requires attribution to the original author, [Kevin Crouse](https://gitlab.com/krcrouse), if used or incorporated into other products. Further, any products incorporating this code must be open source. A full copy of the GNU License is availabe in the root directory of the repository.
