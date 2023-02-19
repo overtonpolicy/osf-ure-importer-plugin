@@ -1,0 +1,220 @@
+# mathblock
+
+```````````````````````````````` example
+# Heading
+
+$$\alpha\beta*2^{3i}$$
+
+Next paragraph
+.
+<h1>Heading</h1>
+<div class="mathexpr">\alpha\beta*2^{3i}</div><p>Next paragraph</p>
+````````````````````````````````
+
+
+```````````````````````````````` example
+# Heading
+
+$$ \alpha\beta*2^{3i} $$
+
+Next paragraph
+.
+<h1>Heading</h1>
+<div class="mathexpr">\alpha\beta*2^{3i}</div><p>Next paragraph</p>
+````````````````````````````````
+
+
+```````````````````````````````` example
+Initial Text
+$$\alpha\beta*2^{3i}$$
+.
+<p>Initial Text</p>
+<div class="mathexpr">\alpha\beta*2^{3i}</div>
+````````````````````````````````
+
+
+```````````````````````````````` example
+$$\alpha\beta*2^{3i}$$
+Next paragraph
+.
+<div class="mathexpr">\alpha\beta*2^{3i}</div><p>Next paragraph</p>
+````````````````````````````````
+
+
+```````````````````````````````` example
+# Heading
+
+$$\alpha
+\beta
+*2^{3i}$$
+
+Next paragraph
+.
+<h1>Heading</h1>
+<div class="mathexpr">\alpha
+\beta
+*2^{3i}</div><p>Next paragraph</p>
+````````````````````````````````
+
+
+```````````````````````````````` example
+# Heading
+
+$$ \alpha
+\beta
+*2^{3i} $$
+
+Next paragraph
+.
+<h1>Heading</h1>
+<div class="mathexpr">\alpha
+\beta
+*2^{3i}</div><p>Next paragraph</p>
+````````````````````````````````
+
+
+```````````````````````````````` example
+$$\alpha
+\beta
+*2^{3i}$$
+Next paragraph
+.
+<div class="mathexpr">\alpha
+\beta
+*2^{3i}</div><p>Next paragraph</p>
+````````````````````````````````
+
+
+```````````````````````````````` example
+# Heading
+$$\alpha
+\beta
+*2^{3i}$$
+Next paragraph
+.
+<h1>Heading</h1>
+<div class="mathexpr">\alpha
+\beta
+*2^{3i}</div><p>Next paragraph</p>
+````````````````````````````````
+
+```````````````````````````````` example
+This should be on a separate line : $$\\alpha\\beta*2^{3i}$$ This line should be standalone on a new line.
+.
+<p>This should be on a separate line :</p>
+<div class="mathexpr">\\alpha\\beta*2^{3i}</div><p>This line should be standalone on a new line.</p>
+````````````````````````````````
+
+
+```````````````````````````````` example
+This should be on a separate line : $$ \\alpha\\beta*2^{3i} $$ This line should be standalone on a new line.
+.
+<p>This should be on a separate line :</p>
+<div class="mathexpr">\\alpha\\beta*2^{3i}</div><p>This line should be standalone on a new line.</p>
+````````````````````````````````
+
+```````````````````````````````` example
+This should be on a separate line : $$ \\alpha
+      \\beta
+    *2^{3i} $$ This line should be standalone on a new line.
+.
+<p>This should be on a separate line :</p>
+<div class="mathexpr">\\alpha
+      \\beta
+    *2^{3i}</div><p>This line should be standalone on a new line.</p>
+````````````````````````````````
+
+```````````````````````````````` example
+Test single character
+
+$$k$$
+
+Math block.
+.
+<p>Test single character</p>
+<div class="mathexpr">k</div><p>Math block.</p>
+````````````````````````````````
+
+```````````````````````````````` example
+Test single character
+
+$$ k $$
+
+Math block.
+.
+<p>Test single character</p>
+<div class="mathexpr">k</div><p>Math block.</p>
+````````````````````````````````
+
+```````````````````````````````` example
+Test single character
+$$ k $$
+Math block.
+.
+<p>Test single character</p>
+<div class="mathexpr">k</div><p>Math block.</p>
+````````````````````````````````
+
+```````````````````````````````` example
+Test single character:$$ k $$-Math block.
+.
+<p>Test single character:</p>
+<div class="mathexpr">k</div><p>-Math block.</p>
+````````````````````````````````
+
+```````````````````````````````` example
+I have some money $$.
+.
+<p>I have some money $$.</p>
+````````````````````````````````
+
+```````````````````````````````` example
+I have all sorts of $$$$.
+.
+<p>I have all sorts of $$$$.</p>
+````````````````````````````````
+
+```````````````````````````````` example
+Unbalanced text should not render Math : 
+
+$$\\alpha\\beta*2^{3i}$ 
+
+Buffer Text.
+.
+<p>Unbalanced text should not render Math :</p>
+<p>$$\alpha\beta*2^{3i}$</p>
+<p>Buffer Text.</p>
+````````````````````````````````
+
+```````````````````````````````` example
+Unbalanced text should not render Math : $\\alpha\\beta*2^{3i}$$ 
+Buffer text 
+.
+<p>Unbalanced text should not render Math : $\alpha\beta*2^{3i}$$ 
+Buffer text</p>
+````````````````````````````````
+
+```````````````````````````````` example
+To create a stub math block : $$_$$ 
+Buffer text 
+.
+<p>To create a stub math block :</p>
+<div class="mathexpr">_</div><p>Buffer text</p>
+````````````````````````````````
+
+
+```````````````````````````````` example
+To create an empty math block : $$<>$$ 
+Buffer text 
+.
+<p>To create an empty math block :</p>
+<div class="mathexpr"><></div><p>Buffer text</p>
+````````````````````````````````
+
+```````````````````````````````` example
+To create an empty math block : $$<!--- --->$$ 
+Buffer text 
+.
+<p>To create an empty math block :</p>
+<div class="mathexpr"><!--- ---></div><p>Buffer text</p>
+````````````````````````````````

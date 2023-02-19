@@ -1,0 +1,212 @@
+# mathspan
+
+```````````````````````````````` example
+# Heading
+
+$\alpha\beta*2^{3i}$
+
+Next paragraph
+.
+<h1>Heading</h1>
+<p><span class="mathexpr">\alpha\beta*2^{3i}</span></p>
+<p>Next paragraph</p>
+````````````````````````````````
+
+
+```````````````````````````````` example
+# Heading
+
+$ \alpha\beta*2^{3i} $
+
+Next paragraph
+.
+<h1>Heading</h1>
+<p>$ \alpha\beta*2^{3i} $</p>
+<p>Next paragraph</p>
+````````````````````````````````
+
+
+```````````````````````````````` example
+Initial Text
+$\alpha\beta*2^{3i}$
+.
+<p>Initial Text
+<span class="mathexpr">\alpha\beta*2^{3i}</span></p>
+````````````````````````````````
+
+
+```````````````````````````````` example
+$\alpha\beta*2^{3i}$
+Next paragraph
+.
+<p><span class="mathexpr">\alpha\beta*2^{3i}</span>
+Next paragraph</p>
+````````````````````````````````
+
+
+```````````````````````````````` example
+# Heading
+
+$\alpha
+\beta
+*2^{3i}$
+
+Next paragraph
+.
+<h1>Heading</h1>
+<p><span class="mathexpr">\alpha
+\beta
+*2^{3i}</span></p>
+<p>Next paragraph</p>
+````````````````````````````````
+
+```````````````````````````````` example
+$\alpha
+\beta
+*2^{3i}$
+Next paragraph
+.
+<p><span class="mathexpr">\alpha
+\beta
+*2^{3i}</span>
+Next paragraph</p>
+
+````````````````````````````````
+
+
+```````````````````````````````` example
+# Heading
+$\alpha
+\beta
+*2^{3i}$
+Next paragraph
+.
+<h1>Heading</h1>
+<p><span class="mathexpr">\alpha
+\beta
+*2^{3i}</span>
+Next paragraph</p>
+````````````````````````````````
+
+```````````````````````````````` example
+This starts the line : $\alpha\beta*2^{3i}$ and this continues the line.
+.
+<p>This starts the line : <span class="mathexpr">\alpha\beta*2^{3i}</span> and this continues the line.</p>
+````````````````````````````````
+
+
+```````````````````````````````` example
+This starts the line : $ \alpha\beta*2^{3i} $ and this continues the line.
+.
+<p>This starts the line : $ \alpha\beta*2^{3i} $ and this continues the line.</p>
+````````````````````````````````
+
+```````````````````````````````` example
+Test single character
+
+$k$
+
+Math span.
+.
+<p>Test single character</p>
+<p><span class="mathexpr">k</span></p>
+<p>Math span.</p>
+````````````````````````````````
+
+```````````````````````````````` example
+Test single character
+
+$ k $
+
+Math span.
+.
+<p>Test single character</p>
+<p>$ k $</p>
+<p>Math span.</p>
+````````````````````````````````
+
+```````````````````````````````` example
+Test single character
+$k$
+Math span.
+.
+<p>Test single character
+<span class="mathexpr">k</span>
+Math span.</p>
+````````````````````````````````
+
+
+```````````````````````````````` example
+.
+<p>Test single character
+<span class="mathexpr">k</span>
+Math span.</p>
+````````````````````````````````
+
+```````````````````````````````` example
+I have some money $.
+.
+<p>I have some money $.</p>
+````````````````````````````````
+
+
+```````````````````````````````` example
+I have some money $$.
+.
+<p>I have some money $$.</p>
+````````````````````````````````
+
+```````````````````````````````` example
+I have all sorts of $$$$.
+.
+<p>I have all sorts of $$$$.</p>
+````````````````````````````````
+
+```````````````````````````````` example
+I have $5 and you have $10.
+.
+<p>I have $5 and you have $10.</p>
+````````````````````````````````
+
+
+```````````````````````````````` example
+I have 5$ and you have 10$.
+.
+<p>I have 5$ and you have 10$.</p>
+````````````````````````````````
+
+```````````````````````````````` example
+I have $5 and you
+have $10.
+.
+<p>I have $5 and you
+have $10.</p>
+````````````````````````````````
+
+```````````````````````````````` example
+Unbalanced text should not render Math : 
+
+$$\\alpha\\beta*2^{3i}$ 
+
+Buffer Text.
+.
+<p>Unbalanced text should not render Math :</p>
+<p>$$\alpha\beta*2^{3i}$</p>
+<p>Buffer Text.</p>
+````````````````````````````````
+
+```````````````````````````````` example
+Unbalanced text should render Math : $\\alpha\\beta*2^{3i}$$ 
+Buffer text 
+.
+<p>Unbalanced text should render Math : <span class="mathexpr">\\alpha\\beta*2^{3i}</span>$ 
+Buffer text</p>
+````````````````````````````````
+
+```````````````````````````````` example
+To create an stub inline math entity : $_$ 
+Buffer text 
+.
+<p>To create an stub inline math entity : <span class="mathexpr">_</span> 
+Buffer text</p>
+````````````````````````````````
