@@ -20,4 +20,5 @@ setuptools.setup(
         "Operating System :: OS Independent",
         "Development Status :: 3 - Alpha"
     ],
+    include_package_data=True,
  )
