@@ -5,7 +5,7 @@ import ure.exporter
 
 
 #document = Document(os.path.abspath(args.template)) if args.template else Document()
-with open("input/full_markdown_text.md") as fh:
+with open("tmpfiles/full_markdown_text.md") as fh:
     text = fh.read()
     
 md = [
