@@ -11,9 +11,6 @@ flask
 pillow
 duckdb
 panflute
-
-# mistune docx
-# mistune
 python-docx
 sympy
 latex2mathml
