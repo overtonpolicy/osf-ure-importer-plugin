@@ -64,7 +64,6 @@ def file_export():
     return(flask.send_file("/tmp/tmp.docx", 
             as_attachment=True, 
             download_name=filename,
-            attachment_filename=filename,
             mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
         ))  
     #return(flask.send_file("../tmp.docx", as_attachment=False, download_name=filename))        
