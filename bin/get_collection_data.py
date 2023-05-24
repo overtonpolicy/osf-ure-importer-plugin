@@ -130,13 +130,23 @@ def do_stuff():
         # now the author data
         node['contributors'] = []
         for contrib in nodejs['embeds']['bibliographic_contributors']['data']:
-            user = contrib['embeds']['users']['data']
-            full_name = user['attributes']['full_name']
-            node['contributors'].append({
-                'name': full_name,
-                'id': user['id'],
-                'url': user['links']['html'],
-            }) 
+            if 'data' in contrib['embeds']['users']: 
+                user = contrib['embeds']['users']['data']
+                full_name = user['attributes']['full_name']
+                node['contributors'].append({
+                    'name': full_name,
+                    'id': user['id'],
+                    'url': user['links']['html'],
+                }) 
+            elif 'errors' in contrib['embeds']['users']:
+                # This happens when the user account has been deactivated
+                err = contrib['embeds']['users']['errors'][0]
+                if 'meta' in err and 'full_name' in err['meta']:
+                    node['contributors'].append({
+                        'name': err['meta']['full_name'],
+                        'id': -1,
+                        'url': None,
+                    })
 
         # here we fetch the wiki information 
         node['wikis'] = []
