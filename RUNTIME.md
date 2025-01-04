@@ -9,31 +9,6 @@ up and configuration.
 
 The [README.md](README.md) provides an overview of the project.
 
-# Runtime Notes
-
-## URLs
-
-When testing, it is important to note that `http://127.0.0.1` and 
-`http://localhost` are not the same and that the OSF Developer app configuration
-only allows `localhost` (as of the time of writing). Thus, current code works against 
-`http://localhost`. Entering `127.0.0.1` in the web browser will end up 
-rendering the HTML correctly but not authenticating against OSF.
-
-The flask webserver and all scripts are designed to run from the root of repo
-directory. Do not descend into subdirectories to run anything.
-
-## Markdown
-
-OSF uses Markdown for it's wikis, and there are many markdown "flavors" or 
-"dialects." 
-
-To maximize the translation between documents and OSF, adaptors have been added:
-- OSF does not use an globally accepted markdown syntax
-- Custom filters for `pandoc` calls are in `pkg/ure-package/ure/importer/pandoc/`
-- `pkg/ure-package/ure/importer/docx.py` has a function `hack_docx`, which further manipulates the MS Word docx file for features that pandoc simply didn't have available.
-- `pkg/ure-package/ure/importer/baseclass.py` has a `postprocess_markdown` function that translates the tokens added by `hack_docx` back into appropriate markdown
-- The **mistune v2** python package is used by the exporter to (initially) translate the OSF Wiki markdown, but it's not complete, especially for the mathjax/equations supported by OSF. I have thus written a mathjax plugin for mistune to support this. I submitted a PR to the official mistune account, but it was rejected by the author, who was working on and since released mistune v3. At present, the forked mistune v2 package with my experimental plugin is in this repository and part of the requirements file
-
 # Design and Terminology
 
 ## Terminology 
@@ -75,7 +50,33 @@ I do not feel the initial URE project was very successful in succinctly
 conveying the feature options to such stakeholders in ways that were clear 
 and not overwhelming, and so I leave it to you to figure that out!
 
-# Cached Collection Information (`bin/get_collection_data.py`)
+# Runtime Notes
+
+## URLs
+
+When testing, it is important to note that `http://127.0.0.1` and 
+`http://localhost` are not the same and that the OSF Developer app configuration
+only allows `localhost` (as of the time of writing). Thus, current code works against 
+`http://localhost`. Entering `127.0.0.1` in the web browser will end up 
+rendering the HTML correctly but not authenticating against OSF.
+
+The flask webserver and all scripts are designed to run from the root of repo
+directory. Do not descend into subdirectories to run anything.
+
+## Markdown
+
+OSF uses Markdown for it's wikis, and there are many markdown "flavors" or 
+"dialects." 
+
+To maximize the translation between documents and OSF, adaptors have been added:
+- Custom filters for `pandoc` calls are in `pkg/ure-package/ure/importer/pandoc/`
+- `pkg/ure-package/ure/importer/docx.py` has a function `hack_docx`, which further manipulates the MS Word docx file for features that pandoc simply didn't have available.
+- `pkg/ure-package/ure/importer/baseclass.py` has a `postprocess_markdown` function that translates the tokens added by `hack_docx` back into appropriate markdown
+- The **mistune v2** python package is used by the exporter to (initially) translate the OSF Wiki markdown, but it's not complete, especially for the mathjax/equations supported by OSF. I have thus written a mathjax plugin for mistune to support this. I submitted a PR to the official mistune account, but it was rejected by the author, who was working on and since released mistune v3. At present, the forked mistune v2 package with my experimental plugin is in this repository and part of the requirements file
+
+# Features
+
+## Cached Collection Information (`bin/get_collection_data.py`)
 
 The OSF collection details are fetched and cached locally via the 
 `bin/get_collection_data.py` script, and this is used for several of the front 
@@ -91,19 +92,19 @@ After running `bin/get_collection_data.py`:
 - The JSON data file is stored in `data/`
 - The JSON data file is also stored in `pkg/osfflask/static/data/`, which is used by the local flask server
 
-# Running the Local Server (`bin/startflask`)
+## Running the Local Server (`bin/startflask`)
 
 Running `bin/startflask` will start the local flask server that includes the various plugins and add-ons.
 After the server starts up, navigate to http://localhost:3000/
 
-## Most Recent OSF Collection Items Table
+### Most Recent OSF Collection Items Table
 
 The [Most Recent Collection Items](http://localhost:3000/collectionlist) uses 
 jquery (and jquery-table) to create a more interactive, searchable 
 table of URE Sources in the collection. This uses the JSON OSF cache file
 pulled down by `get_collection_data.py`
 
-## Advanced Search
+### Advanced Search
 
 The [Advanced Search](http://localhost:3000/search/advanced) uses 
 jquery (and jquery-table) to create an interactive search that includes content 
@@ -112,7 +113,7 @@ was both faster and included more features than the OSF search. This uses the
 DuckDB database constructed from OSF sources pulled down by 
 `get_collection_data.py`
 
-# Exporter
+### Exporter
 
 The [OSF Exporter](http://localhost:3000/export/file) will take the wikis from 
 an OSF Project and convert them into a word processor file.
@@ -138,9 +139,9 @@ Options for the Exporter:
 - **Break Between Wikis** specifies a type of document break when there are multiple wikis in an OSF project. The default is not to have any sort of break.
 - **Break Between Components** specifies a type of document break when there are OSF sub-projects linked to the project being exported. The default is to have a page break.
 
-# Importer
+### Importer
 
-## Word Importer
+#### Word Importer
 
 The [URE Microsoft Word Importer](http://localhost:3000/import/docx) imports a 
 Microsoft Word file, obviously. You must be signed in to OSF as your personal 
@@ -156,7 +157,7 @@ Options for the Word docx importer:
 - **Heading 1 Actions** indicates how to interpret top-level headings. By default, each top-level heading will lead to a new Wiki in the project.
 - **Heading 2 Actions** indicates how to interpret second-level headings. By default, second-level headings do nothing special and will appear as Heading 2 within the wiki. 
 
-## Google Drive/Docs Importer
+#### Google Drive/Docs Importer
 
 The [Google Docs Importer](http://localhost:3000/import/google) uses, as 
 expected, Google Docs. You must be signed in to OSF as your personal 

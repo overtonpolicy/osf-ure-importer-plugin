@@ -52,7 +52,7 @@ people doing good things.
 
 # License
 
-All code is licensed under the GNU License v3, and requires attribution to 
+All code is licensed under the GNU GPL v3, and requires attribution to 
 the original author, [Kevin Crouse](https://github.com/kcphila), if used or 
 incorporated into other products. Further, any products incorporating this code 
 must be open source. A full copy of the [GPL](LICENSE) is availabe in the root 
