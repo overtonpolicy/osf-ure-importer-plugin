@@ -24,9 +24,9 @@ segmenting the Importer from other tools. This will give you a new PAT - you can
 not retrieve it anytime after it is created, so copy it down.
 
 In [Developer Apps](https://osf.io/settings/applications), Create an app and 
-set the **Authorization Callback URL** to 
+set the **Authorization Callback URL** to
 `http://localhost:3000/auth/osfauth-callback.html`
-for local development, or whatever it would be for deployment. This will give 
+for local development, or whatever it would be for deployment. This will give
 you the **OSF Client ID** and **Client Secret**.
 
 **NOTE:** It seems that OSF may now require the Callback URL to have the 

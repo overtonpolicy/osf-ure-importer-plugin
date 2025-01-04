@@ -33,6 +33,20 @@ document and you likely do not need to reference it after initial setup.
 The [RUNTIME.md](RUNTIME.md) document provides details about the tools, features,
 and existing codebase. It provides more guidance for active development.
 
+## Running the Server
+
+If you have already configured everything:
+
+Refresh the local cache of URE Collection documents:
+```sh
+bin/get_collection_data.py
+```
+
+Run the server:
+```sh
+bin/startflask
+```
+
 # About the URE Methods Project
 
 # About OSF
