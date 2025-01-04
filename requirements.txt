@@ -15,6 +15,10 @@ python-docx
 sympy
 latex2mathml
 
+pkg/mistune-package
+pkg/osf-package
+pkg/ure-package
+
 # These are required for sympy / math rendering
 # Ubuntu packages:
 # texlive-latex-base

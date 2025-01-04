@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export PYTHONPATH=python
+export PYTHONPATH=python:pkg/ure-package
 export FLASK_APP=pkg/osfflask
 export FLASK_ENV=development
 flask run -p 3000

@@ -42,7 +42,6 @@ class DocX(BaseImporter):
 
             # pandoc will soon be moving to this:
             #'--markdown-headings=atx', 
-            '--atx-headers', 
             '--wrap=preserve', 
             tempfile,
         ]

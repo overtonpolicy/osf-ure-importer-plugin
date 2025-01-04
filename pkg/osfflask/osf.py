@@ -283,11 +283,16 @@ def getnodes():
         
         if bibliographic_only:
             bibliographic = [] 
+            from pprint import pprint 
+
             for node in data:
                 # find the contributor record 
                 for contrib in node['embeds']['contributors']['data']:
                     # if this is the user AND it's a bibliographic contribution, add it and break
-                    if contrib['embeds']['users']['data']['id'] != me['id']:                        
+                    data = contrib['embeds']['users'].get('data')
+                    if not data: # happens when a user record links to someone that has deleted their account
+                        continue
+                    if data['id'] != me['id']:                        
                         continue
                     if contrib['attributes']['bibliographic']:                        
                         bibliographic.append(node)

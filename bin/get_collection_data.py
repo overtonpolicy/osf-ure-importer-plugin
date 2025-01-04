@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python   
 import sys,os,re
 import shutil
 import traceback,pdb
@@ -15,13 +15,15 @@ args = parser.parse_args()
 
 import osf
 
+if not os.path.exists('conf/osf.pat'):
+    raise FileNotFoundError(f"conf/osf.pat not found - please set up your OSF Personal Access Token")
 
 with open('conf/osf.pat') as fh:
     token = fh.read().strip()
 
 def main():
     try:
-        do_stuff()
+        run_program()
     except Exception as e:
         if args.debug:
             extype, value, tb = sys.exc_info()
@@ -30,7 +32,7 @@ def main():
         raise
 
 
-def do_stuff():
+def run_program():
     """ 
     create the total collection data structure:
     collection_data is an array of {
@@ -167,8 +169,18 @@ def do_stuff():
 
     load_duckdb(collection_data)
 
+    # json dump to data
     with open('data/collectioninfo.json', 'w') as fh:
         json.dump(collection_data, fh)    
+
+    # json dump to flask webserver static data
+    
+    if not os.path.exists('pkg/osfflask/static/data/'):
+        os.makedirs('pkg/osfflask/static/data/', exist_ok=True)
+
+    with open('pkg/osfflask/static/data/collectioninfo.json', 'w') as fh:
+        json.dump(collection_data, fh)    
+
 
 def load_duckdb(collection_data):
     tf = tempfile.NamedTemporaryFile(delete=False, suffix='.duckdb')
