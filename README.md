@@ -4,7 +4,7 @@ This repo contains files and tools to run plugins developed by
 [Kevin Crouse](https://www.linkedin.com/in/kevincrouse/), Co-PI
 of the [Use of Research Evidence (URE) Methods project](https://uremethods.org).
 
-The URE Methods Project uses [Open Science Framework (OSF)](https://osf.io), a 
+The URE Methods Project uses the [Open Science Framework (OSF)](https://osf.io), a 
 free and open source software project to support collaborative research. The 
 tools and resources in this repository interact with the OSF API.
 
@@ -32,16 +32,6 @@ document and you likely do not need to reference it after initial setup.
 
 The [RUNTIME.md](RUNTIME.md) document provides details about the tools, features,
 and existing codebase. It provides more guidance for active development.
-
-# Overview
-
-The repo functions both as a fully functional python flask environment and also
-as a codebase to accomplish the plugin tasks in a standalone context. This 
-should allow for easier incorporation into the OSF codebase, if desired.  
-
-Otherwise, here is a description of the folder layout:
-* `bin/`: Executable files to start a development flask server and to get the metadata from the collection for the better search features
-* `conf/`: Holds yaml files with account-specific information and API keys - see the credentials section below.
 
 # About the URE Methods Project
 
