@@ -11,6 +11,8 @@ The [README.md](README.md) provides an overview of the project.
 
 # Runtime Notes
 
+## URLs
+
 When testing, it is important to note that `http://127.0.0.1` and 
 `http://localhost` are not the same and that the OSF Developer app configuration
 only allows `localhost` (as of the time of writing). Thus, current code works against 
@@ -19,6 +21,18 @@ rendering the HTML correctly but not authenticating against OSF.
 
 The flask webserver and all scripts are designed to run from the root of repo
 directory. Do not descend into subdirectories to run anything.
+
+## Markdown
+
+OSF uses Markdown for it's wikis, and there are many markdown "flavors" or 
+"dialects." 
+
+To maximize the translation between documents and OSF, adaptors have been added:
+- OSF does not use an globally accepted markdown syntax
+- Custom filters for `pandoc` calls are in `pkg/ure-package/ure/importer/pandoc/`
+- `pkg/ure-package/ure/importer/docx.py` has a function `hack_docx`, which further manipulates the MS Word docx file for features that pandoc simply didn't have available.
+- `pkg/ure-package/ure/importer/baseclass.py` has a `postprocess_markdown` function that translates the tokens added by `hack_docx` back into appropriate markdown
+- The **mistune v2** python package is used by the exporter to (initially) translate the OSF Wiki markdown, but it's not complete, especially for the mathjax/equations supported by OSF. I have thus written a mathjax plugin for mistune to support this. I submitted a PR to the official mistune account, but it was rejected by the author, who was working on and since released mistune v3. At present, the forked mistune v2 package with my experimental plugin is in this repository and part of the requirements file
 
 # Design and Terminology
 

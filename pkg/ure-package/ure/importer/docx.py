@@ -41,7 +41,7 @@ class DocX(BaseImporter):
             # don't use letters or roman numerals for lower-level ordered lists 
 
             # pandoc will soon be moving to this:
-            #'--markdown-headings=atx', 
+            #'--markdown-headings=atx', # needed for pandoc v2, but not for v3
             '--wrap=preserve', 
             tempfile,
         ]
