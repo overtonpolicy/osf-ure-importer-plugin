@@ -17,9 +17,9 @@ You need the API Key to connect to the [OSF API](https://developer.osf.io/).
 
 Go to [OSF Setting](https://osf.io/settings/).
 
-In [Personal Access Tokens (PAT)](https://osf.io/settings/tokens), create a 
-token with `osf.full_write` scopes, which is necessary for the Importer.  
-Obviously you can also create a token with just `full_read` if you will be 
+In [Personal Access Tokens (PAT)](https://osf.io/settings/tokens), create a
+token with `osf.full_write` scopes, which is necessary for the Importer.
+Obviously you can also create a token with just `full_read` if you will be
 segmenting the Importer from other tools. This will give you a new PAT - you can
 not retrieve it anytime after it is created, so copy it down.
 
