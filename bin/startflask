@@ -3,4 +3,10 @@
 export PYTHONPATH=python:pkg/ure-package
 export FLASK_APP=pkg/osfflask
 export FLASK_ENV=development
+
+echo ""
+echo "Go to the index page at http://localhost:3000"
+echo ""
+echo "**WARNING** Flask is lying to you. Do not go to http://127.0.0.1:3000"
+echo ""
 flask run -p 3000

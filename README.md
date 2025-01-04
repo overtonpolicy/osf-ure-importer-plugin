@@ -1,95 +1,69 @@
-# OSF Plugins from the URE Project
+# OSF Plugins for the URE Project
 
-This repo contains all of the files to run the plugins developed to support the URE community interacting with OSF in more typical approaches.
+This repo contains files and tools to run plugins developed by 
+[Kevin Crouse](https://www.linkedin.com/in/kevincrouse/), Co-PI
+of the [Use of Research Evidence (URE) Methods project](https://uremethods.org).
 
-# Key Notes
+The URE Methods Project uses [Open Science Framework (OSF)](https://osf.io), a 
+free and open source software project to support collaborative research. The 
+tools and resources in this repository interact with the OSF API.
 
-- When testing, it is important to note that `http://127.0.0.1` and `http://localhost` are not the same. The current code works against `http://localhost`. Entering `127.0.0.1` in the web browser may end up rendering the HTML correctly but not authenticating against OSF or Google.
+# Orientation
+
+Open Science is a fledgling, community enterprise. It is important and necessary 
+if we want practitioners on the ground to actually be able to obtain and apply
+research in practice, which is necessary to improve conditions for struggling 
+memboers of our community and, by extension, for everyone else.
+
+The OSF platform is a good starting point, but thus far it has been used 
+primarily by tech-saavy, physical science researchers. Additional features are 
+needed for social science (let alone humanities) researchers, and tools need
+to be provided so that researchers who do not know "markdown" can also engage
+with the platform. 
+
+This repository attempts to provide tools and plugins to support these research
+clients.
+
+# Local Development and Runtime
+
+The [SETUP.md](SETUP.md) document indicates the requirements to configure the 
+repo for your own use. This is intended to be the initial configuration and setup
+document and you likely do not need to reference it after initial setup.
+
+The [RUNTIME.md](RUNTIME.md) document provides details about the tools, features,
+and existing codebase. It provides more guidance for active development.
 
 # Overview
 
-The repo functions both as a fully functional python flask environment and also as a codebase to accomplish the plugin tasks in a standalone context. This should allow for easier incorporation into the OSF codebase, if desired.  
-
-The flask webserver is set up to run from the root of the `python` directory, allowing the custom built python modules to be imported without being installed, which also should help in testing and development.
+The repo functions both as a fully functional python flask environment and also
+as a codebase to accomplish the plugin tasks in a standalone context. This 
+should allow for easier incorporation into the OSF codebase, if desired.  
 
 Otherwise, here is a description of the folder layout:
 * `bin/`: Executable files to start a development flask server and to get the metadata from the collection for the better search features
 * `conf/`: Holds yaml files with account-specific information and API keys - see the credentials section below.
 
-# Credentials
+# About the URE Methods Project
 
-OSF and Google require developers to register their application in order to access their programmatic APIs, and so the credentials are stored in specific files in the `conf/` directory. You will need to set up the developer accounts and keys on your own.
+# About OSF
 
-## OSF Credentials
+[OSF](https://osf.io) is a project and platform developed by the 
+[Center for Open Science (COS)](https://www.cos.io/). 
 
-Register your application in **Developer Apps** for [OSF Production](https://osf.io/settings/applications)
+> The Center for Open Science (COS) was founded in 2013 to 
+> start, scale, and sustain open research practices that will democratize access to 
+> research, improve inclusion of all stakeholders, enhance accountability to research 
+> integrity, facilitate the self-corrective process of science, expand transparency
+> and sharing of all research content, and improve research rigor and reproducibility"
+> ([COS](https://www.cos.io/about)). 
 
-# Set Up
-
-This code is built on Python 3.10. It is highly recommended to use a python virtual environment 
-for the repository.
-
-## Package Installation
-
-Custom, modified, and in-house packages are all in the `pkg/` folder, but are also referenced in `requirements.txt`
-
-
-```bash
-pip install -r requirements.txt
-```
-
-## Other Requirements
-
-Additionally, these utilities are required:
-
-- pandoc
-
-# Cached Collection Information (`bin/get_collection_data.py`)
-
-The OSF collection details are fetched and cached locally via the 
-`bin/get_collection_data.py` script, and this is used for several of the front 
-end tools. Having the tools hit OSF directly from the client is slow and leads 
-to inconsistent results when OSF has network lags.
-
-This saves both a json data file of details and a DuckDB database for advanced
-querying.
-
-After running `bin/get_collection_data.py`, the cached files are stored in `data/`
-and a copy of the json dump is also stored in the static web repository.
-
-# Running the Local Server (`bin/startflask`)
-
-Running `bin/startflask` will start the local flask server that includes the various plugins and add-ons.
-After the server starts up, navigate to http://127.0.0.1:3000/
-
-## Most Recent OSF Collection Items Table
-
-The [Most Recent Collection Items](http://localhost:3000/collectionlist) uses 
-jquery (and jquery-table) to create a more interactive, searchable 
-table of URE Sources in the collection. This uses the JSON OSF cache file
-pulled down by `get_collection_data.py`
-
-## Advanced Search
-
-The [Advanced Search](http://localhost:3000/search/advanced) uses 
-jquery (and jquery-table) to create an interactive search that includes content 
-from wiki pages as well as different fields. At the time of development, this 
-was both faster and included more features than the OSF search. This uses the 
-DuckDB database constructed from OSF sources pulled down by `get_collection_data.py`
-
-# Exporter
-
-
-# Importer
-
-## Word Importer
-
-
-## Google Drive/Docs Importer
-
-The Google Docs Importer uses, as expected, Google Docs.
-
+The URE Methods team has no formal affiliation with COS or OSF, but they're good
+people doing good things.
 
 # License
 
-All code is licensed under the GNU License, v 3.0, and requires attribution to the original author, [Kevin Crouse](https://gitlab.com/krcrouse), if used or incorporated into other products. Further, any products incorporating this code must be open source. A full copy of the GNU License is availabe in the root directory of the repository.
+All code is licensed under the GNU License, v 3.0, and requires attribution to 
+the original author, [Kevin Crouse](https://github.com/kcphila), if used or 
+incorporated into other products. Further, any products incorporating this code 
+must be open source. A full copy of the [GPL](LICENSE) is availabe in the root 
+directory of the repository.
