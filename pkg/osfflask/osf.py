@@ -35,7 +35,7 @@ def parse_parameters(param_items=None, checkbox_params=None):
             parameters[checkboxparam] = checkboxparam in parameters
     return(parameters)
 
-def osfapicall(url:str, reqparams:dict=None, method:str='get', quiet:bool=True, return_json:bool=True, access_token:str=None, debug:bool=True):
+def osfapicall(url:str, reqparams:dict=None, method:str='get', quiet:bool=True, return_json:bool=True, access_token:str=None, debug:bool=False):
     """ Shorthand call to the OSF API. Use this to curry a request on to OSF from a plugin or web app.
     
     Args:
@@ -273,8 +273,6 @@ def getnodes():
             }
         if not include_components:
             params['filter[parent]'] = 'null'
-        #else:
-        #    print(f"WTF? Include components is {include_components}", file=sys.stderr)
 
         data = osfgetdata(f"/users/{me['id']}/nodes/", params, fetch_all=True)
         if type(data) is not list:

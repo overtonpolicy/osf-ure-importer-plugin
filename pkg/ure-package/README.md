@@ -9,6 +9,7 @@ and Google Docs to and from OSF.
 # Testing
 
 There are some tests in `t/` but they are not particularly thorough or complete.
+They primarily test the markdown translators.
 
 # Authors
 
