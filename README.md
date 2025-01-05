@@ -74,7 +74,12 @@ people doing good things.
 
 # License
 
-All code is licensed under the 
+External projects included in this repo retain their original license and 
+attribution, and the mistune package (located in `pkg/mistune-package`) is a 
+fork of an external package and licensed under the same (BSD) license. See 
+relevant license details in the respective subdirectories.
+
+Otherwise, all code is licensed under the 
 [GNU GPLv3](https://www.gnu.org/licenses/gpl-3.0.html#license-text), 
 which requires attribution to the original author, 
 [Kevin Crouse](https://github.com/kcphila), if used or incorporated into other 

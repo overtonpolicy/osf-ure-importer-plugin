@@ -1,8 +1,12 @@
 from . import OSFBase
+from .project import Project
 
 class User(OSFBase):
+    """A python class to represent an OSF Author / USer
+    """
 
     json_properties = ['id', 'links', 'type', 'attributes', 'relationships']
+
     def __init__(self, init, session):
         self._projects = None
 
@@ -14,21 +18,34 @@ class User(OSFBase):
             self._user_id = init
 
     @property
-    def user_id(self):
+    def user_id(self) -> str:
+        "str: The User ID"
         return(self._user_id)
 
     @property
-    def projects(self):
+    def projects(self) -> list[Project]:
+        """list: The Projects attached to the user """
         return([p for p in self.nodes if p.project_type == 'project'])
 
     @property
     def nodes(self):
+        """list: All Nodes attached to the user """
+
         if not self._projects:
             data = self.session.get_all(self.session.root + '/users/'+self.user_id+'/nodes/')
-            self._projects = [osf.Project(p, self.session) for p in data]
+            self._projects = [Project(p, self.session) for p in data]
         return(self._projects)
 
-    def get_project(self, project_id):
+    def get_project(self, project_id:str) -> Project:
+        """ Gets one of the user's projects, by ID.
+
+        Args:
+            project_id (str): The project ID
+
+        Returns:
+            Project: The Project
+            None: IF the project_id is not one of the user's projects, nothing is returned.
+        """
         for p in self.projects:
             if p.id == project_id:
                 return(p)
