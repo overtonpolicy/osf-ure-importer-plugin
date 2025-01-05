@@ -1,4 +1,7 @@
-conf
+conf/*.yml
+conf/*.json
+conf/osf.pat
 data
 tmpfiles
 uploads
+pkg/*/build
