@@ -2,17 +2,13 @@
 
 # ure
 
-This is a package that handles tools and features for the Use of Research Evidence (URE) plugins.
+This is a package that handles tools and features for the Use of Research 
+Evidence (URE) plugins - specifically importing and exporting Microsoft Word 
+and Google Docs to and from OSF.
 
-## Installation
+# Testing
 
-Use the package manager [pip](https://pip.pypa.io/en/stable/) to install ure.
-
-```bash
-pip install ure
-```
-
-
+There are some tests in `t/` but they are not particularly thorough or complete.
 
 # Authors
 

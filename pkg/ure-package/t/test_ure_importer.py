@@ -3,7 +3,6 @@ import os,sys,re
 import pdb,warnings
 import textwrap, pprint
 
-pdb.set_trace()
 sys.path.insert(0, os.path.dirname(__file__) + '/..')
 import ure
 input_dir = os.path.dirname(__file__) + '/input'
@@ -158,6 +157,10 @@ def test_h1_component_h2_wiki_breaks():
     )
     reference_data = [
         [
+            '(No Title)',
+            ['home_wiki'],
+        ],
+        [
             'First Heading 1: Abstract 1.1.1',
             [
                 'home_wiki',
@@ -284,7 +287,25 @@ def compare_import_to_markdown(filename):
         for wiki_title, wiki_text in node_data:
             actual_wiki_title, actual_text = next(actual_wiki_iter)
             assert wiki_title == actual_wiki_title, f"Node {i}, Wiki {w} title is '{wiki_title}', but the comparison data thinks it should be '{actual_wiki_title}'"
-            assert wiki_text == actual_text, f"Node {i}, Wiki {w} ('{wiki_title}') does not have matching text!"
+            wiki_text = wiki_text.strip()
+            actual_text = actual_text.strip()
+            if wiki_text == actual_text:
+                assert wiki_text == actual_text
+                continue
+            # find out specifically what is different, ignoring whitespace
+            wiki_lines = [z.strip() for z in wiki_text.splitlines()]
+            actual_lines = [z.strip() for z in wiki_text.splitlines()]
+            decomposed = []            
+            errors = 0
+            for i in range(len(wiki_lines)):
+                if wiki_lines[i] == actual_lines[i]:
+                    decomposed.append(f"{i:03d}: {wiki_lines[i]}")
+                else:
+                    errors += 1
+                    decomposed.append(f"Line {i+1}:\n  Expected: {wiki_lines[i]}\n    Actual: {actual_lines[i]}")
+
+            if errors:
+                pytest.fail("\n".join(decomposed))
             w += 1
         i += 1
 

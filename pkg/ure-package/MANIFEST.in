@@ -1,1 +1,2 @@
 include ure/importer/pandoc/*
+include ure/exporter/templates/*

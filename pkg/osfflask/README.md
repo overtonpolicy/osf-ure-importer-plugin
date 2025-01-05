@@ -1,7 +1,13 @@
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
+# osfflask
 
+This is primarily a local development flask server and flask implementations of
+the various plugins that were being developed by the URE Method project to 
+improve the OSF experience for URE stakeholders. 
 
+It may provide templates and examples that can be used for other/future 
+endeavors, but it is not designed to be a standalone python package, per se.
 
 # Authors
 

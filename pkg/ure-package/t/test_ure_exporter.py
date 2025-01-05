@@ -9,9 +9,7 @@ import ure
 import ure.exporter
 input_dir = os.path.dirname(__file__) + '/input'
 
-exporter = ure.exporter.Docx(
-    style_template="conf/APA Double Space.docx",
-)
+exporter = ure.exporter.Docx()
 
 markdown = [
     ('Woof Project',
@@ -112,17 +110,13 @@ markdown = [
 ]
 
 
-def render_docx(md, output_filename):
+def test_render_docx():
+    output_filename = "test.docx"
     doc = exporter.process_markdown(
-        md,
+        markdown,
     )
+    assert doc
     doc.save(output_filename)
-    print("\nSaved to:\n", output_filename)    
 
-try:
-    render_docx(markdown, "test.docx")
-except:
-    errtype,errvalue,errtb = sys.exc_info()
-    traceback.print_exc()
-    pdb.post_mortem(errtb)
+    pytest.fail(f"Saved output to {output_filename}, but we haven't crafted thorough tests to make sure it is right")
 
