@@ -29,8 +29,8 @@ clients.
 # Local Development and Runtime
 
 The [SETUP.md](SETUP.md) document indicates the requirements to configure the 
-repo for your own use. This is intended to be the initial configuration and setup
-document and you likely do not need to reference it after initial setup.
+repo for your own use. This is intended to be the initial configuration
+and you likely do not need to reference it after initial setup.
 
 The [RUNTIME.md](RUNTIME.md) document provides details about the tools, features,
 and existing codebase. It provides more guidance for active development.
