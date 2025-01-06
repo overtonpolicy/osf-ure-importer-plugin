@@ -63,7 +63,7 @@ and disseminate their work.
 
 The **URE Methods Project** was funded primarily through grants by the 
 [W. T. Grant Foundation](https://wtgrantfoundation.org/). This included a pilot
-project to create a open repository for URE studies hosted in a 
+project to create an open repository for URE studies hosted in a 
 [collection in the Open Science Framework (OSF)](https://osf.io/collections/uremethods/discover)
 and a [website](https://uremethods.org) to support researchers who may wish to 
 contribute to the collection.
