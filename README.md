@@ -53,6 +53,40 @@ bin/startflask
 
 # About the URE Methods Project
 
+The **URE Methods Project** was a project that existed between 2019 and 2024 with 
+Principal Investigator [Drew H. Gitomer](https://gse.rutgers.edu/faculty/drew-h-gitomer/) 
+and Co-Principal Investigator [Kevin Crouse](https://www.linkedin.com/in/kevincrouse/) 
+and focused on the Use of Research Evidence (URE) and translational science. 
+The project led to (a) analyses of methods and measures appropriate for URE research 
+and (b) pilots to establish open and accessible spaces for URE researchers to engage 
+and disseminate their work.
+
+The **URE Methods Project** was funded primarily through grants by the 
+[W. T. Grant Foundation](https://wtgrantfoundation.org/). This endeavor included 
+a pilot to create a open repository for URE studies. These studies were hosted in a 
+[collection in the Open Science Framework (OSF)](https://osf.io/collections/uremethods/discover)
+and a [website](https://uremethods.org) to support researchers who may wish to 
+contribute to the collection.
+
+At the end of 2024 / beginning of 2025, the pilot website and collection are 
+being handed over to new stakeholders that hopefully will be able to expand and
+scale the URE participant community. 
+
+This codebase provides the tools and extensions to OSF that were developed 
+during the pilot project. At the time of writing, it was fully functional and 
+could be run locally for development following the instructions in the 
+[setup](SETUP.md) and [runtime][RUNTIME.md] documents included in the repo.
+
+## About the W. T. Grant Foundation
+
+> The [W. T. Grant Foundation](https://wtgrantfoundation.org/) invests in 
+> high-quality research focused on reducing inequality in youth outcomes and 
+> improving the use of research evidence in decisions that affect young people 
+> in the United States.
+
+This project was funded primarily by W. T. Grant's 
+[Improving the use of research evidence](https://wtgrantfoundation.org/focus-areas/improving-the-use-of-research-evidence) grant program.
+
 # About OSF
 
 [OSF](https://osf.io) is a project and platform developed by the 
