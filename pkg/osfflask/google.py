@@ -135,7 +135,6 @@ def google_oauth2_callback():
         'scopes': credentials.scopes,
     }
 
-    print(f"Google token: {flask.session['google_token']}", file=sys.stderr)
     return(flask.current_app.send_static_file('auth/googleauth-callback.html'))
 
 def api(service_path, method_list, params=None):
