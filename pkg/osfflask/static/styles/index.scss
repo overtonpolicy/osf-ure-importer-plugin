@@ -20,6 +20,9 @@ body {
 h1 {
     @include theme.typography_dialog_heading;
 }
+h4 {
+    font-size: 20px
+}
 .ure-button {
     background: theme.$primary-main;
     border-radius: theme.$radius_md;
@@ -94,4 +97,24 @@ h1 {
     @include theme.typography_body_lg;
     font-weight: 500;
     margin-top: theme.$spacing_2;
+}
+
+.importer_header {
+    border-bottom: 1px solid theme.$common-black_states-focus;
+    padding: 0 0 theme.$spacing_2;
+    margin-bottom: theme.$spacing_4;
+}
+
+.drag-n-drop-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 85px;
+    height: 85px;
+    background-color: theme.$purple-50;
+    border: 2px dashed theme.$primary-main;
+    color: theme.$primary-main;
+    font-size: 50px;
+    text-align: center;
+    vertical-align: middle;
 }

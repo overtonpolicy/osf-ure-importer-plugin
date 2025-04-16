@@ -45,6 +45,10 @@ h1 {
   }
 }
 
+h4 {
+  font-size: 20px;
+}
+
 .ure-button, .ure-button_outlined {
   background: rgb(54, 48, 104);
   border-radius: 0.5rem;
@@ -118,6 +122,26 @@ h1 {
   letter-spacing: -0.15px;
   font-weight: 500;
   margin-top: 1rem;
+}
+
+.importer_header {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1199999973);
+  padding: 0 0 1rem;
+  margin-bottom: 2rem;
+}
+
+.drag-n-drop-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 85px;
+  height: 85px;
+  background-color: rgb(235, 233, 242);
+  border: 2px dashed rgb(54, 48, 104);
+  color: rgb(54, 48, 104);
+  font-size: 50px;
+  text-align: center;
+  vertical-align: middle;
 }
 
 /*# sourceMappingURL=ure_methods.css.map */

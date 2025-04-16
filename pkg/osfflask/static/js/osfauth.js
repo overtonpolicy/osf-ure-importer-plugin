@@ -344,7 +344,7 @@ class OSFAuth {
             // in this case, we logged in separately and are notifying the osf object of it, so we 
             // we don't need to call getme separately.
             self.me = me;
-            $('#osf-authentication-status').html('Logged in as '+me.attributes.full_name+'.');
+            $('#osf-authentication-status').html("Logged in as <b>" + me.attributes.full_name + "</b>.");
             self.loginCallbacks.forEach(function(callback){
                 callback(me);
             });
@@ -353,7 +353,7 @@ class OSFAuth {
             // update the label and conduct any custom callbacks
             self.getme({success:function(me){            
                 self.me = me;
-                $('#osf-authentication-status').html('Logged in as '+me.attributes.full_name+'.');
+                $('#osf-authentication-status').html("Logged in as <b>" + me.attributes.full_name + "</b>.");
                 self.loginCallbacks.forEach(function(callback){
                     callback(me);
                 });

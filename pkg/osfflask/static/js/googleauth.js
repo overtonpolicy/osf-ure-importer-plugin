@@ -205,7 +205,7 @@ class GoogleAuth {
         });
         self.logged_in = true;
         self.me = me;
-        $('#google-authentication-status').html('You are logged in as ' + me.name);
+        $('#google-authentication-status').html("Logged in as <b>" + me.name + "</b>");
         self.loginCallbacks.forEach(function(callback){
             callback(me);
         });
