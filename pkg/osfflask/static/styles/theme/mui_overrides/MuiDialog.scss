@@ -1,0 +1,35 @@
+@use "../sizing";
+@use "../colors";
+@use "../typography";
+
+.MuiDialog {
+    &-root {
+        border-radius: sizing.$spacing_2;
+    }
+}
+
+.MuiDialogTitle {
+    &-root {
+        @include typography.typography_dialog_heading;
+        display: flex;
+        flex-flow: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: sizing.$spacing_2;
+        padding: sizing.$spacing_3;
+    }
+}
+
+.MuiDialogContent {
+    &-root {
+        border-color: colors.$color_text_primary-light-mode;
+    }
+}
+
+.MuiDialogActions {
+    &-root {
+        padding: sizing.$spacing_2;
+        display: flex;
+        gap: 2px;
+    }
+}

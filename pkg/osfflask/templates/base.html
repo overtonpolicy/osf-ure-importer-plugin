@@ -7,14 +7,11 @@
 {% endblock %}
     
 {% block topmatter %}
-<div class="row pt-3">
-    <div class="col">
-        {% include "partials/page-navigation.html" %}
-    </div>
+<div class="row pt-3 osf-login-required">
     <div class="col">
     </div>
     <div class="col-sm-5 text-right">
-        {% include "partials/login-widget.html" %}
+        {% include "partials/auth-widget.html" %}
     </div>
 </div>
 {% endblock %}

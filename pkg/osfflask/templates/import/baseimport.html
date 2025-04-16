@@ -3,161 +3,144 @@
 {% block javascript %}
 {{ super() }}
 <script type="text/javascript"
-    src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+        src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
 <script type="text/javascript"
-    src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/additional-methods.min.js"></script>
+        src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/additional-methods.min.js"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/osf-project-select.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/importgeneral.js') }}"></script>
 {% endblock %}
 
 {% block content %}
 <form id="document-import" method="POST" enctype="application/x-www-form-urlencoded">
-<fieldset>
+    <fieldset>
 
-    {% include 'partials/osf-project-select.html' %}
+        {% include 'partials/osf-project-select.html' %}
 
-    {% block import_content %}{% endblock %}
+        {% block import_content %}{% endblock %}
 
-    <div class="accordian mt-3" id="import-accordian">
-        <div id="doc-options" class="accordian-item">
-            <h2 class="accordian-header" id="doc-options-header">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#doc-options-item" aria-controls="doc-options-item"
-                    aria-expanded="true">
-                    Document Options
-                </button>
-            </h2>
-            <div id="doc-options-item" class="accordion-collapse collapse show"
-                aria-labelledby="doc-options-header">
-                <div class="accordion-body">
-                    <div class="row">
-                        <div class="col-sm-1 text-end">
-                            <input type="checkbox" id="overwrite" value="" name="overwrite" class='inline-input' CHECKED />
+        <div class="accordian mt-3" id="import-accordian">
+            <div id="doc-options" class="accordian-item">
+                <h2 class="accordian-header" id="doc-options-header">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#doc-options-item" aria-controls="doc-options-item"
+                            aria-expanded="true">
+                        Document Options
+                    </button>
+                </h2>
+                <div id="doc-options-item" class="accordion-collapse collapse show"
+                     aria-labelledby="doc-options-header">
+                    <div class="accordion-body">
+                        <div class="row">
+                            <div class="col-sm-1">
+                                <input type="checkbox" id="overwrite" value="" name="overwrite" class='inline-input'
+                                       CHECKED/>
+                            </div>
+                            <div class="col">
+                                <label class="inline-label" for="overwrite">
+                                    Overwrite
+                                </label>
+                            </div>
                         </div>
-                        <div class="col">
-                            <label class="inline-label" for="overwrite">
-                            Overwrite
-                            </label>
+                        <div class="row">
+                            <div class="offset-sm-1 col">
+                                <label class="text-muted" for="overwrite">
+                                    Indicates that if a wiki or component already exists with the name for the
+                                    section, it will be replaced. Unselect this if the Wiki may have changes or
+                                    modifications that are not in the content you are importing.
+                                </label>
+                            </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="offset-sm-1 col">
-                            <label class="text-muted" for="overwrite">
-                            Indicates that if a wiki or component already exists with the name for the
-                            section, it will be replaced. Unselect this if the Wiki may have changes or
-                            modifications that are not in the content you are importing.
-                            </label>
+                        <br/>
+                        <div class="row">
+                            <div class="col-sm-1">
+                                <input type="checkbox" id="deleteold" value="" name="deleteold" class='inline-input'/>
+                            </div>
+                            <div class="col">
+                                <label class="inline-label" for="deleteold">Delete Old</label>
+                            </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-1 text-end">
-                            <input type="checkbox" id="deleteold" value="" name="deleteold" class='inline-input' />
-                        </div>
-                        <div class="col">
-                            <label class="inline-label" for="deleteold">Delete Old</label>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="offset-sm-1 col">
-                            <label class="text-muted" for="deleteold">
-                                Deletes any wiki pages or components that do not exist in your new import.
-                                <b>This will lead to the loss of data</b> if new components or wikis were
-                                added to your project; it is only intended if you do all of your work
-                                externally and solely enter content in OSF via import.
-                            </label>
+                        <div class="row">
+                            <div class="offset-sm-1 col">
+                                <label class="text-muted" for="deleteold">
+                                    Deletes any wiki pages or components that do not exist in your new import.
+                                    <b>This will lead to the loss of data</b> if new components or wikis were
+                                    added to your project; it is only intended if you do all of your work
+                                    externally and solely enter content in OSF via import.
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div id="break-options" class="accordian-item">
-            <h2 class="accordian-header" id="break-options-header">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#break-options-item" aria-controls="break-options-item"
-                    aria-expanded="true">
-                    Wiki and Component Break Options
-                </button>
-            </h2>
-            <div id="break-options-item" class="accordion-collapse collapse show"
-                aria-labelledby="break-options-header">
-                <div class="accordion-body d-grid gap-3">
-                    <div>
-                        {% block component_break_desc %}
-                        Any <b>Component Break</b> found in your source content will create a new
-                        subcomponent in OSF and write the remaining wiki pages there. This is common
-                        for major sections in a project. By default, any <i>Section Break</i> or
-                        <i>Page Break</i> will create new components. Depending on how you format
-                        your document, <i>1st Headings</i> sometimes are also component breaks.
-                        {% endblock %}
-                    </div>
-                    <div>
-                        {% block wiki_break_desc %}
-                        Any <b>Wiki Break</b> found in your source content will create a new wiki in
-                        the same OSF project/component. This is common for minor areas within a
-                        component. By default, <i>1st Headings</i> will create new wikis, but you
-                        may want to designate other headings as well.
-                        {% endblock %}
-                    </div>
-                    <div>
-                        <h5>Section Break Action</h5>
-                        <div class="text-muted">
-                            Select the action to take when section breaks are found. If a
-                            <i>Component</i> or <i>Wiki</i> break is selected, the first heading found
-                            will be taken for the title.
+            <div id="break-options" class="accordian-item">
+                <h2 class="accordian-header" id="break-options-header">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#break-options-item" aria-controls="break-options-item"
+                            aria-expanded="true">
+                        Wiki and Component Break Options
+                    </button>
+                </h2>
+                <div id="break-options-item" class="accordion-collapse collapse show"
+                     aria-labelledby="break-options-header">
+                    <div class="accordion-body d-grid gap-3">
+                        <p>
+                            You can customise how <i>Page Breaks</i>, <i>Section Breaks</i> and <i>headings</i> in
+                            your document are
+                            processed by the importer. You can use the dropdowns below to specify if these should become
+                            <i>Component Breaks</i> or <i>Wiki Breaks</i>.
+                        </p>
+                        <div>
+                            A <b>Component Break</b> will create a new subcomponent in OSF and write the remaining wiki
+                            pages there. This is common for major sections in a project. This is common
+                            for major sections in a project.
                         </div>
-                        <select id="section-break-policy" name="section-break-policy" class="form-select form-select-md">
-                            <option value="">No Action</option>
-                            <option value="wiki">Wiki Break</option>
-                            <option value="component" SELECTED>Component Break</option>
-                        </select>
-                    </div>
-                    <div>
-                        <h5>Page Break Action</h5>
-                        <div class="text-muted">
-                            Select the action to take when page breaks are found. If a <i>Component</i>
-                            or <i>Wiki</i> break is selected, the first heading found will be taken for
-                            the title.
+                        <div>
+                            A <b>Wiki Break</b> will create a new wiki page in the same OSF project/component. This is
+                            common for minor areas within a project.
                         </div>
-                        <select id="page-break-policy" name="page-break-policy" class="form-select form-select-md">
-                            <option value="">No Action</option>
-                            <option value="wiki">Wiki Break</option>
-                            <option value="component" SELECTED>Component Break</option>
-                        </select>
-                    </div>
-                    <div>
-                        <h5>Heading 1 Actions</h5>
-                        <div class="text-muted">
-                            Select the action to take when a <i>Heading 1</i> is found. The heading will
-                            be used as the title.
+                        <div>
+                            <h5 class="break-title">Section Break</h5>
+                            <select id="section-break-policy" name="section-break-policy"
+                                    class="form-select form-select-md">
+                                <option value="">No Action</option>
+                                <option value="wiki">Wiki Break</option>
+                                <option value="component" SELECTED>Component Break</option>
+                            </select>
                         </div>
-                        <select id="h1-policy" name="h1-policy" class="form-select form-select-md">
-                            <option value="">No Action</option>
-                            <option value="wiki" SELECTED>Wiki Break</option>
-                            <option value="component">Component Break</option>
-                        </select>
-                    </div>
-                    <div>
-                        <h5>Heading 2 Actions</h5>
-                        <div class="text-muted">
-                            Select the action to take when a <i>Heading 2</i> is found. The heading will
-                            be used as the title.
+                        <div>
+                            <h5 class="break-title">Page Break</h5>
+                            <select id="page-break-policy" name="page-break-policy" class="form-select form-select-md">
+                                <option value="">No Action</option>
+                                <option value="wiki">Wiki Break</option>
+                                <option value="component" SELECTED>Component Break</option>
+                            </select>
                         </div>
-                        <select id="h2-policy" name="h2-policy" class="form-select form-select-md">
-                            <option value="" SELECTED>No Action</option>
-                            <option value="wiki">Wiki Break</option>
-                            <option value="component">Component Break</option>
-                        </select>
+                        <div>
+                            <h5 class="break-title">Heading 1</h5>
+                            <select id="h1-policy" name="h1-policy" class="form-select form-select-md">
+                                <option value="">No Action</option>
+                                <option value="wiki" SELECTED>Wiki Break</option>
+                                <option value="component">Component Break</option>
+                            </select>
+                        </div>
+                        <div>
+                            <h5 class="break-title">Heading 2</h5>
+                            <select id="h2-policy" name="h2-policy" class="form-select form-select-md">
+                                <option value="" SELECTED>No Action</option>
+                                <option value="wiki">Wiki Break</option>
+                                <option value="component">Component Break</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="pb-4 pt-3 px-4">
-                <input type="submit" class="btn btn-primary btn-lg" id="import-button" value="Import">
+            <div class="row">
+                <div class="pb-4 pt-3 px-4">
+                    <input type="submit" class="btn btn-primary btn-lg ure-button" id="import-button" value="Import">
+                </div>
             </div>
         </div>
-    </div>
-</fieldset>
+    </fieldset>
 </form>
 
 {% endblock %}

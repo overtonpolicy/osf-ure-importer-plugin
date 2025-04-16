@@ -1,0 +1,14 @@
+@use "../sizing";
+@use "../colors";
+@use "../typography";
+@use "../effects";
+
+.MuiTooltip {
+    &-tooltip {
+        @include typography.typography_body_caption;
+        font-weight: normal;
+        background: colors.$grey-300;
+        color: colors.$text-secondary;
+        padding: sizing.$spacing_half sizing.$spacing_1;
+    }
+}

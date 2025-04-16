@@ -1,0 +1,465 @@
+@use "../sizing";
+@use "../colors";
+@use "../effects";
+
+.MuiButton {
+
+    &-root {
+        border-radius: sizing.$radius_md;
+        letter-spacing: 0.2px;
+        text-transform: none;
+
+        &:hover {
+            box-shadow: none;
+        }
+    }
+
+    &-containedPrimary {
+        color: colors.$primary-contrast;
+        background: colors.$primary-main;
+        box-shadow: none;
+
+        &:hover {
+            background-color: colors.$primary-dark;
+        }
+    }
+
+    &-containedSecondary {
+        color: colors.$secondary-contrast;
+        background: colors.$secondary-main;
+        box-shadow: none;
+
+        &:hover {
+            background-color: colors.$secondary-dark;
+        }
+    }
+
+    &-containedInherit {
+        box-shadow: none;
+    }
+
+    &-outlinedPrimary {
+        border-color: colors.$primary-main;
+        color: colors.$primary-main;
+
+        &:hover {
+            border-color: colors.$primary-main;
+            color: colors.$primary-main;
+            background: colors.$primary-_states-hover;
+        }
+    }
+
+    &-outlinedSecondary {
+        border-color: colors.$secondary-main;
+        color: colors.$secondary-main;
+
+        &:hover {
+            border-color: colors.$secondary-main;
+            color: colors.$secondary-main;
+            background: colors.$secondary-_states-hover;
+        }
+    }
+    //&-sizeLarge {
+    //    // Primary
+    //    &.MuiButton-containedPrimary {
+    //        font-size: 1rem;
+    //        font-style: normal;
+    //        font-weight: 500;
+    //        line-height: 26px; /* 162.5% */
+    //        letter-spacing: 0.2px;
+    //        text-transform: none;
+    //        padding: 8px 22px;
+    //        border-radius: sizing.$radius_md;
+    //        opacity: 1;
+    //        box-shadow: none;
+    //
+    //        &:not(.Mui-disabled):not(.Mui-focusVisible):not(:hover) {
+    //            color: colors.$primary-contrast;
+    //            background: colors.$primary-main;
+    //        }
+    //
+    //        &:not(.Mui-disabled).Mui-focusVisible:not(:hover) {
+    //            color: colors.$primary-contrast;
+    //            background: colors.$primary-main;
+    //
+    //            .MuiTouchRipple-root {
+    //                width: 65.527px;
+    //                height: 54px;
+    //                border-radius: 100px;
+    //                opacity: 0.3;
+    //                background: colors.$primary-contrast;
+    //                padding: 0;
+    //                box-shadow: none;
+    //            }
+    //        }
+    //
+    //        &:not(.Mui-disabled):not(.Mui-focusVisible):hover {
+    //            color: colors.$primary-contrast;
+    //            background: colors.$primary-dark;
+    //        }
+    //
+    //        &.Mui-disabled:not(.Mui-focusVisible):not(:hover) {
+    //            color: colors.$primary-contrast;
+    //            background: colors.$primary-dark;
+    //        }
+    //    }
+    //
+    //    // Inherit
+    //    &.MuiButton-containedInherit {
+    //        font-size: 1rem;
+    //        font-style: normal;
+    //        font-weight: 500;
+    //        line-height: 26px; /* 162.5% */
+    //        letter-spacing: 0.2px;
+    //        text-transform: none;
+    //        padding: 8px 22px;
+    //        border-radius: sizing.$radius_md;
+    //        opacity: 1;
+    //        box-shadow: none;
+    //
+    //        &:not(.Mui-disabled):not(.Mui-focusVisible):not(:hover) {
+    //            color: colors.$text-primary;
+    //            background: #E0E0E0;
+    //        }
+    //
+    //        &:not(.Mui-disabled).Mui-focusVisible:not(:hover) {
+    //            color: colors.$text-primary;
+    //            background: #E0E0E0;
+    //
+    //            .MuiTouchRipple-root {
+    //                width: 65.527px;
+    //                height: 54px;
+    //                border-radius: 100px;
+    //                background: colors.$text-_states-focusvisible;
+    //                padding: 0;
+    //                opacity: 1;
+    //                box-shadow: none;
+    //            }
+    //        }
+    //
+    //        &:not(.Mui-disabled):not(.Mui-focusVisible):hover {
+    //            color: colors.$text-primary;
+    //            background: #F5F5F5;
+    //        }
+    //
+    //        &.Mui-disabled:not(.Mui-focusVisible):not(:hover) {
+    //            color: colors.$action-disabled;
+    //            background: colors.$action-disabledbackground;
+    //        }
+    //    }
+    //
+    //    // "Inherit (white)" → renamed to Inherit-white
+    //    &.MuiButton-containedInherit-white {
+    //        font-size: 1rem;
+    //        font-style: normal;
+    //        font-weight: 500;
+    //        line-height: 26px; /* 162.5% */
+    //        letter-spacing: 0.2px;
+    //        text-transform: none;
+    //        padding: 8px 22px;
+    //        border-radius: sizing.$radius_md;
+    //        opacity: 1;
+    //        box-shadow: none;
+    //
+    //        &:not(.Mui-disabled):not(.Mui-focusVisible):not(:hover) {
+    //            color: var(--mui-palette-common-white_states-main);
+    //            background: #E0E0E0;
+    //        }
+    //
+    //        &:not(.Mui-disabled).Mui-focusVisible:not(:hover) {
+    //            color: var(--mui-palette-common-white_states-main);
+    //            background: #E0E0E0;
+    //
+    //            .MuiTouchRipple-root {
+    //                width: 65.527px;
+    //                height: 54px;
+    //                border-radius: 100px;
+    //                opacity: 0.3;
+    //                background: var(--mui-palette-common-white_states-main);
+    //                padding: 0;
+    //                box-shadow: none;
+    //            }
+    //        }
+    //
+    //        &:not(.Mui-disabled):not(.Mui-focusVisible):hover {
+    //            color: var(--mui-palette-common-white_states-main);
+    //            background: #F5F5F5;
+    //        }
+    //
+    //        &.Mui-disabled:not(.Mui-focusVisible):not(:hover) {
+    //            color: colors.$action-disabled;
+    //            background: colors.$action-disabledbackground;
+    //        }
+    //    }
+    //
+    //    // Secondary
+    //    &.MuiButton-containedSecondary {
+    //        font-size: 1rem;
+    //        font-style: normal;
+    //        font-weight: 500;
+    //        line-height: 26px; /* 162.5% */
+    //        letter-spacing: 0.2px;
+    //        text-transform: none;
+    //        padding: 8px 22px;
+    //        border-radius: sizing.$radius_md;
+    //        opacity: 1;
+    //        box-shadow: none;
+    //
+    //        &:not(.Mui-disabled):not(.Mui-focusVisible):not(:hover) {
+    //            color: colors.$secondary-contrast;
+    //            background: var(--mui-palette-secondary-main);
+    //        }
+    //
+    //        &:not(.Mui-disabled).Mui-focusVisible:not(:hover) {
+    //            color: colors.$secondary-contrast;
+    //            background: var(--mui-palette-secondary-main);
+    //
+    //            .MuiTouchRipple-root {
+    //                width: 65.527px;
+    //                height: 54px;
+    //                border-radius: 100px;
+    //                opacity: 0.3;
+    //                background: colors.$secondary-contrast;
+    //                padding: 0;
+    //                box-shadow: none;
+    //            }
+    //        }
+    //
+    //        &:not(.Mui-disabled):not(.Mui-focusVisible):hover {
+    //            color: colors.$secondary-contrast;
+    //            background: colors.$secondary-dark;
+    //        }
+    //
+    //        &.Mui-disabled:not(.Mui-focusVisible):not(:hover) {
+    //            color: colors.$action-disabled;
+    //            background: colors.$action-disabledbackground;
+    //        }
+    //    }
+    //
+    //    .MuiButton {
+    //        &-root {
+    //            padding: sizing.$spacing_xs sizing.$spacing_md;
+    //            text-transform: none;
+    //            border-radius: 26.5px !important; // Note: Using `!important` is typically discouraged in CSS as it makes overriding styles difficult.
+    //            font-size: sizing.$font_size_sm;
+    //            font-weight: sizing.$font_weight_normal;
+    //            letter-spacing: 0;
+    //            align-items: center;
+    //            white-space: nowrap;
+    //            box-shadow: none;
+    //            border-color: currentColor;
+    //            min-width: auto;
+    //        }
+    //
+    //        &-contained {
+    //            @include effects.border-box;
+    //        }
+    //
+    //        &-sizeSmall {
+    //            //padding: sizing.$spacing_xxs sizing.$spacing_xs sizing.$spacing_none;
+    //            padding: sizing.$spacing_xxs sizing.$spacing_sm;
+    //            font-size: sizing.$font_size_xs;
+    //        }
+    //
+    //        &-iconSizeSmall {
+    //            svg {
+    //                font-size: sizing.$font_size_xs !important;
+    //            }
+    //        }
+    //
+    //        &-sizeXsmall {
+    //            padding: sizing.$spacing_none sizing.$spacing_xs;
+    //            font-size: sizing.$font_size_xs;
+    //        }
+    //
+    //        &-textBasic {
+    //            padding: sizing.$spacing_none;
+    //
+    //            &:hover {
+    //                background: none;
+    //                filter: brightness(1.5);
+    //            }
+    //        }
+    //
+    //        &-outlined, &-outlined:hover {
+    //            @include effects.border-box;
+    //        }
+    //    }
+    //}
+    //
+    //&-sizeMedium {
+    //    &.MuiButton-containedPrimary {
+    //        font-size: 0.875rem;
+    //        font-style: normal;
+    //        font-weight: 500;
+    //        line-height: 24px; /* 171.429% */
+    //        letter-spacing: 0.2px;
+    //        text-transform: none;
+    //        padding: 6px 16px;
+    //        border-radius: sizing.$radius_md;
+    //        opacity: 1;
+    //        box-shadow: none;
+    //
+    //        &:not(.Mui-disabled):not(.Mui-focusVisible):not(:hover) {
+    //            color: colors.$primary-contrast;
+    //            background: colors.$primary-main;
+    //        }
+    //
+    //        &:not(.Mui-disabled).Mui-focusVisible:not(:hover) {
+    //            color: colors.$primary-contrast;
+    //            background: colors.$primary-main;
+    //
+    //            .MuiTouchRipple-root {
+    //                width: 53.011px;
+    //                height: 46.286px;
+    //                border-radius: 100px;
+    //                opacity: 0.3;
+    //                background: colors.$primary-contrast;
+    //                padding: 0;
+    //                box-shadow: none;
+    //            }
+    //        }
+    //
+    //        &:not(.Mui-disabled):not(.Mui-focusVisible):hover {
+    //            color: colors.$primary-contrast;
+    //            background: colors.$primary-dark;
+    //        }
+    //
+    //        &.Mui-disabled:not(.Mui-focusVisible):not(:hover) {
+    //            color: colors.$action-disabled;
+    //            background: colors.$action-disabledbackground;
+    //        }
+    //    }
+    //
+    //    &.MuiButton-containedInherit {
+    //        font-size: 0.875rem;
+    //        font-style: normal;
+    //        font-weight: 500;
+    //        line-height: 24px; /* 171.429% */
+    //        letter-spacing: 0.2px;
+    //        text-transform: none;
+    //        padding: 6px 16px;
+    //        border-radius: sizing.$radius_md;
+    //        opacity: 1;
+    //        box-shadow: none;
+    //
+    //        &:not(.Mui-disabled):not(.Mui-focusVisible):not(:hover) {
+    //            color: colors.$text-primary;
+    //            background: #E0E0E0;
+    //        }
+    //
+    //        &:not(.Mui-disabled).Mui-focusVisible:not(:hover) {
+    //            color: colors.$text-primary;
+    //            background: #E0E0E0;
+    //
+    //            .MuiTouchRipple-root {
+    //                width: 53.011px;
+    //                height: 46.286px;
+    //                border-radius: 100px;
+    //                background: colors.$text-_states-focusvisible;
+    //                padding: 0;
+    //                opacity: 1;
+    //                box-shadow: none;
+    //            }
+    //        }
+    //
+    //        &.Mui-disabled:not(.Mui-focusVisible):not(:hover) {
+    //            color: colors.$action-disabled;
+    //            background: colors.$action-disabledbackground;
+    //        }
+    //
+    //        &:not(.Mui-disabled):not(.Mui-focusVisible):hover {
+    //            color: colors.$text-primary;
+    //            background: #F5F5F5;
+    //        }
+    //    }
+    //
+    //    &.MuiButton-containedInherit-white {
+    //        font-size: 0.875rem;
+    //        font-style: normal;
+    //        font-weight: 500;
+    //        line-height: 24px; /* 171.429% */
+    //        letter-spacing: 0.2px;
+    //        text-transform: none;
+    //        padding: 6px 16px;
+    //        border-radius: sizing.$radius_md;
+    //        opacity: 1;
+    //        box-shadow: none;
+    //
+    //        &:not(.Mui-disabled):not(.Mui-focusVisible):not(:hover) {
+    //            color: var(--mui-palette-common-white_states-main);
+    //            background: #E0E0E0;
+    //        }
+    //
+    //        &:not(.Mui-disabled).Mui-focusVisible:not(:hover) {
+    //            color: var(--mui-palette-common-white_states-main);
+    //            background: #E0E0E0;
+    //
+    //            .MuiTouchRipple-root {
+    //                width: 53.011px;
+    //                height: 46.286px;
+    //                border-radius: 100px;
+    //                opacity: 0.3;
+    //                background: var(--mui-palette-common-white_states-main);
+    //                padding: 0;
+    //                box-shadow: none;
+    //            }
+    //        }
+    //
+    //        &.Mui-disabled:not(.Mui-focusVisible):not(:hover) {
+    //            color: colors.$action-disabled;
+    //            background: colors.$action-disabledbackground;
+    //        }
+    //
+    //        &:not(.Mui-disabled):not(.Mui-focusVisible):hover {
+    //            color: var(--mui-palette-common-white_states-main);
+    //            background: #F5F5F5;
+    //        }
+    //    }
+    //
+    //    &.MuiButton-containedSecondary {
+    //        font-size: 0.875rem;
+    //        font-style: normal;
+    //        font-weight: 500;
+    //        line-height: 24px; /* 171.429% */
+    //        letter-spacing: 0.2px;
+    //        text-transform: none;
+    //        padding: 6px 16px;
+    //        border-radius: sizing.$radius_md;
+    //        opacity: 1;
+    //        box-shadow: none;
+    //
+    //        &:not(.Mui-disabled):not(.Mui-focusVisible):not(:hover) {
+    //            color: colors.$secondary-contrast;
+    //            background: var(--mui-palette-secondary-main);
+    //        }
+    //
+    //        &:not(.Mui-disabled).Mui-focusVisible:not(:hover) {
+    //            color: colors.$secondary-contrast;
+    //            background: var(--mui-palette-secondary-main);
+    //
+    //            .MuiTouchRipple-root {
+    //                width: 53.011px;
+    //                height: 46.286px;
+    //                border-radius: 100px;
+    //                opacity: 0.3;
+    //                background: colors.$secondary-contrast;
+    //                padding: 0;
+    //                box-shadow: none;
+    //            }
+    //        }
+    //
+    //        &.Mui-disabled:not(.Mui-focusVisible):not(:hover) {
+    //            color: colors.$action-disabled;
+    //            background: colors.$action-disabledbackground;
+    //        }
+    //
+    //        &:not(.Mui-disabled):not(.Mui-focusVisible):hover {
+    //            color: colors.$secondary-contrast;
+    //            background: colors.$secondary-dark;
+    //        }
+    //    }
+    //}
+}
+
+

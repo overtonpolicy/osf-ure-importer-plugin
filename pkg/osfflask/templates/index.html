@@ -1,17 +1,28 @@
 {% extends 'base.html' %}
 {% block content %}
-<h2>Import into OSF</h2>
-<ul>
-    <li class="elegant-list emphasis"><a href="/import/google">Import from a Google Document</a></li>
-    <li class="elegant-list emphasis"><a href="/import/docx">Import from a MS Word Document</a></li>
-</ul>
-<h2>Export from OSF</h2>
-<ul>
-    <li class="elegant-list emphasis"><a href="/export/file">Export to a file</a></li>
-</ul>
-<h2>Collection Views</h2>
-<ul>
-    <li><a href="/collectionlist">Most recent collection items</a></li>
-    <li><a href="/search/advanced">Advanced search that includes project content</a></li>
-</ul>
+<section class="hide-after-login">
+    <h1>Log in to your OSF account</h1>
+    <hr/>
+    <p>The URE Methods repository uses the Open Science Framework to create, store and update new protocols. You’ll need
+        an OSF account in order use the importer tool.</p>
+    <p>If you already have an OSF account you can log in using your details below</p>
+    <button id="osf-login" class="btn btn-primary btn-sm ure-button " type="button">Log in to your OSF account</button>
+    <br/>
+    <br/>
+    <p>Otherwise, you can create an account on the OSF website.</p>
+    <button onclick="window.open('https://osf.io/register', '_blank')"
+            id="osf-create" class="btn btn-primary btn-sm ure-button_outlined" type="button">
+        Create an OSF account <i class="fa-solid fa-up-right-from-square"></i>
+    </button>
+</section>
+<section id="import-options">
+    <div>
+        <p>Import a Word document (.docx file)</p>
+        <a href="/import/docx" class="btn btn-primary btn-sm ure-button " type="button">Import from .docx</a>
+        <br/>
+        <br/>
+        <p>Import a document from your Google Documents</p>
+        <a href="/import/google" class="btn btn-primary btn-sm ure-button " type="button">Import from Google Docs</a>
+    </div>
+</section>
 {% endblock %}

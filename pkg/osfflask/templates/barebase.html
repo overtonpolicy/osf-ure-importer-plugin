@@ -19,7 +19,12 @@
 
     <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='ext/three-dots/three-dots.min.css') }}">
 
-    <!-- link rel="stylesheet" href="{{ url_for('static', filename='css/general.css') }}" -->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/ure_methods.css' ) }}" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Besley:wght@400..900&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/58b1fa4ad2.js" crossorigin="anonymous"></script>
+
     {% endblock %}
 
     {%block javascript %}
@@ -41,7 +46,7 @@
 <section class="content">
 
     <body>
-        <div id="content" class="m-5 container border bg-light">
+        <div id="content" class="m-5 container border">
             {% block topmatter %}{% endblock %}
             {% block content %}{% endblock %}
             {% block footer %}{% endblock %}

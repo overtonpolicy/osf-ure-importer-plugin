@@ -1,0 +1,23 @@
+@use "../sizing" as sizing;
+$font_family_default: "Poppins", "Arial", sans-serif;
+.MuiChip {
+    &-root {
+        height: 26px;
+        align-items: center;
+        font-family: $font_family_default;
+
+        .MuiChip-labelSmall {
+            padding: sizing.$spacing_half sizing.$spacing_1;
+            font-size: sizing.$font_size_xxs;
+        }
+
+        .MuiChip-labelMedium {
+            padding: sizing.$spacing_half sizing.$spacing_2;
+            font-size: sizing.$font_size_xs;
+        }
+    }
+
+    &-sizeSmall {
+        height: 22px;
+    }
+}
