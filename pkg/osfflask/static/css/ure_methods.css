@@ -1,0 +1,123 @@
+/* colors */
+/* palette - Light */
+/* Text Styles  */
+.module-inner {
+  width: 100%;
+  max-width: 100%;
+  margin: auto;
+}
+@media (min-width: 1201px) {
+  .module-inner {
+    max-width: 1280px;
+  }
+}
+@media (min-width: 1441px) {
+  .module-inner {
+    max-width: 1620px;
+  }
+}
+
+:root {
+  line-height: 1.45;
+  font-weight: 400;
+  margin: 0;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background: transparent;
+  font-family: "Poppins", "Helvetica Neue", sans-serif;
+}
+
+h1 {
+  font-family: Poppins, sans-serif;
+  font-size: 1.125rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 115%;
+}
+@media screen and (min-width: 768px) {
+  h1 {
+    font-size: 1.5rem;
+  }
+}
+
+.ure-button, .ure-button_outlined {
+  background: rgb(54, 48, 104);
+  border-radius: 0.5rem;
+  border-color: rgb(54, 48, 104);
+  font-weight: 500;
+  padding: 6px 1rem;
+}
+.ure-button:hover, .ure-button_outlined:hover {
+  background: rgb(77, 64, 134);
+  border-color: rgb(77, 64, 134);
+}
+.ure-button:focus-visible, .ure-button_outlined:focus-visible, .ure-button :focus, .ure-button_outlined :focus {
+  box-shadow: 0 0 0 0.25rem rgb(205, 200, 223);
+  background: rgb(77, 64, 134);
+}
+.ure-button_outlined {
+  background: transparent;
+  color: rgb(54, 48, 104);
+}
+
+.accordion-button {
+  color: rgb(4, 79, 71);
+}
+.accordion-button:not(.collapsed) {
+  color: rgb(4, 79, 71);
+  background: rgb(224, 242, 243);
+}
+
+.docs-check-container {
+  padding: 0 20px;
+}
+@media screen and (max-width: 576px) {
+  .docs-check-container {
+    padding: 0;
+    flex-wrap: nowrap;
+  }
+  .docs-check-container .col-sm-1 {
+    width: auto;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .accordion-body {
+    padding: 0.5rem 0;
+  }
+  .accordion-body .row {
+    flex-wrap: nowrap;
+  }
+  .accordion-body .row .col-sm-1 {
+    width: auto;
+  }
+}
+
+.container {
+  background: rgb(255, 255, 255);
+  border-radius: 2rem;
+  padding: 1rem 1rem;
+  margin: 2rem auto !important;
+}
+@media screen and (min-width: 768px) {
+  .container {
+    padding: 2rem 2rem;
+  }
+}
+
+.break-title {
+  font-family: Poppins, sans-serif;
+  font-size: 1.125rem;
+  font-weight: 400;
+  line-height: 150%;
+  letter-spacing: -0.15px;
+  font-weight: 500;
+  margin-top: 1rem;
+}
+
+/*# sourceMappingURL=ure_methods.css.map */
