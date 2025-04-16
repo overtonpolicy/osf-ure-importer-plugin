@@ -217,7 +217,11 @@ class GoogleAuth {
             return;
         $('#google-login').show();
         $('#google-logout').hide();
-        $('#google-authentication-status').html('You are not logged in.');
+        $('#google-authentication-status').html(
+            '<button id="google-login" class="btn btn-primary btn-md ure-button_outlined" type="button">' +
+            '<i class="fa-brands fa-google"></i> Sign in with Google ' +
+            '</button>'
+        );
         $('.google-login-required').each(function(){
             $(this).hide();
         });
