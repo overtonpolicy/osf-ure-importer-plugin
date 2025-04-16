@@ -100,6 +100,7 @@ class OSFAuth {
             success: function(data) {
                 console.log("Token revoked");
                 self.registerLogout();
+                window.location.assign("/");
                 if(on_complete)
                     on_complete(data);
             },
