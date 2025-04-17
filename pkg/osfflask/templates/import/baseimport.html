@@ -14,17 +14,21 @@
 <form id="document-import" method="POST" enctype="application/x-www-form-urlencoded">
     <fieldset>
 
-        {% include 'partials/osf-project-select.html' %}
-
         {% block import_content %}{% endblock %}
 
-        <div class="accordian mt-3" id="import-accordian">
-            <div id="doc-options" class="accordian-item">
+        {% include 'partials/osf-project-select.html' %}
+        <div class="row mt-5 mb-2">
+            <div class="col">
+                <h4>Additional settings</h4>
+            </div>
+        </div>
+        <div class="accordian" id="import-accordian">
+            <div id="doc-options" class="accordian-item mb-3">
                 <h2 class="accordian-header" id="doc-options-header">
                     <button class="accordion-button" type="button" data-bs-toggle="collapse"
                             data-bs-target="#doc-options-item" aria-controls="doc-options-item"
                             aria-expanded="true">
-                        Document Options
+                        Document options
                     </button>
                 </h2>
                 <div id="doc-options-item" class="accordion-collapse collapse show"
@@ -37,16 +41,16 @@
                             </div>
                             <div class="col">
                                 <label class="inline-label" for="overwrite">
-                                    Overwrite
+                                    Overwrite existing content
                                 </label>
                             </div>
                         </div>
                         <div class="row">
                             <div class="offset-sm-1 col">
                                 <label class="text-muted" for="overwrite">
-                                    Indicates that if a wiki or component already exists with the name for the
-                                    section, it will be replaced. Unselect this if the Wiki may have changes or
-                                    modifications that are not in the content you are importing.
+                                    Indicates that if a wiki or component already exists with the name for the section,
+                                    it will be replaced. Unselect this if the Wiki may have changes or modifications
+                                    that are not in the content you are importing.
                                 </label>
                             </div>
                         </div>
@@ -56,7 +60,7 @@
                                 <input type="checkbox" id="deleteold" value="" name="deleteold" class='inline-input'/>
                             </div>
                             <div class="col">
-                                <label class="inline-label" for="deleteold">Delete Old</label>
+                                <label class="inline-label" for="deleteold">Delete old content</label>
                             </div>
                         </div>
                         <div class="row">
@@ -77,7 +81,7 @@
                     <button class="accordion-button" type="button" data-bs-toggle="collapse"
                             data-bs-target="#break-options-item" aria-controls="break-options-item"
                             aria-expanded="true">
-                        Wiki and Component Break Options
+                        Wiki and Component Break options
                     </button>
                 </h2>
                 <div id="break-options-item" class="accordion-collapse collapse show"
