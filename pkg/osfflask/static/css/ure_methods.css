@@ -49,6 +49,13 @@ h4 {
   font-size: 20px;
 }
 
+a {
+  color: rgb(1, 123, 115);
+}
+a:hover {
+  color: rgb(4, 79, 71);
+}
+
 .ure-button, .ure-button_outlined {
   background: rgb(54, 48, 104);
   border-radius: 0.5rem;

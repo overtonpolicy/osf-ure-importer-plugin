@@ -34,7 +34,13 @@ function show_import_results(data){
     var modaldiag = bootstrap.Modal.getInstance(document.getElementById('wait-dialog'));
     modaldiag.hide();
     $('#result-header').html('Import Complete')
-    $('#result-preamble').html('<p class="lead"><a href="" onclick=\'bootstrap.Modal.getInstance(document.getElementById("result-dialog")).hide()\'>Click Here</a> to close this window and return to the importer.</p><p class="lead"><a href="http://osf.io/'+data.rootnodeid+'/">Click Here</a> to leave the importer and go to the '+data.rootnodename+' Project.</p><p class="lead"><a href="/">Click Here</a> to return to the URE Methods extensions index.</p><p class="text-muted">Below is a list of completed actions. Click on the links to open a <i>new window</i> for the page.</p><p class="text-muted>If you accidentally overwrote a wiki page, you can <b>revert</b> it to the old <b>Version</b> via the wiki page. If you accidentally deleted a wiki or component, it cannot be recovered.</p>')
+    $('#result-preamble').html('<p class="lead">' +
+        '<h4 class="mt-3">View your protocol on the OSF</h4>' +
+        '<p><a href="http://osf.io/'+data.rootnodeid+'/" target="_blank">Click Here</a> to view your updated project, '+data.rootnodename+', on OSF.io.</p><br/>' +
+        '<h4>Submit your protocol</h4>' +
+        '<p>If you\'re ready, you can <a href="https://osf.io/collections/uremethods/submit" target="_blank">Submit your protocol</a> to the URE methods collection</p><br/>' +
+        '<p class="text-muted">Below is a list of completed actions. Click on the links to open a <i>new window</i> for the page.</p>' +
+        '<p class="text-muted">If you accidentally overwrote a wiki page, you can <b>revert</b> it to the old <b>Version</b> via the wiki page. If you accidentally deleted a wiki or component, it cannot be recovered.</p>')
     var div = $('<div></div>');
 
     ['ignored', 'deleted', 'updated', 'created'].forEach(function(type){
