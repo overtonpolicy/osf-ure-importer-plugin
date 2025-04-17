@@ -60,9 +60,10 @@ h4 {
   background: rgb(77, 64, 134);
   border-color: rgb(77, 64, 134);
 }
-.ure-button:focus-visible, .ure-button_outlined:focus-visible, .ure-button :focus, .ure-button_outlined :focus {
+.ure-button:focus-visible, .ure-button_outlined:focus-visible, .ure-button:focus, .ure-button_outlined:focus, .ure-button:active:focus {
   box-shadow: 0 0 0 0.25rem rgb(205, 200, 223);
   background: rgb(77, 64, 134);
+  color: rgb(255, 255, 255);
 }
 .ure-button_outlined {
   background: transparent;
