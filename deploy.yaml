@@ -1,0 +1,27 @@
+import:
+  - recipe/common.php
+
+config:
+  application: 'ure-methods-importer'
+  repository: 'git@github.com:overtonpolicy/osf-ure-importer-plugin.git'
+  shared_files: ["conf/osf.pat", "conf/auth.yml"]
+
+hosts:
+  staging:
+    remote_user: overton
+    hostname: "alfred"
+    deploy_path: '/var/www/importer.ure-test.overton.io'
+    branch: main
+
+tasks:
+  deploy:
+    - deploy:prepare
+    - deploy:permissions
+    - deploy:publish
+
+  deploy:permissions:
+    - run: 'sudo chown -R {{remote_user}}:www-data {{release_path}} && sudo chmod -R 775 {{release_path}} && sudo chmod -R 775 {{deploy_path}}/shared && sudo chown -R {{remote_user}}:www-data {{deploy_path}}/shared'
+
+after:
+  deploy:failed: deploy:unlock
+
