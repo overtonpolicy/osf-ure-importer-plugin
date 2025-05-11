@@ -18,9 +18,13 @@ tasks:
     - deploy:prepare
     - deploy:permissions
     - deploy:publish
+    - deploy:restart-app
 
   deploy:permissions:
     - run: 'sudo chown -R {{remote_user}}:www-data {{release_path}} && sudo chmod -R 775 {{release_path}} && sudo chmod -R 775 {{deploy_path}}/shared && sudo chown -R {{remote_user}}:www-data {{deploy_path}}/shared'
+
+  deploy:restart-app:
+    - run: 'sudo systemctl restart flask-app'
 
 after:
   deploy:failed: deploy:unlock
