@@ -35,7 +35,7 @@ def development_level():
 
     if hostname == 'http://localhost:3000/':
         dev_mode = 'development'
-    elif hostname == 'https://testing.uremethods.org/':
+    elif hostname == 'https://importer.ure-test.overton.io/':
         dev_mode = 'staging'
     elif hostname == 'https://plugins.uremethods.org/':
         dev_mode = 'production'
