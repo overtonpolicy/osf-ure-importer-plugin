@@ -32,13 +32,15 @@
         navLinks.forEach(link => {
             const path = link.getAttribute('href');
             if (path.startsWith('/')) {
-                link.href = '//' + targetHost + path;
+                //TODO update to https for production
+                link.href = 'http://' + targetHost + path;
             }
         });
         // Also update the logo link
         const logoLink = document.querySelector('.SiteLogo');
         if (logoLink) {
-            logoLink.href = '//' + targetHost;
+            //TODO update to https for production
+            logoLink.href = 'http://' + targetHost;
         }
     });
 </script>
