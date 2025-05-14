@@ -32,7 +32,7 @@
         navLinks.forEach(link => {
             const path = link.getAttribute('href');
             if (path.startsWith('/')) {
-                link.href = 'https://' + targetHost + path;
+                link.href = '//' + targetHost + path;
             }
         });
         // Also update the logo link
