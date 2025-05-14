@@ -1,0 +1,81 @@
+@use "theme" as theme;
+
+.SiteFooter {
+    @include theme.module;
+    padding-top: theme.$spacing_6;
+    padding-bottom: theme.$spacing_6;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: theme.$spacing_6;
+}
+
+.SiteFooterBottom {
+    background-color: theme.$purple-50;
+    gap: theme.$spacing_3;
+    padding-top: theme.$spacing_4;
+    padding-bottom: theme.$spacing_4;
+
+    @include theme.media(theme.$breakpoint-lg, "max") {
+        flex-direction: column;
+        gap: theme.$spacing_3;
+        align-items: flex-start;
+    }
+
+    .accreditation {
+        @include theme.module-inner;
+        display: flex;
+        justify-content: space-between;
+        flex-flow: row;
+        gap: theme.$spacing_6;
+        @include theme.media(theme.$breakpoint-lg, "max") {
+            flex-flow: row wrap;
+        }
+    }
+
+    .copy {
+        min-width: 280px;
+        @include theme.typography_body_sm;
+
+        a {
+            color: theme.$primary-dark;
+            text-decoration: none;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+
+    .image {
+        max-width: 205px;
+        max-height: 45px;
+        object-fit: contain;
+    }
+
+    .TermsContainer {
+        @include theme.module-inner;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: theme.$spacing_2 0;
+
+        @include theme.media(theme.$breakpoint-lg, "max") {
+            padding: theme.$spacing_3 0;
+            flex-flow: column;
+            align-items: flex-start;
+            gap: theme.$spacing_2;
+        }
+
+        a {
+            color: theme.$color_text_primary-light-mode;
+            text-decoration: none;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+}

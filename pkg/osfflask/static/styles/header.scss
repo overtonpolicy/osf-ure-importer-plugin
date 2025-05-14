@@ -1,0 +1,126 @@
+@use "theme" as theme;
+
+.site-header {
+    background: white;
+    @include theme.module;
+    width: 100%;
+    position: relative;
+    display: flex;
+    flex-flow: row;
+    gap: theme.$spacing_2;
+    justify-content: center;
+    background: theme.$secondary-contrast;
+    font-family: theme.$font_family_default;
+    z-index: 1100;
+    padding: theme.$spacing_1 theme.$spacing_2;
+    top: 0;
+    box-sizing: border-box;
+
+    &.scrolled {
+        top: -100px;
+        transition: top 0.3s;
+
+        &-visible {
+            position: fixed;
+            top: 0;
+            transition: top 0.3s;
+
+            .HeaderMenuItem {
+                padding: theme.$spacing_3 theme.$spacing_2;
+            }
+
+            .SiteHeaderContent {
+                padding-top: theme.$spacing_0;
+            }
+        }
+    }
+
+    @include theme.media(theme.$breakpoint-xl, "max") {
+        justify-content: space-between;
+    }
+    @include theme.media(theme.$breakpoint-sm, "min") {
+        padding: theme.$spacing_1 theme.$spacing_3;
+    }
+
+    @include theme.media(theme.$breakpoint-xl, "min") {
+        padding: 0 theme.$spacing_3;
+    }
+
+    @include theme.media(theme.$breakpoint-xxl, "min") {
+        padding: 0 theme.$spacing_10;
+    }
+}
+
+.header-content {
+    @include theme.module-inner;
+    display: flex;
+    flex: 1 1 100%;
+    flex-flow: row;
+    align-items: center;
+    gap: theme.$spacing_3;
+    padding-top: theme.$spacing_2;
+
+    .SiteLogo {
+        @include theme.tablet-up {
+            flex: 1;
+        }
+    }
+}
+
+
+.HeaderMenu {
+    display: none;
+    margin: 0 0 0 theme.$spacing_2;
+    color: theme.$text-primary;
+    font-size: theme.$font_size_sm;
+    height: theme.$header_height;
+
+    @include theme.media(theme.$breakpoint-xl, 'min') {
+        display: flex;
+        justify-content: flex-end;
+    }
+}
+
+.HeaderMenuItem {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: theme.$spacing_2 theme.$spacing_2;
+    box-sizing: border-box;
+    border-bottom: 2px solid transparent;
+    color: theme.$color_text_primary-light-mode;
+    cursor: pointer;
+    @include theme.typography_dialog_heading;
+    text-decoration: none;
+
+    &-scrolled {
+        border-bottom: 1px solid theme.$color_text_primary-light-mode;
+        padding: theme.$spacing_1 theme.$spacing_2;
+    }
+
+    &.active {
+        background: theme.$primary-_states-focusvisible;
+    }
+
+    &:last-child {
+        margin-right: theme.$spacing_2;
+    }
+
+    @include theme.desktop-up {
+        @include theme.typography_body_sm;
+        padding: theme.$spacing_4 theme.$spacing_2;
+        font-weight: 500;
+        letter-spacing: 0.35px;
+
+        &.active {
+            border-color: theme.$color_outline_primary;
+            background: transparent;
+        }
+        &:hover {
+            border-color: theme.$color_outline_primary;
+            text-decoration: none;
+            color: inherit;
+        }
+    }
+
+}
