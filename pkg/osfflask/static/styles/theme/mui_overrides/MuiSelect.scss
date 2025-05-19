@@ -1,0 +1,12 @@
+@use "../sizing";
+.MuiSelect{
+  &-select{
+    &.MuiInputBase-inputSizeSmall{
+      padding-top: sizing.$spacing_half;
+      padding-bottom: sizing.$spacing_half;
+    }
+  }
+  > *:focus-visible {
+    box-shadow: none;
+  }
+}

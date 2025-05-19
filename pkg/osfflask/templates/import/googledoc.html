@@ -10,18 +10,23 @@
 {% block import_content %}
 <div class="row pt-3">
     <div class="col">
-        <h3>Google Document</h3>
+        <h4>Log in to your Google Account</h4>
     </div>
 </div>
 {% include "partials/googleauth-widget.html" %}
+<div class="row mt-3 mb-2">
+    <div class="col">
+        <h4>Select the Google document you want to use</h4>
+    </div>
+</div>
 <div class="row google-login-required">
     <input type="hidden" name="google-document-id" value="" id="google-document-id" />
-    <div class="input-group mb-3 col">
+    <div class="input-group mb-4 mt-2 col">
         <span id="googledoc-label" class="input-group-text">GoogleDoc</span>
         <input type="text" id="google-document-name" name="google-document-name" class="form-control autocomplete-panel" placeholder="Start typing and select your doc to import..." aria-describedby="googledoc-label" value=""  />        
       </div>          
 </div>
-<div class="row mx-3">
+<div class="row docs-check-container">
     <div class="col-sm-1">
         <input type="checkbox" name="google-include-shared" id="google-include-shared" />
     </div>
@@ -31,7 +36,7 @@
         </label>
     </div>
 </div>
-<div class="row mx-3">
+<div class="row docs-check-container">
     <div class="offset-sm-1 col">
         <label class="text-muted" for="google-include-shared">Check <i>Use Shared Drives</i> if you have a <b>dedicated</b> Shared/Team Drive - this doesn't apply to files simply shared with others. </label>
     </div>

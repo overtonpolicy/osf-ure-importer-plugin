@@ -7,14 +7,12 @@
 {% endblock %}
     
 {% block topmatter %}
-<div class="row pt-3">
-    <div class="col">
-        {% include "partials/page-navigation.html" %}
-    </div>
-    <div class="col">
-    </div>
-    <div class="col-sm-5 text-right">
-        {% include "partials/login-widget.html" %}
+<div class="row osf-login-required importer_header">
+    <h1 class="col" id="importer_title">
+        Import your protocol
+    </h1>
+    <div class="col-sm-5 text-right" style="text-align: right">
+        {% include "partials/auth-widget.html" %}
     </div>
 </div>
 {% endblock %}

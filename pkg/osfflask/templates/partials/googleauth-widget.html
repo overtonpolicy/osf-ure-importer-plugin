@@ -1,10 +1,12 @@
 {% block login %}
-<div id="google-login-div" class="row pb-3">
+<div id="google-login-div" class="row pb-3 mt-2">
     <div id="google-authentication-status" class="col-sm-8">
-        <button id="google-login" class="google-auth-button btn btn-primary btn-md" type="button">Log In</button>
+        <button id="google-login" class="btn btn-primary btn-md ure-button_outlined" type="button">
+            <i class="fa-brands fa-google"></i> Sign in with Google
+        </button>
     </div>
-    <div class="col-sm-4">
-        <button id="google-logout" class="google-auth-button btn btn-primary" type="button">Log Out</button>
+    <div class="col-sm-8 mt-2 mb-3">
+        <button id="google-logout" class=" btn btn-primary btn-sm ure-button_outlined" type="button">Log out of Google</button>
     </div>
 </div>
 {% endblock %}

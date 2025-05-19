@@ -1,0 +1,138 @@
+@use "theme" as theme;
+@import "header";
+@import "footer";
+
+:root {
+    line-height: 1.45;
+    font-weight: 400;
+    margin: 0;
+    //width: 100%;
+
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    background: theme.$purple-50;
+    font-family: "Poppins", "Helvetica Neue", sans-serif;
+}
+
+h1 {
+    @include theme.typography_dialog_heading;
+}
+
+h4 {
+    font-size: 20px
+}
+
+a {
+    color: theme.$secondary-main;
+
+    &:hover {
+        color: theme.$secondary-dark;
+    }
+}
+
+.content {
+    min-height: 60vh;
+}
+
+.ure-button {
+    background: theme.$primary-main;
+    border-radius: theme.$radius_md;
+    border-color: theme.$primary-main;
+    font-weight: 500;
+    padding: 6px theme.$spacing_2;
+
+    &:hover {
+        background: theme.$primary-dark;
+        border-color: theme.$primary-dark;
+    }
+
+    &:focus-visible, &:focus, &:active:focus {
+        box-shadow: 0 0 0 .25rem theme.$purple-100;
+        background: theme.$primary-dark;
+        color: theme.$color_background_contrast
+    }
+
+    &_outlined {
+        @extend .ure-button;
+        background: transparent;
+        color: theme.$primary-main;
+    }
+}
+
+.accordion-button {
+    color: theme.$secondary-dark;
+
+    &:not(.collapsed) {
+        color: theme.$secondary-dark;
+        background: theme.$teal-50;
+    }
+}
+
+.docs-check-container {
+    padding: 0 20px;
+
+    @include theme.phone-only {
+        padding: 0;
+        flex-wrap: nowrap;
+
+        .col-sm-1 {
+            width: auto;
+        }
+    }
+}
+
+.accordion-body {
+    @include theme.phone-only {
+        padding: theme.$spacing_1 0;
+
+        .row {
+            flex-wrap: nowrap;
+
+            .col-sm-1 {
+                width: auto;
+            }
+        }
+    }
+}
+
+.container {
+    background: theme.$color_background_contrast;
+    border-radius: theme.$radius_xl;
+    padding: theme.$spacing_2 theme.$spacing_2;
+    margin: 2rem auto !important;
+
+    @include theme.tablet-up {
+        padding: theme.$spacing_4 theme.$spacing_4;
+    }
+}
+
+.break-title {
+    @include theme.typography_body_lg;
+    font-weight: 500;
+    margin-top: theme.$spacing_2;
+}
+
+.importer_header {
+    border-bottom: 1px solid theme.$common-black_states-focus;
+    padding: 0 0 theme.$spacing_2;
+    margin-bottom: theme.$spacing_4;
+}
+
+.drag-n-drop-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 85px;
+    height: 85px;
+    background-color: theme.$purple-50;
+    border: 2px dashed theme.$primary-main;
+    color: theme.$primary-main;
+    font-size: 50px;
+    text-align: center;
+    vertical-align: middle;
+}

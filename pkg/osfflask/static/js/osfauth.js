@@ -100,6 +100,7 @@ class OSFAuth {
             success: function(data) {
                 console.log("Token revoked");
                 self.registerLogout();
+                window.location.assign("/");
                 if(on_complete)
                     on_complete(data);
             },
@@ -325,6 +326,7 @@ class OSFAuth {
     registerLogin(me){
         var self = this;
         $('#osf-login').hide();
+        $('#import-options').show();
         $('#osf-logout').show();
         $('.osf-login-required').each(function(){
             $(this).show();
@@ -343,7 +345,7 @@ class OSFAuth {
             // in this case, we logged in separately and are notifying the osf object of it, so we 
             // we don't need to call getme separately.
             self.me = me;
-            $('#osf-authentication-status').html('You are logged in as '+me.attributes.full_name+'.');
+            $('#osf-authentication-status').html("Logged in as <b>" + me.attributes.full_name + "</b>.");
             self.loginCallbacks.forEach(function(callback){
                 callback(me);
             });
@@ -352,7 +354,7 @@ class OSFAuth {
             // update the label and conduct any custom callbacks
             self.getme({success:function(me){            
                 self.me = me;
-                $('#osf-authentication-status').html('You are logged in as '+me.attributes.full_name+'.');
+                $('#osf-authentication-status').html("Logged in as <b>" + me.attributes.full_name + "</b>.");
                 self.loginCallbacks.forEach(function(callback){
                     callback(me);
                 });
@@ -365,8 +367,9 @@ class OSFAuth {
     registerLogout(){
         var self = this;
         $('#osf-login').show();
+        $('#import-options').hide();
         $('#osf-logout').hide();
-        $('#osf-authentication-status').html('You are not logged in.');
+        $('#osf-authentication-status').html('');
         $('.osf-login-required').each(function(){
             $(this).hide();
         });
@@ -417,7 +420,8 @@ $(document).ready(function () {
     //
     $('#osf-login').show();
     $('#osf-logout').hide();
-    osf.getme({ 
+    $('#import-options').hide();
+    osf.getme({
         success: function(me){osf.registerLogin(me)}, 
         error: function(){osf.registerLogout()},
         relogin: false,

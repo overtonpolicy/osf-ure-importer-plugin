@@ -1,0 +1,8 @@
+@use "../sizing";
+@use "../colors";
+.MuiButtonGroup {
+  &-root {
+    background-color: colors.$color_neutral_5;
+    border-radius: sizing.$radius_xl
+  }
+}

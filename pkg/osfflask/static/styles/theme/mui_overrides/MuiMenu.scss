@@ -1,0 +1,10 @@
+@use "../sizing";
+@use "../effects";
+@use "../colors";
+
+.MuiMenu {
+    &-paper {
+        border-radius: sizing.$spacing_2;
+        box-shadow: effects.$basic_shadow;
+    }
+}

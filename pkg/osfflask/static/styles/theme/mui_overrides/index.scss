@@ -1,0 +1,122 @@
+@use "../sizing";
+@use "../colors";
+@forward "MuiAutocomplete";
+@forward "MuiButton";
+@forward "MuiButtonGroup";
+@forward "MuiIconButton";
+@forward "MuiChip";
+@forward "MuiDialog";
+@forward "MuiSelect";
+@forward "MuiSwitch";
+@forward "MuiTooltip";
+@forward "MuiMenu";
+
+.MuiButtonGroup {
+  //@include buttonGroupTheme; // Assuming buttonGroupTheme is a mixin
+}
+
+.MuiFormLabel {
+  &-root {
+    line-height: 1;
+  }
+}
+
+.MuiMenu {
+  &-root {
+    transition-duration: 0ms;
+  }
+}
+
+.MuiInputBase {
+  &-multiline {
+    border-radius: sizing.$radius_md;
+    padding: 0;
+  }
+}
+
+.MuiOutlinedInput {
+  &-input {
+    padding: 10.5px 12px 10.5px;
+
+    &:focus-visible {
+      box-shadow: none !important;
+    }
+  }
+
+  &-notchedOutline {
+    border-color: #666;
+  }
+
+  &.Mui-focused {
+    outline: none;
+    box-shadow: none;
+    border: 0;
+  }
+}
+
+.MuiSkeleton {
+  &-root {
+    border-radius: 0;
+    transform: none;
+  }
+}
+
+.MuiTooltip {
+  .tooltip {
+    font-size: 0.85em;
+    background: rgba(0, 0, 0, 0.9);
+    padding: 8px 8px 6px;
+  }
+
+  .arrow {
+    color: rgba(0, 0, 0, 0.9);
+  }
+}
+
+.MuiTableCell {
+  &-root {
+    font-weight: inherit;
+    font-size: inherit;
+  }
+}
+
+.MuiTableHead {
+  &-root {
+    font-weight: 700;
+  }
+}
+
+.MuiTab {
+  &-root {
+    text-transform: none;
+    font-size: sizing.$font_size_sm;
+    padding: sizing.$spacing_0 sizing.$spacing_1;
+  }
+
+  .selected {
+    font-weight: 500;
+    color: colors.$primary-_states-focusvisible;
+  }
+}
+
+.MuiTabs {
+  &-root {
+    min-height: 40px;
+    padding: sizing.$spacing_0 sizing.$spacing_2;
+  }
+}
+
+.MuiTableBody {
+  &-root {
+    font-size: sizing.$font_size_sm;
+    letter-spacing: 0;
+  }
+}
+
+.MuiFormHelperText {
+  &-root {
+    font-size: sizing.$font_size_xxs !important;
+    margin-top: sizing.$spacing_half !important;
+    margin-left: sizing.$spacing_2 !important;
+  }
+}

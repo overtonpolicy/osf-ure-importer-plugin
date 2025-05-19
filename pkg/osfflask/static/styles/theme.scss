@@ -1,0 +1,66 @@
+@forward "./theme/colors";
+@forward "./theme/animations";
+@forward "./theme/breakpoints";
+@forward "./theme/sizing";
+@forward "./theme/typography";
+@forward "./theme/effects";
+@forward "./theme/media_queries";
+
+@use "./theme/colors" as colors;
+@use "./theme/breakpoints" as breakpoints;
+@use "./theme/sizing" as sizing;
+
+@mixin module {
+    width: 100%;
+    padding-left: sizing.$spacing_2;
+    padding-right: sizing.$spacing_2;
+
+    @include media(breakpoints.$breakpoint-sm, "min") {
+        padding-left: sizing.$spacing_3;
+        padding-right: sizing.$spacing_3;
+    }
+
+    @include media(breakpoints.$breakpoint-xl, "min") {
+        padding-left: sizing.$spacing_3;
+        padding-right: sizing.$spacing_3;    }
+
+    @include media(breakpoints.$breakpoint-xxl, "min") {
+        padding-left: sizing.$spacing_10;
+        padding-right: sizing.$spacing_10;    }
+}
+
+@mixin module-inner {
+    width: 100%;
+    max-width: 100%;
+    margin: auto;
+
+    @include media(breakpoints.$breakpoint-xl, "min") {
+        max-width: 1280px;
+    }
+    @include media(breakpoints.$breakpoint-xxl, "min") {
+        max-width: 1620px;
+    }
+}
+
+
+@mixin media($breakpoint: '576px', $size: 'max') {
+    @if ($size == 'max') {
+        @media (max-width: $breakpoint) {
+            @content
+        }
+    }
+    @if ($size == 'min') {
+        @media (min-width: $breakpoint) {
+            @content
+        }
+    } @else if ($size) {
+        @media (max-width: $breakpoint) {
+            @content
+        }
+    }
+}
+
+
+.module-inner {
+    @include module-inner();
+}

@@ -1,0 +1,21 @@
+@use "neutrals";
+@use "palette";
+
+$color_text_primary-light-mode: palette.$text-primary;
+$color_text_secondary-light-mode: palette.$text-secondary;
+$color_text_primary-dark-mode: palette.$secondary-contrast;
+$color_text_light-light-mode: palette.$text-disabled;
+
+$color_outline_primary: palette.$text-primary;
+
+$color_background_contrast: palette.$secondary-contrast;
+
+$color_text_line_error: palette.$error-dark;
+$color_text_line_warning: palette.$warning-dark;
+$color_text_line_informative: palette.$primary-dark;
+$color_text_line_success: palette.$secondary-dark;
+
+$color_background_error: palette.$error-light;
+$color_background_warning: palette.$warning-light;
+$color_background_informative: palette.$purple-50;
+$color_background_success: palette.$teal-50;

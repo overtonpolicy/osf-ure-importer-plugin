@@ -1,0 +1,9 @@
+@use "../sizing";
+
+.MuiIconButton{
+  &-size{
+    &Xsmall{
+      font-size: sizing.$font_size_sm;
+    }
+  }
+}

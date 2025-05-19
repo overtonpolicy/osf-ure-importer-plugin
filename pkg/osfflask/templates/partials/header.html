@@ -1,0 +1,47 @@
+{% block header %}
+<header class="site-header">
+    <div class="header-content MuiBox-root css-0">
+        <a class="SiteLogo" href="/" style="height: 36px;">
+            <img height="36"
+                 alt="alt"
+                 src="/static/images/use-of-research-evidence-logo.webp"></a>
+        <nav class="HeaderMenu"><a class="HeaderMenuItem MuiBox-root css-0" href="/building-a-protocol" target="">Building
+            a protocol</a><a class="HeaderMenuItem MuiBox-root css-0" href="/protocols" target="">Browse protocols</a><a
+                class="HeaderMenuItem MuiBox-root css-0" href="/resources" target="">URE Resource hub</a><a
+                class="HeaderMenuItem MuiBox-root css-0" href="/about" target="">About</a><a
+                class="HeaderMenuItem MuiBox-root css-0" href="/faqs" target="">FAQs</a>
+        </nav>
+    </div>
+</header>
+{% endblock %}
+<script>
+    // ensure that the links rendered on the header match the main URE domain name.
+    function getBaseDomain(hostname) {
+        const parts = hostname.split('.');
+        if (parts.length >= 2) {
+            return parts.slice(1).join('.');
+        }
+        return hostname;
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const currentHostname = window.location.hostname;
+        const targetHost = getBaseDomain(currentHostname);
+
+        // Updates all navigation links to point to the main site
+        const navLinks = document.querySelectorAll('.HeaderMenu a');
+        navLinks.forEach(link => {
+            const path = link.getAttribute('href');
+            if (path.startsWith('/')) {
+                //TODO update to https for production
+                link.href = 'http://' + targetHost + path;
+            }
+        });
+        // Also update the logo link
+        const logoLink = document.querySelector('.SiteLogo');
+        if (logoLink) {
+            //TODO update to https for production
+            logoLink.href = 'http://' + targetHost;
+        }
+    });
+</script>

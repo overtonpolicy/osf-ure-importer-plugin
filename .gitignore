@@ -6,3 +6,4 @@ data
 tmpfiles
 uploads
 pkg/*/build
+.idea/

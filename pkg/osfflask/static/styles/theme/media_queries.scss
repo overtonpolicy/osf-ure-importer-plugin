@@ -1,0 +1,26 @@
+@use "breakpoints";
+
+@mixin phone-only {
+    @media screen and (max-width: breakpoints.$breakpoint-sm) { @content; }
+}
+@mixin phone-up {
+    @media screen and (min-width: breakpoints.$breakpoint-xs) { @content; }
+}
+@mixin large-phone-up {
+    @media screen and (min-width: breakpoints.$breakpoint-sm) { @content; }
+}
+@mixin tablet-up {
+    @media screen and (min-width: breakpoints.$breakpoint-md) { @content; }
+}
+@mixin small-desktop-up {
+    @media screen and (min-width: breakpoints.$breakpoint-lg) { @content; }
+}
+@mixin desktop-up {
+    @media screen and (min-width: breakpoints.$breakpoint-xl) { @content; }
+}
+@mixin large-desktop-up {
+    @media screen and (min-width: breakpoints.$breakpoint-xxl) { @content; }
+}
+@mixin extra-large-desktop-up {
+    @media (min-width: breakpoints.$breakpoint-xxxl) { @content; }
+}

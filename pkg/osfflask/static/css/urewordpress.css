@@ -26,6 +26,9 @@ table {
   display:inline-block;
 }
 
+#import-options {
+    display:none
+}
 
 /* styling of the program area, method type, and tags*/
 .program-area, .collected-type, .tag{
