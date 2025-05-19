@@ -15,6 +15,7 @@
 </header>
 {% endblock %}
 <script>
+    // ensure that the links rendered on the header match the main URE domain name.
     function getBaseDomain(hostname) {
         const parts = hostname.split('.');
         if (parts.length >= 2) {
