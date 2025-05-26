@@ -7,3 +7,4 @@ tmpfiles
 uploads
 pkg/*/build
 .idea/
+__pycache__

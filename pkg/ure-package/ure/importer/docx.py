@@ -48,7 +48,7 @@ class DocX(BaseImporter):
         tempfile = self.hack_docx(filepath)
         
         pandoc_command = [
-            'pandoc', 
+            '/usr/bin/pandoc',
             '-f', 'docx', 
             '-t', 'markdown+pipe_tables-simple_tables-fancy_lists-grid_tables-multiline_tables',
             # don't add blank lines between list items
@@ -60,7 +60,7 @@ class DocX(BaseImporter):
             '--wrap=preserve', 
             tempfile,
         ]
-        
+
         #print(" ".join(pandoc_command))
         exc = subprocess.run(
             pandoc_command, 

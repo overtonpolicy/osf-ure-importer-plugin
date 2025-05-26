@@ -4,7 +4,7 @@ import:
 config:
   application: 'ure-methods-importer'
   repository: 'git@github.com:overtonpolicy/osf-ure-importer-plugin.git'
-  shared_files: ["conf/osf.pat", "conf/auth.yml"]
+  shared_files: ["conf/osf.pat", "conf/auth.yml", 'conf/googleauth.yml', 'conf/google_client_secret.json']
 
 hosts:
   staging:
