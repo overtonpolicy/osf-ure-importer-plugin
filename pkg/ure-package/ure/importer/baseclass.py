@@ -220,6 +220,7 @@ class BaseImporter():
 
 
     ulmd_re = re.compile(r'\[([^\]]+)\]\{\.(underline|ul)\}', flags=re.MULTILINE | re.I)
+    highlight_re = re.compile(r'\[([^\]]+)\]\{\.(mark)\}', flags=re.MULTILINE | re.I)
     boldline_re = re.compile(r'^(#+\s+)\*\*(.+)\*\*\s*$', flags=re.MULTILINE )
     supmd_re = re.compile(r'\^([^\^]+)\^', flags=re.MULTILINE | re.I)
     
@@ -237,6 +238,9 @@ class BaseImporter():
         # Consideration: possibly italicize it, but quasi-links or link-like objects can end up with 
         #      underline characteristics, and that is not appropriate to italicize.
         mkdtext = cls.ulmd_re.sub(lambda m: m.group(1), mkdtext)
+
+        # pandoc formats highlighting as [text]{.mark}, which isn't standard to OSF - Removing it
+        mkdtext = cls.highlight_re.sub(lambda m: m.group(1), mkdtext)
                
         # remove bold from headings (if the entire heading is bolded) as it leads to weird markdown
         mkdtext = cls.boldline_re.sub(lambda m: m.group(1) + m.group(2), mkdtext)
