@@ -9,7 +9,7 @@ config:
 hosts:
   staging:
     remote_user: overton
-    hostname: "alfred"
+    hostname: rain
     deploy_path: '/var/www/importer.ure-test.overton.io'
     branch: main
 
