@@ -37,7 +37,7 @@ def development_level():
         dev_mode = 'development'
     elif hostname == 'https://importer.ure-test.overton.io/':
         dev_mode = 'staging'
-    elif hostname == 'https://plugins.uremethods.org/':
+    elif hostname == 'https://importer.uremethods.org/':
         dev_mode = 'production'
     else:
         raise Exception(f"We do not recognize calls from {hostname}. Connection to OSF relies on registered domain origins only. Are you perhaps using an ip address?");    

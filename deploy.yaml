@@ -11,6 +11,14 @@ hosts:
     remote_user: overton
     hostname: rain
     deploy_path: '/var/www/importer.ure-test.overton.io'
+    flask_app_service: 'ure-staging-flask-app'
+    branch: main
+
+  production:
+    remote_user: overton
+    hostname: rain
+    deploy_path: '/var/www/importer.uremethods.org'
+    flask_app_service: 'ure-production-flask-app'
     branch: main
 
 tasks:
@@ -24,7 +32,7 @@ tasks:
     - run: 'sudo chown -R {{remote_user}}:www-data {{release_path}} && sudo chmod -R 775 {{release_path}} && sudo chmod -R 775 {{deploy_path}}/shared && sudo chown -R {{remote_user}}:www-data {{deploy_path}}/shared'
 
   deploy:restart-app:
-    - run: 'sudo systemctl restart flask-app'
+    - run: 'sudo systemctl restart {{ flask_app_service }}'
 
 after:
   deploy:failed: deploy:unlock
